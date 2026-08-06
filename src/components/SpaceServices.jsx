@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { SERVICES, STATS } from '../lib/content'
@@ -58,7 +58,7 @@ export default function SpaceServices() {
           What we <span className="ember-text italic">build</span>
         </h2>
         <p className="mt-5 text-star-400">
-          From a landing page in three days to full-scale systems â€” engineered to launch fast and scale further.
+          From a landing page in three days to full-scale systems — engineered to launch fast and scale further.
         </p>
       </div>
 
@@ -77,7 +77,7 @@ export default function SpaceServices() {
             <ul className="mt-6 space-y-2.5 border-t border-white/5 pt-6">
               {s.features.map((f) => (
                 <li key={f} className="flex items-center gap-2.5 text-sm text-star-300">
-                  <span className="text-ember-500">âœ¦</span>
+                  <span className="text-ember-500">✦</span>
                   {f}
                 </li>
               ))}

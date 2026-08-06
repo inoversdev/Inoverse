@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { BRAND, CONTACT } from '../lib/content'
@@ -16,8 +16,8 @@ export default function SpaceContact() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const { name, email, message } = form
-    const subject = `Project Inquiry â€” ${name}`
-    const body = `Hi Inovers team,\n\n${message}\n\nâ€” ${name} (${email})`
+    const subject = `Project Inquiry — ${name}`
+    const body = `Hi Inovers team,\n\n${message}\n\n— ${name} (${email})`
 
     // True API delivery once an access key is configured (Web3Forms)
     if (CONTACT.formAccessKey) {
@@ -42,7 +42,7 @@ export default function SpaceContact() {
       return
     }
 
-    // Fallback â€” same flow the old inovers.vercel.app used: open the
+    // Fallback — same flow the old inovers.vercel.app used: open the
     // visitor's email app with the message pre-filled, and if the page
     // is still visible a second later, open Gmail compose as backup.
     const enc = encodeURIComponent
@@ -98,7 +98,7 @@ export default function SpaceContact() {
             <ul className="mt-8 space-y-3">
               {CONTACT.callWhy.map((c) => (
                 <li key={c} className="flex items-start gap-3 text-sm text-star-300">
-                  <span className="mt-0.5 text-ember-500">âœ¦</span>
+                  <span className="mt-0.5 text-ember-500">✦</span>
                   {c}
                 </li>
               ))}
@@ -132,7 +132,7 @@ export default function SpaceContact() {
                   rows={4}
                   value={form.message}
                   onChange={(e) => setForm({ ...form, message: e.target.value })}
-                  placeholder="Tell us about your projectâ€¦"
+                  placeholder="Tell us about your project…"
                   className={`${FIELD} resize-none`}
                 />
                 <div className="flex flex-wrap items-center gap-3">
@@ -142,24 +142,24 @@ export default function SpaceContact() {
                     aria-busy={status === 'sending'}
                     className="v2-btn v2-btn-primary group min-w-[12.5rem]"
                   >
-                    {status === 'sending' ? 'Sendingâ€¦' : 'Send message'}
+                    {status === 'sending' ? 'Sending…' : 'Send message'}
                     <span
                       aria-hidden="true"
                       className={`transition-transform duration-300 ease-out group-hover:translate-x-1 motion-reduce:translate-x-0 motion-reduce:transition-none ${
                         status === 'sending' ? 'opacity-0' : ''
                       }`}
-                    >â†’</span>
+                    >→</span>
                   </button>
                   {status === 'success' && (
                     <p className="text-xs text-star-200">
                       {CONTACT.formAccessKey
-                        ? "Message sent â€” we'll get back to you within 24 hours."
-                        : 'Your email app is opening â€” press Send to deliver it.'}
+                        ? "Message sent — we'll get back to you within 24 hours."
+                        : 'Your email app is opening — press Send to deliver it.'}
                     </p>
                   )}
                   {status === 'error' && (
                     <p className="text-xs text-ember-300">
-                      Send failed â€” please email {BRAND.email} directly.
+                      Send failed — please email {BRAND.email} directly.
                     </p>
                   )}
                 </div>
@@ -176,7 +176,7 @@ export default function SpaceContact() {
                 <p className="text-sm uppercase tracking-widest text-star-500">Free consultation</p>
                 <p className="mt-1 text-lg text-star-100">Book a 30-minute call</p>
               </div>
-              <span className="text-2xl text-star-500 transition-all group-hover:translate-x-1 group-hover:text-ember-300">â†’</span>
+              <span className="text-2xl text-star-500 transition-all group-hover:translate-x-1 group-hover:text-ember-300">→</span>
             </a>
 
             <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-6">

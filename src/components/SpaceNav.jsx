@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLenis } from 'lenis/react'
 import { BRAND, NAV_LINKS } from '../lib/content'
 
@@ -9,7 +9,7 @@ export default function SpaceNav() {
 
   // Low-profile header: while the visitor is reading a body section, the
   // bar stays compact, and it tucks away entirely when scrolling down.
-  // It returns on the first upward scroll â€” or whenever you're back near
+  // It returns on the first upward scroll — or whenever you're back near
   // the top (hero), where it lives at full presence.
   useEffect(() => {
     let lastY = window.scrollY

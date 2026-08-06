@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useLenis } from 'lenis/react'
@@ -44,7 +44,7 @@ const ORBIT_POS = [
   'left-[24%] sm:left-[22%] top-1/2 -translate-x-1/2 -translate-y-1/2',
 ]
 
-// Per-node depth (billboard space) â€” nodes float above/below the plane
+// Per-node depth (billboard space) — nodes float above/below the plane
 const NODE_DEPTHS = [-36, 28, -22, 32]
 
 // Tiny specks drifting at different depths on the orbital plane
@@ -149,7 +149,7 @@ export default function SpaceAbout() {
     return () => ctx.revert()
   }, [])
 
-  // Drag-to-rotate â€” grab the orbital system and spin it. Horizontal drags
+  // Drag-to-rotate — grab the orbital system and spin it. Horizontal drags
   // turn it around Y, vertical drags tilt the disc (clamped so it never
   // goes edge-on). On release the spin carries on with momentum, then a
   // slow idle drift keeps the system alive. Disabled for reduced motion.
@@ -193,7 +193,7 @@ export default function SpaceAbout() {
       })
     }
 
-    // Per-frame: momentum decay â†’ idle drift. Skipped while the reveal
+    // Per-frame: momentum decay → idle drift. Skipped while the reveal
     // tween owns the scene transform (getTweensOf > 0).
     const loop = (now) => {
       const dt = Math.min((now - prevT) / 1000, 0.05)
@@ -208,7 +208,7 @@ export default function SpaceAbout() {
         } else {
           velX = 0
           velY = 0
-          rotY += 3 * dt // idle drift â€” slow turn showing the 3D
+          rotY += 3 * dt // idle drift — slow turn showing the 3D
         }
         apply()
       }
@@ -308,7 +308,7 @@ export default function SpaceAbout() {
               <span
                 aria-hidden="true"
                 className="transition-transform duration-300 ease-out group-hover:translate-x-1 motion-reduce:translate-x-0 motion-reduce:transition-none"
-              >â†’</span>
+              >→</span>
             </button>
             <a
               href={BRAND.calendly}
@@ -321,7 +321,7 @@ export default function SpaceAbout() {
           </div>
         </div>
 
-        {/* 3D orbital system â€” the values orbit the Inovers core on a
+        {/* 3D orbital system — the values orbit the Inovers core on a
             tilted plane; medallions stand upright at different depths. */}
         <div className="flex items-center lg:col-span-7">
           <div
@@ -347,27 +347,27 @@ export default function SpaceAbout() {
                 className="v2-orbit-scene absolute inset-0 will-change-transform"
                 style={{ transformStyle: 'preserve-3d' }}
               >
-                {/* Outer boundary ring â€” farthest plane */}
+                {/* Outer boundary ring — farthest plane */}
                 <div
                   className="absolute inset-[4%] rounded-full border border-white/[0.06]"
                   style={{ transform: 'translateZ(-40px)' }}
                 />
-                {/* Main orbit path â€” slowly rotating satellite */}
+                {/* Main orbit path — slowly rotating satellite */}
                 <div className="v2-orbit-ring animate-orbit-spin absolute inset-[16%] rounded-full border border-white/[0.14] sm:inset-[22%]">
                   <span className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ember-300 shadow-[0_0_12px_rgba(245,48,3,0.95)]" />
                   <span className="absolute left-1/2 top-0 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ember-500/25 blur-[3px]" />
                 </div>
-                {/* Ember dashed ring â€” counter-rotating, slightly raised */}
+                {/* Ember dashed ring — counter-rotating, slightly raised */}
                 <div className="absolute inset-0" style={{ transform: 'translateZ(14px)' }}>
                   <div className="animate-orbit-spin-rev absolute inset-[24%] rounded-full border border-dashed border-ember-500/25 sm:inset-[30%]" />
                 </div>
-                {/* Inner ember ring â€” nearest plane */}
+                {/* Inner ember ring — nearest plane */}
                 <div
                   className="v2-orbit-ring absolute inset-[32%] rounded-full border border-ember-500/25 sm:inset-[38%]"
                   style={{ transform: 'translateZ(24px)' }}
                 />
 
-                {/* Value medallions â€” billboarded, floating at varied depths.
+                {/* Value medallions — billboarded, floating at varied depths.
                     The wrapper carries preserve-3d so the billboard's rotateX
                     keeps its depth instead of being flattened onto the disc. */}
                 {ABOUT.values.map((v, i) => (
@@ -376,7 +376,7 @@ export default function SpaceAbout() {
                     className={`absolute ${ORBIT_POS[i]}`}
                     style={{ transformStyle: 'preserve-3d' }}
                   >
-                    {/* GSAP reveal target â€” a plain div with NO positioning,
+                    {/* GSAP reveal target — a plain div with NO positioning,
                         so the cascade tween can't nullify the translate on
                         the anchor wrapper above (translate: none bug). */}
                     <div className="v2-orbit-node">
@@ -418,17 +418,17 @@ export default function SpaceAbout() {
                 ))}
               </div>
 
-              {/* Core + glow â€” deliberately OUTSIDE the rotating disc so the
+              {/* Core + glow — deliberately OUTSIDE the rotating disc so the
                   core stays pinned to the exact center of the system while
                   the rings and medallions orbit around it. It shares the
                   medallions' behaviour: billboarded per-frame by the drag
                   loop (always faces the camera) and floating on the same
-                  float cycle â€” only its anchor differs: the middle.
+                  float cycle — only its anchor differs: the middle.
 
                   IMPORTANT: the centering lives on THIS static wrapper.
                   GSAP's pop tween targets the billboard inside and nullifies
                   the CSS translate property (translate: none), which would
-                  destroy Tailwind's -translate-x/y-1/2 centering â€” so the
+                  destroy Tailwind's -translate-x/y-1/2 centering — so the
                   anchor must never sit on a GSAP-touched element. */}
               <div
                 className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
@@ -440,7 +440,7 @@ export default function SpaceAbout() {
                   style={{ transform: `translateZ(54px) rotateX(-${TILT}deg)` }}
                 >
                   <div className="animate-float-node relative">
-                    {/* Glow hugging the orb â€” floats with it */}
+                    {/* Glow hugging the orb — floats with it */}
                     <span
                       className="pointer-events-none absolute -inset-6 -z-10 rounded-full"
                       style={{
@@ -463,7 +463,7 @@ export default function SpaceAbout() {
         </div>
       </div>
 
-      {/* Value strip â€” full descriptions, clean editorial rows */}
+      {/* Value strip — full descriptions, clean editorial rows */}
       <div className="mt-20 grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
         {ABOUT.values.map((v) => (
           <div key={v.id} className="v2-about-value border-t border-white/10 pt-6">

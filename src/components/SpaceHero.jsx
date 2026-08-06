@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useLenis } from 'lenis/react'
@@ -25,7 +25,7 @@ export default function SpaceHero() {
           delay: 0.2,
         }
       )
-      // Hero content parallax fade + shrink â€” in sync with the UFO departure
+      // Hero content parallax fade + shrink — in sync with the UFO departure
       gsap.to('.v2-hero-content', {
         opacity: 0,
         y: -40,
@@ -38,7 +38,7 @@ export default function SpaceHero() {
           scrub: true,
         },
       })
-      // Soft glam glow behind the headline â€” fades out as the UFO departs
+      // Soft glam glow behind the headline — fades out as the UFO departs
       gsap.to('.v2-hero-glow', {
         opacity: 0,
         ease: 'none',
@@ -72,7 +72,7 @@ export default function SpaceHero() {
       ref={rootRef}
       className="relative flex min-h-screen items-center justify-center overflow-hidden px-6"
     >
-      {/* Soft glam glow â€” the UFO lighting this part of the sky */}
+      {/* Soft glam glow — the UFO lighting this part of the sky */}
       <div
         className="v2-hero-glow pointer-events-none absolute left-1/2 top-[38%] h-[62vh] w-[80vw] max-w-3xl -translate-x-1/2 -translate-y-1/2 rounded-full"
         style={{
@@ -104,7 +104,7 @@ export default function SpaceHero() {
             <span
               aria-hidden="true"
               className="transition-transform duration-300 ease-out group-hover:translate-x-1 motion-reduce:translate-x-0 motion-reduce:transition-none"
-            >â†’</span>
+            >→</span>
           </a>
           <a
             href={BRAND.calendly}
@@ -116,7 +116,7 @@ export default function SpaceHero() {
           </a>
         </div>
         <p className="v2-hero-reveal mt-14 text-xs uppercase tracking-[0.3em] text-star-600">
-          Scroll to begin the journey â†“
+          Scroll to begin the journey ↓
         </p>
       </div>
     </section>

@@ -1,4 +1,4 @@
-﻿import { useLenis } from 'lenis/react'
+import { useLenis } from 'lenis/react'
 import { BRAND, FOOTER, NAV_LINKS } from '../lib/content'
 
 export default function SpaceFooter() {
@@ -44,11 +44,11 @@ export default function SpaceFooter() {
           <a href={`mailto:${BRAND.email}`} className="transition-colors hover:text-star-300">
             {BRAND.email}
           </a>
-          <span>Â·</span>
+          <span>·</span>
           <a href={`mailto:${BRAND.emailAlt}`} className="transition-colors hover:text-star-300">
             {BRAND.emailAlt}
           </a>
-          <span>Â·</span>
+          <span>·</span>
           <span>{BRAND.phone}</span>
         </div>
 

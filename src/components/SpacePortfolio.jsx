@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { PROJECTS } from '../lib/content'
@@ -13,7 +13,7 @@ const LINKED = [
   { id: 'agenxure', url: 'https://www.agenxure.com/' },
 ]
 
-// "V" formation â€” wide at the top, converging to the point card at the
+// "V" formation — wide at the top, converging to the point card at the
 // bottom. Each row is a pair of cards (except the last), and each row's
 // container shrinks toward the center so the cards visually form a V.
 const ROW_PLAN = [[0, 1], [2, 3], [4, 5], [6]]
@@ -63,11 +63,11 @@ export default function SpacePortfolio() {
           rel="noreferrer"
           className="text-sm text-star-400 transition-colors hover:text-ember-300"
         >
-          View flagship project â†’
+          View flagship project →
         </a>
       </div>
 
-      {/* Project cards in a "V" â€” wide rows at the top that converge
+      {/* Project cards in a "V" — wide rows at the top that converge
           toward a single point card at the bottom. Stacked on mobile. */}
       <div className="flex flex-col items-center gap-6">
         {ROW_PLAN.map((row, ri) => (
@@ -94,10 +94,10 @@ export default function SpacePortfolio() {
                     </span>
                     {hasLink ? (
                       <span className="text-star-600 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-ember-300">
-                        â†—
+                        ↗
                       </span>
                     ) : (
-                      <span className="text-star-700">â—†</span>
+                      <span className="text-star-700">◆</span>
                     )}
                   </div>
                   <h3 className="font-display text-2xl text-star-100 transition-colors group-hover:text-ember-100">
