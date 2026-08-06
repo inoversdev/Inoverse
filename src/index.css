@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* ─── Inovers V2 — Space Odyssey Design Tokens ─── */
+/* ─── Inovers V2 Design Tokens ─── */
 @theme {
   --font-sans: "Geist", "Plus Jakarta Sans", system-ui, sans-serif;
   --font-display: "Fraunces", "Geist", serif;
@@ -86,8 +86,8 @@ body {
 /* Scrolled header: same glass material, but no all-around outline —
    just a hairline seat at the bottom edge. */
 .v2-header-glass {
-  border: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid transparent;
+  border-bottom-color: rgba(255, 255, 255, 0.06);
 }
 
 /* ─── Buttons ───
