@@ -1,0 +1,274 @@
+@import "tailwindcss";
+
+/* ─── Inovers V2 — Space Odyssey Design Tokens ─── */
+@theme {
+  --font-sans: "Geist", "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-display: "Fraunces", "Geist", serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Deep space ink */
+  --color-space-950: #050404;
+  --color-space-900: #0a0808;
+  --color-space-800: #14100e;
+  --color-space-700: #1f1917;
+  --color-space-600: #2b2421;
+
+  /* Warm star neutrals */
+  --color-star-100: #F5F1ED;
+  --color-star-300: #D8CFC7;
+  --color-star-400: #B3A69B;
+  --color-star-500: #8C7F74;
+  --color-star-600: #665C54;
+
+  /* Ember (same brand, glows harder on dark) */
+  --color-ember-50: #FEF2ED;
+  --color-ember-100: #FDE1D6;
+  --color-ember-200: #FBC3AD;
+  --color-ember-300: #F79E7B;
+  --color-ember-400: #F36F49;
+  --color-ember-500: #F53003;
+  --color-ember-600: #D42A02;
+  --color-ember-700: #A92001;
+}
+
+/* ─── Base ─── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-space-950);
+  color: var(--color-star-100);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+::selection {
+  background-color: var(--color-ember-500);
+  color: var(--color-space-950);
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-space-900);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-ember-600);
+  border-radius: 9999px;
+}
+
+/* ─── Grain overlay ─── */
+.grain-overlay::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 128 128' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 128px 128px;
+}
+
+/* ─── Glass card ─── */
+.glass {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+/* Scrolled header: same glass material, but no all-around outline —
+   just a hairline seat at the bottom edge. */
+.v2-header-glass {
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ─── Buttons ───
+   Classic rounded pills. Ember solid + hairline ghost, set in the body
+   sans. No decoration beyond the shape and the color: the familiar,
+   trustworthy button grammar clients already know. */
+.v2-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.2;
+  white-space: nowrap;
+  min-height: 2.75rem;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  text-decoration: none;
+  transition:
+    background-color 0.3s ease-out,
+    color 0.3s ease-out,
+    border-color 0.3s ease-out,
+    box-shadow 0.3s ease-out,
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.v2-btn:focus-visible {
+  outline: 2px solid var(--color-ember-400);
+  outline-offset: 3px;
+}
+.v2-btn:active {
+  transform: translateY(1px);
+}
+
+/* Primary — solid ember pill. */
+.v2-btn-primary {
+  background: var(--color-ember-500);
+  color: var(--color-space-950);
+  padding: 0.75rem 1.75rem;
+}
+.v2-btn-primary:hover {
+  background: var(--color-ember-400);
+}
+/* Focus ring needs contrast against the solid ember plate: near-white. */
+.v2-btn-primary:focus-visible {
+  outline-color: var(--color-star-50);
+}
+
+/* Ghost — hairline ember outline pill, the quieter counterweight.
+   Border is compensated in padding so both pills align at identical
+   heights. */
+.v2-btn-ghost {
+  background: transparent;
+  color: var(--color-star-100);
+  border: 1px solid rgba(245, 48, 3, 0.35);
+  padding: calc(0.75rem - 1px) 1.75rem;
+}
+.v2-btn-ghost:hover {
+  border-color: var(--color-ember-500);
+  background: rgba(245, 48, 3, 0.06);
+  color: var(--color-ember-200);
+}
+/* Focus ring brightens against the hairline border. */
+.v2-btn-ghost:focus-visible {
+  outline-color: var(--color-ember-300);
+}
+
+/* Size modifiers — scale the pill, keep the proportions.
+   Ghost variants re-compensate their border for each size. */
+.v2-btn-lg {
+  padding: 0.875rem 2.25rem;
+  font-size: 1rem;
+}
+.v2-btn-ghost.v2-btn-lg {
+  padding: calc(0.875rem - 1px) 2.25rem;
+}
+.v2-btn-sm {
+  padding: 0.5rem 1.25rem;
+  font-size: 0.875rem;
+  min-height: 2.5rem;
+}
+.v2-btn-ghost.v2-btn-sm {
+  padding: calc(0.5rem - 1px) 1.25rem;
+}
+
+.v2-btn[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v2-btn,
+  .v2-btn * {
+    transition: none !important;
+  }
+}
+
+/* ─── Ember glow text ─── */
+.ember-text {
+  background: linear-gradient(120deg, #f53003 0%, #f97316 50%, #ffb27a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ─── Marquee ───
+   (Motion is GSAP-driven in SpaceMarquee.jsx — measured half-width loop,
+   which is seamless; CSS keyframes can't land the -50% seam exactly on
+   fractional-width tracks.) */
+
+/* ─── Star twinkle ─── */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 1; }
+}
+
+/* ─── Orbital system (About) ─── */
+@keyframes orbit-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-orbit-spin {
+  animation: orbit-spin 90s linear infinite;
+}
+
+@keyframes float-node {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-9px); }
+}
+.animate-float-node {
+  animation: float-node 6s ease-in-out infinite;
+}
+
+@keyframes core-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+.animate-core-pulse {
+  animation: core-pulse 4s ease-in-out infinite;
+}
+
+/* Counter-rotation for the ember dashed ring */
+@keyframes orbit-spin-rev {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+.animate-orbit-spin-rev {
+  animation: orbit-spin-rev 140s linear infinite;
+}
+
+/* Ambient dust twinkle on the orbital plane */
+@keyframes dust-twinkle {
+  0%, 100% { opacity: 0.12; }
+  50% { opacity: 0.7; }
+}
+.animate-dust {
+  animation: dust-twinkle 4s ease-in-out infinite;
+}
+
+/* Whole system gently bobs in space */
+@keyframes scene-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.animate-scene-bob {
+  animation: scene-bob 9s ease-in-out infinite;
+}
+
+/* ─── Reduced motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .grain-overlay::after {
+    display: none;
+  }
+}
