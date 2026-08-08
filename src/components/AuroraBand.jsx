@@ -8,10 +8,10 @@ import { useEffect, useRef } from 'react'
 import { useTheme } from '../theme'
 
 const CURTAINS = [
-  { color: [245, 48, 3], amp: 26, freq: 0.008, speed: 0.42, phase: 0, height: 0.8, alpha: 0.55 },
-  { color: [255, 138, 92], amp: 20, freq: 0.011, speed: -0.5, phase: 2.1, height: 0.92, alpha: 0.5 },
-  { color: [255, 217, 201], amp: 24, freq: 0.006, speed: 0.34, phase: 4.2, height: 0.62, alpha: 0.42 },
-  { color: [192, 36, 2], amp: 16, freq: 0.013, speed: 0.22, phase: 1.3, height: 0.5, alpha: 0.38 },
+  { color: [245, 48, 3], amp: 34, freq: 0.008, speed: 1.5, phase: 0, height: 0.8, alpha: 0.55 },
+  { color: [255, 138, 92], amp: 28, freq: 0.011, speed: -1.7, phase: 2.1, height: 0.92, alpha: 0.5 },
+  { color: [255, 217, 201], amp: 30, freq: 0.006, speed: 1.2, phase: 4.2, height: 0.62, alpha: 0.42 },
+  { color: [192, 36, 2], amp: 22, freq: 0.013, speed: 0.9, phase: 1.3, height: 0.5, alpha: 0.38 },
 ]
 
 export default function AuroraBand() {
@@ -40,16 +40,18 @@ export default function AuroraBand() {
 
     // One curtain = a ribbon whose top edge is a layered sine wave;
     // filled with a vertical gradient so it fades into the dark/white bg.
-    const drawCurtain = (c, t, w, h) => {
+    // `bobY` lifts/lowers the whole cloud, `pulse` makes it breathe.
+    const drawCurtain = (c, t, w, h, bobY, pulse) => {
       const grad = ctx.createLinearGradient(0, h, 0, 0)
+      const a = c.alpha * darkMul * pulse
       grad.addColorStop(0, `rgba(${c.color},0)`)
-      grad.addColorStop(0.3, `rgba(${c.color},${c.alpha * darkMul})`)
-      grad.addColorStop(0.7, `rgba(${c.color},${c.alpha * darkMul * 0.55})`)
+      grad.addColorStop(0.3, `rgba(${c.color},${a})`)
+      grad.addColorStop(0.7, `rgba(${c.color},${a * 0.55})`)
       grad.addColorStop(1, `rgba(${c.color},0)`)
       ctx.fillStyle = grad
       ctx.beginPath()
       const steps = 72
-      const baseY = h * (1 - c.height)
+      const baseY = h * (1 - c.height) + bobY
       for (let i = 0; i <= steps; i++) {
         const x = (i / steps) * w
         const s1 = Math.sin(x * c.freq + t * c.speed + c.phase) * c.amp
@@ -69,9 +71,13 @@ export default function AuroraBand() {
       const w = canvas.getBoundingClientRect().width
       const h = canvas.getBoundingClientRect().height
       if (w === 0 || h === 0) return
+      const s = t / 1000
+      // whole-cloud float + breathing pulse
+      const bobY = Math.sin(s * 0.9) * 7
+      const pulse = 0.82 + 0.18 * Math.sin(s * 1.6)
       ctx.clearRect(0, 0, w, h)
       ctx.globalCompositeOperation = 'lighter'
-      CURTAINS.forEach((c) => drawCurtain(c, t / 1000, w, h))
+      CURTAINS.forEach((c) => drawCurtain(c, s, w, h, bobY, pulse))
       ctx.globalCompositeOperation = 'source-over'
     }
 
