@@ -23,17 +23,31 @@ export default function Ufo2D({ variant = 'transit', className = '', size = 96 }
             <stop offset="0%" stopColor="rgba(245,48,3,0.55)" />
             <stop offset="100%" stopColor="rgba(245,48,3,0)" />
           </radialGradient>
+          <linearGradient id="ufo-tail" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="rgba(245,48,3,0)" />
+            <stop offset="55%" stopColor="rgba(245,48,3,0.45)" />
+            <stop offset="100%" stopColor="rgba(255,138,92,0.75)" />
+          </linearGradient>
         </defs>
 
       {/* glow behind the saucer */}
       <ellipse cx="60" cy="32" rx="48" ry="24" fill="url(#ufo-glow)" className="ufo-glow" />
 
-      {/* engine trail — layered teardrop glow, only while flying */}
+      {/* engine trail — comet tail + layered glow + spark particles,
+          only while flying */}
       {variant === 'transit' && (
         <g className="ufo-trail">
-          <ellipse cx="16" cy="34" rx="34" ry="10" fill="rgba(245,48,3,0.12)" />
-          <ellipse cx="10" cy="34" rx="24" ry="8" fill="rgba(245,48,3,0.28)" />
-          <ellipse cx="4" cy="34" rx="14" ry="5" fill="rgba(255,138,92,0.6)" />
+          {/* long tapered comet tail */}
+          <path d="M58 31 L-26 28 Q-38 34 -26 40 L58 39 Z" fill="url(#ufo-tail)" opacity="0.85" />
+          {/* layered glow near the engine */}
+          <ellipse cx="20" cy="35" rx="40" ry="12" fill="rgba(245,48,3,0.10)" />
+          <ellipse cx="12" cy="35" rx="27" ry="8" fill="rgba(245,48,3,0.24)" />
+          <ellipse cx="5" cy="35" rx="15" ry="5" fill="rgba(255,138,92,0.6)" />
+          {/* trailing spark particles — drift back and fade */}
+          <circle className="ufo-particle" cx="-8" cy="33" r="2.2" fill="#ffb27a" />
+          <circle className="ufo-particle" cx="-18" cy="37" r="1.6" fill="#ff8a5c" style={{ animationDelay: '0.4s' }} />
+          <circle className="ufo-particle" cx="-28" cy="30" r="1.3" fill="#ffd9c9" style={{ animationDelay: '0.9s' }} />
+          <circle className="ufo-particle" cx="-36" cy="36" r="1" fill="#f53003" style={{ animationDelay: '1.4s' }} />
         </g>
       )}
 

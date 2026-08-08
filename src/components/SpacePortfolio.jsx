@@ -92,7 +92,7 @@ export default function SpacePortfolio() {
           </div>
         </div>
 
-        {/* dashed approach route — dashes flow toward the pad */}
+        {/* dashed approach route — dashes flow across the strip */}
         <div className="ufo-route absolute inset-x-0 bottom-12 h-[3px] opacity-60" />
 
         {/* twinkling stars on the strip */}
@@ -100,16 +100,6 @@ export default function SpacePortfolio() {
         <span className="animate-dust absolute left-[30%] top-9 h-1 w-1 rounded-full bg-star-100/70" style={{ animationDelay: '1.4s' }} />
         <span className="animate-dust absolute left-[74%] top-4 h-1.5 w-1.5 rounded-full bg-star-100/70" style={{ animationDelay: '2.2s' }} />
         <span className="animate-dust absolute left-[89%] top-10 h-1 w-1 rounded-full bg-star-100/70" style={{ animationDelay: '0.9s' }} />
-
-        {/* delivery pad — target rings, landing ripples, spark */}
-        <div className="absolute bottom-5 left-1/2 -translate-x-1/2">
-          <span className="absolute -inset-3 rounded-full border border-ember-500/25" />
-          <span className="absolute -inset-5 rounded-full border border-dashed border-ember-500/15" />
-          <span className="relative block h-2 w-2 rounded-full bg-ember-500/80 shadow-[0_0_14px_rgba(245,48,3,0.9)]" />
-          <span className="ufo-ping-a absolute -inset-1 rounded-full border-2 border-ember-500/60" />
-          <span className="ufo-ping-b absolute -inset-1 rounded-full border border-ember-500/50" />
-          <span className="ufo-spark absolute -inset-4 flex items-center justify-center text-sm text-ember-500">✦</span>
-        </div>
       </div>
 
       <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
