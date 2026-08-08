@@ -323,6 +323,17 @@ body {
   animation: scene-bob 9s ease-in-out infinite;
 }
 
+/* ─── MiniOrbit band (Hero → Services) ─── */
+.mini-orbit-spin {
+  animation: orbit-spin 40s linear infinite;
+}
+.mini-orbit-spin-rev {
+  animation: orbit-spin-rev 26s linear infinite;
+}
+.mini-sat-inner {
+  animation: orbit-spin-rev 40s linear infinite;
+}
+
 /* ─── Split-heading chars (V4 pattern) ─── */
 .sh-word {
   display: inline-block;

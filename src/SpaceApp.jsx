@@ -6,7 +6,7 @@ import SpaceScene from './three/SpaceScene'
 import SmoothScroll from './components/SmoothScroll'
 import SpaceNav from './components/SpaceNav'
 import SpaceHero from './components/SpaceHero'
-import SpaceDivider from './components/SpaceDivider'
+import MiniOrbit from './components/MiniOrbit'
 import SpaceServices from './components/SpaceServices'
 import SpaceAbout from './components/SpaceAbout'
 import SpacePortfolio from './components/SpacePortfolio'
@@ -104,7 +104,7 @@ export default function SpaceApp() {
           <SpaceNav />
           <main>
             <SpaceHero />
-            <SpaceDivider />
+            <MiniOrbit />
             <SpaceServices />
             <SpaceAbout />
             <SpacePortfolio />
