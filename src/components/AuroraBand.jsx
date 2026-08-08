@@ -1,71 +1,115 @@
-// ─── AuroraBand — V4-style aurora transition between Hero and Services ───
-// Layered blurred gradient blobs + one skewed sweep ribbon, drifting
-// slowly. CSS-only (V4's WebGL shader look, zero GPU cost) so the fixed
-// 3D space scene stays visible through it. Purely decorative.
+// ─── AuroraBand — real flowing aurora curtains between Hero and Services ───
+// 2D canvas aurora (no WebGL): several vertical curtain ribbons whose
+// edges sway with layered sine waves, drawn additively over the fixed
+// 3D space scene. Pauses offscreen, draws one static frame for reduced
+// motion, scales opacity with the active theme.
 
-const BLOBS = [
-  {
-    color: 'rgba(245,48,3,0.55)', // ember
-    left: '18%',
-    top: '18%',
-    w: 520,
-    drift: 'aurora-drift-a',
-    dur: 17,
-    delay: 0,
-  },
-  {
-    color: 'rgba(255,138,92,0.5)', // peach
-    left: '58%',
-    top: '10%',
-    w: 440,
-    drift: 'aurora-drift-b',
-    dur: 23,
-    delay: 2,
-  },
-  {
-    color: 'rgba(255,217,201,0.55)', // warm white
-    left: '34%',
-    top: '52%',
-    w: 380,
-    drift: 'aurora-drift-c',
-    dur: 19,
-    delay: 5,
-  },
+import { useEffect, useRef } from 'react'
+import { useTheme } from '../theme'
+
+const CURTAINS = [
+  { color: [245, 48, 3], amp: 26, freq: 0.008, speed: 0.42, phase: 0, height: 0.8, alpha: 0.55 },
+  { color: [255, 138, 92], amp: 20, freq: 0.011, speed: -0.5, phase: 2.1, height: 0.92, alpha: 0.5 },
+  { color: [255, 217, 201], amp: 24, freq: 0.006, speed: 0.34, phase: 4.2, height: 0.62, alpha: 0.42 },
+  { color: [192, 36, 2], amp: 16, freq: 0.013, speed: 0.22, phase: 1.3, height: 0.5, alpha: 0.38 },
 ]
 
 export default function AuroraBand() {
+  const canvasRef = useRef(null)
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const darkMul = isDark ? 1 : 0.72 // quieter in light mode
+
+    const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2)
+      const rect = canvas.getBoundingClientRect()
+      canvas.width = Math.round(rect.width * dpr)
+      canvas.height = Math.round(rect.height * dpr)
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    }
+    resize()
+    window.addEventListener('resize', resize)
+
+    // One curtain = a ribbon whose top edge is a layered sine wave;
+    // filled with a vertical gradient so it fades into the dark/white bg.
+    const drawCurtain = (c, t, w, h) => {
+      const grad = ctx.createLinearGradient(0, h, 0, 0)
+      grad.addColorStop(0, `rgba(${c.color},0)`)
+      grad.addColorStop(0.3, `rgba(${c.color},${c.alpha * darkMul})`)
+      grad.addColorStop(0.7, `rgba(${c.color},${c.alpha * darkMul * 0.55})`)
+      grad.addColorStop(1, `rgba(${c.color},0)`)
+      ctx.fillStyle = grad
+      ctx.beginPath()
+      const steps = 72
+      const baseY = h * (1 - c.height)
+      for (let i = 0; i <= steps; i++) {
+        const x = (i / steps) * w
+        const s1 = Math.sin(x * c.freq + t * c.speed + c.phase) * c.amp
+        const s2 = Math.sin(x * c.freq * 2.7 + t * c.speed * 2.3 + c.phase * 2) * c.amp * 0.4
+        const s3 = Math.sin(x * c.freq * 0.45 + t * c.speed * 0.6 + c.phase * 3) * c.amp * 0.3
+        const y = baseY + s1 + s2 + s3
+        if (i === 0) ctx.moveTo(x, y)
+        else ctx.lineTo(x, y)
+      }
+      ctx.lineTo(w, h)
+      ctx.lineTo(0, h)
+      ctx.closePath()
+      ctx.fill()
+    }
+
+    const draw = (t) => {
+      const w = canvas.getBoundingClientRect().width
+      const h = canvas.getBoundingClientRect().height
+      if (w === 0 || h === 0) return
+      ctx.clearRect(0, 0, w, h)
+      ctx.globalCompositeOperation = 'lighter'
+      CURTAINS.forEach((c) => drawCurtain(c, t / 1000, w, h))
+      ctx.globalCompositeOperation = 'source-over'
+    }
+
+    let raf = 0
+    let visible = true
+    const io = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting
+    })
+    io.observe(canvas)
+
+    if (reduce) {
+      // single static frame — no animation loop
+      draw(0)
+    } else {
+      const loop = (t) => {
+        if (visible) draw(t)
+        raf = requestAnimationFrame(loop)
+      }
+      raf = requestAnimationFrame(loop)
+    }
+
+    return () => {
+      cancelAnimationFrame(raf)
+      io.disconnect()
+      window.removeEventListener('resize', resize)
+    }
+  }, [isDark])
+
   return (
-    <section className="aurora-band relative overflow-hidden overflow-x-clip py-16" aria-hidden="true">
+    <section className="aurora-band relative h-44 overflow-hidden overflow-x-clip sm:h-56" aria-hidden="true">
       {/* ember hairlines — top/bottom edges */}
       <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-ember-500/35 to-transparent" />
       <span className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-ember-500/20 to-transparent" />
 
-      {/* aurora blobs — breathing + drifting, stronger in dark mode */}
-      {BLOBS.map((b, i) => (
-        <span
-          key={i}
-          className="aurora-blob opacity-30 dark:opacity-45"
-          style={{
-            left: b.left,
-            top: b.top,
-            width: b.w,
-            height: b.w,
-            background: `radial-gradient(circle, ${b.color} 0%, transparent 65%)`,
-            animation: `${b.drift} ${b.dur}s ease-in-out ${b.delay}s infinite alternate, aurora-breathe ${b.dur * 0.6}s ease-in-out ${b.delay}s infinite`,
-          }}
-        />
-      ))}
-
-      {/* aurora sweep ribbon — one wide band crossing slowly */}
-      <span
-        className="aurora-sweep opacity-25 dark:opacity-35"
-        style={{
-          width: '180%',
-          height: 160,
-          top: '18%',
-          background:
-            'linear-gradient(100deg, transparent 8%, rgba(245,48,3,0.28) 30%, rgba(255,138,92,0.22) 46%, rgba(255,217,201,0.18) 60%, transparent 82%)',
-        }}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 h-full w-full"
+        style={{ filter: 'blur(10px) saturate(1.15)' }}
       />
     </section>
   )

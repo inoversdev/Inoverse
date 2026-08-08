@@ -323,51 +323,12 @@ body {
   animation: scene-bob 9s ease-in-out infinite;
 }
 
-/* ─── Aurora band (Hero → Services) — V4-style light ─── */
-/* overflow-x-clip: the animated sweep creates scrollable overflow even
+/* ─── Aurora band (Hero → Services) — canvas curtains ─── */
+/* overflow-x-clip: animated content can create scrollable overflow even
    under overflow-hidden (Chrome compositing quirk); clip + contain fix it. */
 .aurora-band {
   overflow-x: clip;
   contain: paint;
-}
-.aurora-blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(55px);
-  pointer-events: none;
-  will-change: transform, opacity;
-}
-.aurora-sweep {
-  position: absolute;
-  left: -40%;
-  border-radius: 9999px;
-  filter: blur(38px);
-  pointer-events: none;
-  animation: aurora-sweep 26s linear infinite;
-  will-change: transform;
-}
-@keyframes aurora-drift-a {
-  0% { transform: translate(-8%, -10%) scale(1); }
-  50% { transform: translate(12%, 8%) scale(1.18); }
-  100% { transform: translate(-4%, 6%) scale(0.94); }
-}
-@keyframes aurora-drift-b {
-  0% { transform: translate(6%, 4%) scale(0.96); }
-  50% { transform: translate(-10%, 12%) scale(1.14); }
-  100% { transform: translate(8%, -6%) scale(1.02); }
-}
-@keyframes aurora-drift-c {
-  0% { transform: translate(-4%, 6%) scale(1.04); }
-  50% { transform: translate(10%, -10%) scale(0.9); }
-  100% { transform: translate(-6%, -4%) scale(1.1); }
-}
-@keyframes aurora-breathe {
-  0%, 100% { opacity: 0.55; }
-  50% { opacity: 1; }
-}
-@keyframes aurora-sweep {
-  0% { transform: translateX(-8%) skewX(-14deg); }
-  100% { transform: translateX(68%) skewX(-14deg); }
 }
 
 /* ─── About orbit — MiniOrbit-style crew chart ─── */
