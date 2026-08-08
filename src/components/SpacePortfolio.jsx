@@ -173,7 +173,7 @@ export default function SpacePortfolio() {
                 <span className="flex items-center gap-2">
                   {p.demo && (
                     <span className="rounded-full bg-star-100/5 px-2 py-0.5 text-[10px] uppercase tracking-wider text-star-500">
-                      new
+                      concept
                     </span>
                   )}
                   {hasLink ? (

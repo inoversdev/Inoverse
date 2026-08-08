@@ -43,6 +43,7 @@ export default function SpaceProcess() {
         const path = pathRef.current
         if (!ufo || !path) return
         const dist = path.offsetWidth * 0.84
+        let lastProgress = 0
         gsap.fromTo(
           ufo,
           { x: 0, rotation: -12 },
@@ -55,6 +56,13 @@ export default function SpaceProcess() {
               start: 'top 82%',
               end: 'bottom 62%',
               scrub: 1,
+              onUpdate: (self) => {
+                // flip the comet wake to trail the motion direction
+                const dir = self.progress >= lastProgress ? 1 : -1
+                lastProgress = self.progress
+                const trail = ufo.querySelector('.ufo-path-trail')
+                if (trail) trail.style.transform = dir === 1 ? '' : 'scaleX(-1)'
+              },
             },
           }
         )
@@ -64,6 +72,7 @@ export default function SpaceProcess() {
         const path = pathRef.current
         if (!ufo || !path) return
         const dist = path.offsetHeight - 52
+        let lastProgress = 0
         gsap.fromTo(
           ufo,
           { y: dist, rotation: -10 },
@@ -76,6 +85,13 @@ export default function SpaceProcess() {
               start: 'top 82%',
               end: 'bottom 62%',
               scrub: 1,
+              onUpdate: (self) => {
+                // mobile: wake points down while climbing, up while descending
+                const dir = self.progress >= lastProgress ? 1 : -1
+                lastProgress = self.progress
+                const trail = ufo.querySelector('.ufo-path-trail')
+                if (trail) trail.style.transform = `rotate(${dir === 1 ? -90 : 90}deg)`
+              },
             },
           }
         )

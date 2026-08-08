@@ -76,14 +76,35 @@ export function buildUFO() {
   ring.position.y = -0.02
   group.add(ring)
 
-  // Rim light orbs
-  const orbMat = new THREE.MeshBasicMaterial({ color: 0xffb27a })
+  // Rim light orbs — glow sprites sitting just past the rim's outer edge
+  // (radius 1.42) so nothing clips them; a small bright core sphere gives
+  // each a crisp center inside the soft glow.
+  const orbGlowTex = makeMoteTexture()
+  const orbGlowMat = new THREE.SpriteMaterial({
+    map: orbGlowTex,
+    color: 0xffb27a,
+    transparent: true,
+    opacity: 0.95,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  })
+  const orbCoreMat = new THREE.MeshBasicMaterial({ color: 0xfff2e2 })
   const orbCount = 10
   for (let i = 0; i < orbCount; i++) {
     const angle = (i / orbCount) * Math.PI * 2
-    const orb = new THREE.Mesh(new THREE.SphereGeometry(0.045, 10, 10), orbMat)
-    orb.position.set(Math.cos(angle) * 1.38, -0.1, Math.sin(angle) * 1.38)
-    group.add(orb)
+    const ox = Math.cos(angle) * 1.5
+    const oz = Math.sin(angle) * 1.5
+    const oy = -0.06
+
+    const glow = new THREE.Sprite(orbGlowMat.clone())
+    glow.scale.set(0.26, 0.26, 1)
+    glow.position.set(ox, oy, oz)
+    glow.userData.texture = orbGlowTex
+    group.add(glow)
+
+    const core = new THREE.Mesh(new THREE.SphereGeometry(0.035, 10, 10), orbCoreMat)
+    core.position.set(ox, oy, oz)
+    group.add(core)
   }
 
   // ─── Engine trail (two glow sprites trailing behind) ───

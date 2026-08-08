@@ -33,10 +33,12 @@ export default function Ufo2D({ variant = 'transit', className = '', size = 96 }
       {/* glow behind the saucer */}
       <ellipse cx="60" cy="32" rx="48" ry="24" fill="url(#ufo-glow)" className="ufo-glow" />
 
-      {/* engine trail — comet tail + layered glow + spark particles,
-          only while flying */}
-      {variant === 'transit' && (
-        <g className="ufo-trail">
+      {/* engine trail — comet tail + layered glow + spark particles.
+          transit: static tail behind the saucer.
+          path: direction-aware (--ufo-trail-dir flips it live with the
+          scroll scrub so the wake always trails the motion). */}
+      {variant !== 'static' && (
+        <g className={`ufo-trail${variant === 'path' ? ' ufo-path-trail' : ''}`}>
           {/* long tapered comet tail */}
           <path d="M58 31 L-26 28 Q-38 34 -26 40 L58 39 Z" fill="url(#ufo-tail)" opacity="0.85" />
           {/* layered glow near the engine */}

@@ -115,6 +115,9 @@ export default class SpaceScene {
       sizeAttenuation: true,
       depthWrite: false,
       vertexColors: true,
+      fog: false, // stars recycle 15-245u ahead of the camera — scene fog
+      // (far: 60) would wash them into the background well before body
+      // sections come into view, so they light the whole flight instead.
       ...(this.isDark ? { blending: THREE.AdditiveBlending } : {}),
     })
     this.stars = new THREE.Points(this.starGeo, starMat)
@@ -155,6 +158,7 @@ export default class SpaceScene {
       depthWrite: false,
       sizeAttenuation: true,
       vertexColors: true,
+      fog: false, // same reasoning as the far starfield above
       ...(this.isDark ? { blending: THREE.AdditiveBlending } : {}),
     })
     this.nearStars = new THREE.Points(this.nearStarGeo, nearMat)

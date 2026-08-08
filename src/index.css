@@ -384,6 +384,12 @@ body {
   pointer-events: none;
   user-select: none;
 }
+/* path variant — live trail: the Process scrub sets the flip/rotation
+   INLINE (JS) because var() inside transform on SVG elements doesn't
+   resolve reliably in Chromium. Origin stays here (SVG user units). */
+.ufo-path-trail {
+  transform-origin: 60px 35px;
+}
 /* transit: arc flight — enters low, rises to center, HOVERS while
    beaming, then banks away (12s per pass) */
 .ufo-track {
