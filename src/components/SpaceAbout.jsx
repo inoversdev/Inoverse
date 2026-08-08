@@ -2,16 +2,38 @@ import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useLenis } from 'lenis/react'
-import { ABOUT, BRAND } from '../lib/content'
+import { ABOUT, BRAND, ORG_CHART } from '../lib/content'
+import SplitHeading from './SplitHeading'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const TILT = 62 // degrees the orbital plane is pitched toward the viewer
 
+// Role icons for the organizational chart medallions
 const ICONS = {
-  spark: (
+  crown: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-6 w-6">
-      <path d="M12 2l2.2 6.6L21 11l-6.8 2.4L12 20l-2.2-6.6L3 11l6.8-2.4L12 2z" />
+      <path d="M3 17l2.5-10 4.5 4.5L12 6l2 5.5L18.5 7 21 17H3z" />
+      <path d="M5 20h14" />
+    </svg>
+  ),
+  chip: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-6 w-6">
+      <rect x="6" y="6" width="12" height="12" rx="2" />
+      <path d="M9 1v4M15 1v4M9 19v4M15 19v4M1 9h4M1 15h4M19 9h4M19 15h4" />
+      <path d="M9.5 9.5h5v5h-5z" />
+    </svg>
+  ),
+  code: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-6 w-6">
+      <path d="M8 6l-6 6 6 6M16 6l6 6-6 6" />
+    </svg>
+  ),
+  pen: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-6 w-6">
+      <path d="M12 19l7-7 3 3-7 7-3-3z" />
+      <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" />
+      <path d="M2 2l7.6 7.6" />
     </svg>
   ),
   shield: (
@@ -28,24 +50,24 @@ const ICONS = {
       <path d="M17.5 14.5c2.4 0 4 1.6 4 3.5" />
     </svg>
   ),
-  trend: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-6 w-6">
-      <path d="M3 17l6-6 4 4 8-8" />
-      <path d="M15 7h6v6" />
-    </svg>
-  ),
 }
 
-// Medallion anchor points on the orbit ring (top / right / bottom / left)
-const ORBIT_POS = [
-  'left-1/2 top-[12%] sm:top-[22%] -translate-x-1/2 -translate-y-1/2',
-  'left-[76%] sm:left-[78%] top-1/2 -translate-x-1/2 -translate-y-1/2',
-  'left-1/2 bottom-[12%] sm:bottom-[22%] -translate-x-1/2 translate-y-1/2',
-  'left-[24%] sm:left-[22%] top-1/2 -translate-x-1/2 -translate-y-1/2',
+// Medallion anchor points per ring — leadership sits on the inner ember
+// ring (top/bottom), teams on the outer main ring (top/right/bottom/left).
+const TEAM_POS = [
+  'left-1/2 top-[4%] sm:top-[6%] -translate-x-1/2 -translate-y-1/2',
+  'left-[82%] sm:left-[80%] top-1/2 -translate-x-1/2 -translate-y-1/2',
+  'left-1/2 bottom-[4%] sm:bottom-[6%] -translate-x-1/2 translate-y-1/2',
+  'left-[18%] sm:left-[20%] top-1/2 -translate-x-1/2 -translate-y-1/2',
+]
+const LEAD_POS = [
+  'left-1/2 top-[20%] sm:top-[24%] -translate-x-1/2 -translate-y-1/2',
+  'left-1/2 bottom-[20%] sm:bottom-[24%] -translate-x-1/2 translate-y-1/2',
 ]
 
 // Per-node depth (billboard space) — nodes float above/below the plane
-const NODE_DEPTHS = [-36, 28, -22, 32]
+const TEAM_DEPTHS = [-30, 26, -24, 30]
+const LEAD_DEPTHS = [44, 38]
 
 // Tiny specks drifting at different depths on the orbital plane
 const DUST = [
@@ -291,9 +313,12 @@ export default function SpaceAbout() {
           <p className="v2-about-copy mb-3 text-xs font-medium uppercase tracking-[0.2em] text-ember-600">
             {ABOUT.eyebrow}
           </p>
-          <h2 className="v2-about-copy font-display text-4xl font-semibold leading-[1.05] tracking-tight text-star-100 sm:text-5xl">
-            {ABOUT.heading} <span className="ember-text font-light">{ABOUT.headingHighlight}</span>
-          </h2>
+          <SplitHeading
+            as="h2"
+            text={`${ABOUT.heading} ${ABOUT.headingHighlight}`}
+            accent={ABOUT.headingHighlight}
+            className="font-display text-4xl font-semibold leading-[1.05] tracking-tight text-star-100 sm:text-5xl"
+          />
           {ABOUT.paragraphs.map((p) => (
             <p key={p} className="v2-about-copy mt-5 leading-relaxed text-star-400">
               {p}
@@ -321,8 +346,9 @@ export default function SpaceAbout() {
           </div>
         </div>
 
-        {/* 3D orbital system — the values orbit the Inovers core on a
-            tilted plane; medallions stand upright at different depths. */}
+        {/* 3D orbital system — the organizational chart orbits the Inovers
+            core on a tilted plane: leadership on the inner ring, teams on
+            the outer ring; medallions stand upright at different depths. */}
         <div className="flex items-center lg:col-span-7">
           <div
             ref={orbitRef}
@@ -331,13 +357,18 @@ export default function SpaceAbout() {
             }`}
             style={{ perspective: '1100px', touchAction: 'pan-y' }}
           >
-            {/* Ambient ember atmosphere behind the whole system */}
-            <div
-              className="pointer-events-none absolute -inset-12 rounded-full"
-              style={{
-                background: 'radial-gradient(circle, rgba(245,48,3,0.09), transparent 62%)',
-              }}
-            />
+            {/* Ambient ember atmosphere behind the whole system — wrapped
+                so its -inset-12 spread stays clipped to the orbit box
+                (prevents mobile horizontal overflow without flattening
+                the preserve-3d scene, which is a sibling). */}
+            <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-full">
+              <div
+                className="absolute -inset-12 rounded-full"
+                style={{
+                  background: 'radial-gradient(circle, rgba(245,48,3,0.09), transparent 62%)',
+                }}
+              />
+            </div>
             {/* The whole system gently bobs (preserve-3d keeps the
                 perspective chain intact through the animation) */}
             <div className="animate-scene-bob absolute inset-0" style={{ transformStyle: 'preserve-3d' }}>
@@ -367,39 +398,48 @@ export default function SpaceAbout() {
                   style={{ transform: 'translateZ(24px)' }}
                 />
 
-                {/* Value medallions — billboarded, floating at varied depths.
-                    The wrapper carries preserve-3d so the billboard's rotateX
-                    keeps its depth instead of being flattened onto the disc. */}
-                {ABOUT.values.map((v, i) => (
-                  <div
-                    key={v.id}
-                    className={`absolute ${ORBIT_POS[i]}`}
-                    style={{ transformStyle: 'preserve-3d' }}
-                  >
-                    {/* GSAP reveal target — a plain div with NO positioning,
-                        so the cascade tween can't nullify the translate on
-                        the anchor wrapper above (translate: none bug). */}
-                    <div className="v2-orbit-node">
-                      <div
-                        className="v2-orbit-billboard"
-                        data-depth={NODE_DEPTHS[i]}
-                        style={{ transform: `translateZ(${NODE_DEPTHS[i]}px) rotateX(-${TILT}deg)` }}
-                      >
+                {/* Organizational chart medallions — billboarded, floating
+                    at varied depths. Teams (outer ring) first, leadership
+                    (inner ring) second. The wrapper carries preserve-3d so
+                    the billboard's rotateX keeps its depth instead of being
+                    flattened onto the disc. */}
+                {ORG_CHART.rings.map((ring, ri) => {
+                  const isLeader = ri === 0
+                  const pos = isLeader ? LEAD_POS : TEAM_POS
+                  const depths = isLeader ? LEAD_DEPTHS : TEAM_DEPTHS
+                  const medallion = isLeader ? 'h-14 w-14 sm:h-16 sm:w-16' : 'h-12 w-12 sm:h-14 sm:w-14'
+                  return ring.roles.map((r, i) => (
+                    <div
+                      key={r.id}
+                      className={`absolute ${pos[i]}`}
+                      style={{ transformStyle: 'preserve-3d' }}
+                    >
+                      {/* GSAP reveal target — a plain div with NO positioning,
+                          so the cascade tween can't nullify the translate on
+                          the anchor wrapper above (translate: none bug). */}
+                      <div className="v2-orbit-node">
                         <div
-                          className="animate-float-node flex flex-col items-center gap-2"
-                          style={{ animationDelay: `${i * 1.3}s` }}
+                          className="v2-orbit-billboard"
+                          data-depth={depths[i]}
+                          style={{ transform: `translateZ(${depths[i]}px) rotateX(-${TILT}deg)` }}
                         >
-                          <span className="flex h-14 w-14 items-center justify-center rounded-full border border-ember-500/40 bg-space-900/90 text-ember-600 shadow-[0_0_25px_rgba(245,48,3,0.25),inset_0_1px_0_rgba(255,255,255,0.18),inset_0_-2px_6px_rgba(0,0,0,0.35)] dark:text-ember-300">
-                            {ICONS[v.icon] || ICONS.spark}
-                          </span>
-                          <span className="whitespace-nowrap text-[10px] font-medium uppercase tracking-[0.2em] text-star-300">
-                            {v.title}
-                          </span>
+                          <div
+                            className="animate-float-node flex flex-col items-center gap-2"
+                            style={{ animationDelay: `${(ri * 4 + i) * 1.3}s` }}
+                            title={r.description}
+                          >
+                            <span className={`flex ${medallion} items-center justify-center rounded-full border border-ember-500/40 bg-space-900/90 text-ember-600 shadow-[0_0_25px_rgba(245,48,3,0.25),inset_0_1px_0_rgba(255,255,255,0.18),inset_0_-2px_6px_rgba(0,0,0,0.35)] dark:text-ember-300`}>
+                              {ICONS[r.icon] || ICONS.users}
+                            </span>
+                            <span className="whitespace-nowrap text-[10px] font-medium uppercase tracking-[0.2em] text-star-300">
+                              {r.title}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                })}
 
                 {/* Ambient dust at different depths */}
                 {DUST.map((p, i) => (

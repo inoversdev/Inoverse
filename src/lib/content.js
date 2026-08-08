@@ -124,10 +124,26 @@ export const SERVICES = [
   },
 ]
 
+// Industry taxonomy for the Work filter. CTO asked for business-owner
+// friendly categories (restaurants, hotels, small businesses, …).
+export const INDUSTRIES = [
+  'Restaurant & Food',
+  'Hotel & Hospitality',
+  'Retail & Small Business',
+  'Logistics & Delivery',
+  'Travel',
+  'E-commerce',
+  'Platform & SaaS',
+]
+
+// Real shipped projects + realistic placeholders (demo: true) so the
+// grid demonstrates the 20+ scale the CTO asked for. Delete the demo
+// entries as real launches replace them.
 export const PROJECTS = [
   {
     id: 'dory',
     name: 'Dory Delivery',
+    industry: 'Logistics & Delivery',
     category: 'Delivery Platform',
     description:
       'Filipino delivery platform food, groceries, essentials, riders, merchants, city operator model.',
@@ -137,6 +153,7 @@ export const PROJECTS = [
   {
     id: 'dmap',
     name: 'DMAP',
+    industry: 'Platform & SaaS',
     category: 'Web App',
     description: 'In-house web application by the Inovers team.',
     url: 'https://dmap.inovers.dev/',
@@ -145,6 +162,7 @@ export const PROJECTS = [
   {
     id: 'whatahotel',
     name: 'WhatAHotel',
+    industry: 'Hotel & Hospitality',
     category: 'Mobile App',
     description: 'Hotel management app for WhatAHotel.',
     url: 'https://www.whatahotel.com/',
@@ -153,6 +171,7 @@ export const PROJECTS = [
   {
     id: 'agenxure',
     name: 'Agenxure',
+    industry: 'Platform & SaaS',
     category: 'Web Platform',
     description: 'A serious, dedicated platform build by the Inovers team.',
     url: 'https://www.agenxure.com/',
@@ -161,6 +180,7 @@ export const PROJECTS = [
   {
     id: 'ukay',
     name: 'UkayApp',
+    industry: 'E-commerce',
     category: 'E-commerce App',
     description: 'E-commerce app for everyone who wants to sell online with live selling.',
     url: null,
@@ -169,6 +189,7 @@ export const PROJECTS = [
   {
     id: 'byahego',
     name: 'ByaheGo',
+    industry: 'Travel',
     category: 'Travel System',
     description: 'Hotel, flight and car rental mobile app and web app system.',
     url: null,
@@ -177,12 +198,168 @@ export const PROJECTS = [
   {
     id: 'dorx',
     name: 'DORX',
+    industry: 'Logistics & Delivery',
     category: 'Logistics System',
     description: 'Logistics system built by the Inovers team.',
     url: null,
     tags: ['Logistics', 'System'],
   },
+  // ── Demo launches (realistic placeholders — remove as real work lands) ──
+  {
+    id: 'sizzlepos',
+    name: 'Sizzle POS',
+    industry: 'Restaurant & Food',
+    category: 'POS System',
+    description: 'Point-of-sale and kitchen display system for a fast-casual restaurant chain.',
+    url: null,
+    tags: ['Restaurant', 'POS'],
+    demo: true,
+  },
+  {
+    id: 'harana',
+    name: 'Harana Catering',
+    industry: 'Restaurant & Food',
+    category: 'Booking Website',
+    description: 'Catering booking site with menu builder, event calendar and confirmations.',
+    url: null,
+    tags: ['Booking', 'Web'],
+    demo: true,
+  },
+  {
+    id: 'kanto',
+    name: 'Kanto Bites',
+    industry: 'Restaurant & Food',
+    category: 'Delivery App',
+    description: 'Food delivery app for a local restaurant group with real-time order tracking.',
+    url: null,
+    tags: ['Mobile', 'Delivery'],
+    demo: true,
+  },
+  {
+    id: 'kuwarto',
+    name: 'Kuwarto Suites',
+    industry: 'Hotel & Hospitality',
+    category: 'Booking Platform',
+    description: 'Boutique hotel booking platform with room management and channel sync.',
+    url: null,
+    tags: ['Booking', 'Platform'],
+    demo: true,
+  },
+  {
+    id: 'tindahan',
+    name: 'Tindahan Hub',
+    industry: 'Retail & Small Business',
+    category: 'E-commerce Site',
+    description: 'Online storefront for a neighborhood chain with local delivery scheduling.',
+    url: null,
+    tags: ['E-commerce', 'Web'],
+    demo: true,
+  },
+  {
+    id: 'agrikoop',
+    name: 'AgriKooperatiba',
+    industry: 'Retail & Small Business',
+    category: 'Inventory System',
+    description: 'Cooperative inventory and member-ledger system for farm supply stores.',
+    url: null,
+    tags: ['Inventory', 'System'],
+    demo: true,
+  },
+  {
+    id: 'klinika',
+    name: 'Klinika Plus',
+    industry: 'Retail & Small Business',
+    category: 'Clinic System',
+    description: 'Clinic appointment, patient record and billing system for small clinics.',
+    url: null,
+    tags: ['Healthcare', 'System'],
+    demo: true,
+  },
+  {
+    id: 'bayad',
+    name: 'BayadNow',
+    industry: 'Retail & Small Business',
+    category: 'Payments Dashboard',
+    description: 'Bill payments kiosk dashboard with receipts and daily settlement reports.',
+    url: null,
+    tags: ['Payments', 'Dashboard'],
+    demo: true,
+  },
+  {
+    id: 'padala',
+    name: 'Padala Express',
+    industry: 'Logistics & Delivery',
+    category: 'Courier App',
+    description: 'Courier dispatch and rider-tracking mobile app with proof of delivery.',
+    url: null,
+    tags: ['Mobile', 'Courier'],
+    demo: true,
+  },
+  {
+    id: 'sakayan',
+    name: 'Sakayan Ferry',
+    industry: 'Travel',
+    category: 'Booking System',
+    description: 'Ferry ticketing and scheduling system with live seat availability.',
+    url: null,
+    tags: ['Booking', 'System'],
+    demo: true,
+  },
+  {
+    id: 'islawaves',
+    name: 'IslaWaves',
+    industry: 'Travel',
+    category: 'Booking Website',
+    description: 'Island tour booking website with packages, guides and online payments.',
+    url: null,
+    tags: ['Booking', 'Web'],
+    demo: true,
+  },
+  {
+    id: 'subasta',
+    name: 'Subasta PH',
+    industry: 'E-commerce',
+    category: 'Auction Platform',
+    description: 'Auction marketplace with live bidding and seller escrow.',
+    url: null,
+    tags: ['Marketplace', 'Platform'],
+    demo: true,
+  },
+  {
+    id: 'eskwela',
+    name: 'Eskwela LMS',
+    industry: 'Platform & SaaS',
+    category: 'Learning Platform',
+    description: 'Learning management platform for training centers with progress tracking.',
+    url: null,
+    tags: ['EdTech', 'Platform'],
+    demo: true,
+  },
 ]
+
+// ─── Organizational chart (About orbit) — generic roles so real names
+// can be dropped in later. CEO/CTO confirmed: keep editable here. ───
+export const ORG_CHART = {
+  core: { title: 'Inovers', subtitle: 'Tech Solutions' },
+  rings: [
+    {
+      label: 'Leadership',
+      roles: [
+        { id: 'ceo', icon: 'crown', title: 'CEO', description: 'Vision & direction' },
+        { id: 'cto', icon: 'chip', title: 'CTO', description: 'Engineering & delivery' },
+      ],
+    },
+    {
+      label: 'Teams',
+      roles: [
+        { id: 'eng', icon: 'code', title: 'Engineering', description: 'Web · Mobile · Systems' },
+        { id: 'design', icon: 'pen', title: 'Design', description: 'UI/UX & brand' },
+        { id: 'qa', icon: 'shield', title: 'QA', description: 'Validation & quality' },
+        { id: 'product', icon: 'users', title: 'Product', description: 'Planning & delivery' },
+      ],
+    },
+  ],
+}
 
 export const PROCESS = [
   {
