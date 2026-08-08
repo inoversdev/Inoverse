@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useLenis } from 'lenis/react'
 import { BRAND, NAV_LINKS } from '../lib/content'
+import { useTheme } from '../theme'
 
 export default function SpaceNav() {
   const [scrolled, setScrolled] = useState(false)
   const [hidden, setHidden] = useState(false)
   const lenis = useLenis()
+  const { theme, toggleTheme } = useTheme()
+  const isDark = theme === 'dark'
 
   // Low-profile header: while the visitor is reading a body section, the
   // bar stays compact, and it tucks away entirely when scrolling down.
@@ -56,35 +59,58 @@ export default function SpaceNav() {
             alt="Inovers"
             className={`transition-all duration-500 ${scrolled ? 'h-7 w-7' : 'h-9 w-9'}`}
           />
-          <span className={`font-display tracking-tight text-star-100 transition-all duration-500 ${
+          <span className={`font-display font-semibold tracking-tight text-star-100 transition-all duration-500 ${
             scrolled ? 'text-lg' : 'text-xl'
           }`}>
             Inovers<span className="ember-text">.</span>
           </span>
         </a>
 
-        <nav className={`hidden items-center md:flex ${scrolled ? 'gap-6' : 'gap-8'} transition-all duration-500`}>
-          {NAV_LINKS.map((l) => (
+        <div className="flex items-center gap-3">
+          <nav className={`hidden items-center md:flex ${scrolled ? 'gap-6' : 'gap-8'} transition-all duration-500`}>
+            {NAV_LINKS.map((l) => (
+              <a
+                key={l.target}
+                href={`#${l.target}`}
+                onClick={(e) => handleNav(e, l.target)}
+                className="text-sm text-star-300 transition-colors hover:text-ember-500"
+              >
+                {l.label}
+              </a>
+            ))}
             <a
-              key={l.target}
-              href={`#${l.target}`}
-              onClick={(e) => handleNav(e, l.target)}
-              className="text-sm text-star-300 transition-colors hover:text-ember-300"
+              href={BRAND.calendly}
+              target="_blank"
+              rel="noreferrer"
+              className={`v2-btn v2-btn-primary ${
+                scrolled ? 'v2-btn-sm' : ''
+              }`}
             >
-              {l.label}
+              Book Call
             </a>
-          ))}
-          <a
-            href={BRAND.calendly}
-            target="_blank"
-            rel="noreferrer"
-            className={`v2-btn v2-btn-primary ${
-              scrolled ? 'v2-btn-sm' : ''
-            }`}
+          </nav>
+
+          {/* Theme toggle — light (white, default) ↔ dark (space classic) */}
+          <button
+            onClick={toggleTheme}
+            aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+            title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-all duration-500 hover:scale-95 active:scale-90 ${
+              scrolled ? 'border-star-300/40' : 'border-star-300/30'
+            } text-star-400 hover:border-ember-500/60 hover:text-ember-500`}
           >
-            Book Call
-          </a>
-        </nav>
+            {isDark ? (
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="4.5" />
+                <path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8" />
+              </svg>
+            ) : (
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+              </svg>
+            )}
+          </button>
+        </div>
       </div>
     </header>
   )

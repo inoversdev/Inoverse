@@ -83,11 +83,11 @@ export default function SpaceHero() {
         aria-hidden="true"
       />
       <div className="v2-hero-content mx-auto max-w-5xl text-center">
-        <p className="v2-hero-reveal mb-6 text-xs uppercase tracking-[0.3em] text-ember-300">
+        <p className="v2-hero-reveal mb-6 text-xs uppercase tracking-[0.2em] text-ember-500">
           {HERO.eyebrow}
         </p>
-        <h1 className="v2-hero-reveal font-display text-5xl font-light leading-[1.05] tracking-tight text-star-100 sm:text-7xl lg:text-8xl">
-          Innovating the <span className="ember-text italic">Future,</span>
+        <h1 className="v2-hero-reveal font-display text-5xl font-bold leading-[0.95] tracking-[-0.04em] text-star-100 sm:text-7xl lg:text-8xl text-balance">
+          Innovating the <span className="ember-text font-light">Future,</span>
           <br />
           Together.
         </h1>
@@ -115,7 +115,7 @@ export default function SpaceHero() {
             {HERO.ctaSecondary}
           </a>
         </div>
-        <p className="v2-hero-reveal mt-14 text-xs uppercase tracking-[0.3em] text-star-600">
+        <p className="v2-hero-reveal mt-14 text-xs uppercase tracking-[0.2em] text-star-600">
           Scroll to begin the journey ↓
         </p>
       </div>

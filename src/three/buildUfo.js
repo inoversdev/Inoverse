@@ -5,8 +5,8 @@ import { makeTrailTexture, makeMoteTexture } from './textures'
 
 const EMBER = 0xf53003
 const EMBER_DARK = 0xc02402
-const INK = 0x1a100c
-const GLASS = 0xffd9c9
+const INK = 0x1f1f1f
+const GLASS = 0xf2f2f2
 
 export function buildUFO() {
   const group = new THREE.Group()
@@ -26,12 +26,12 @@ export function buildUFO() {
   })
   const domeMat = new THREE.MeshPhysicalMaterial({
     color: GLASS,
-    metalness: 0.1,
-    roughness: 0.05,
+    metalness: 0.05,
+    roughness: 0.08,
     transparent: true,
     opacity: 0.5,
-    emissive: 0xff8a4a,
-    emissiveIntensity: 0.15,
+    emissive: 0xffffff,
+    emissiveIntensity: 0.1,
     clearcoat: 1,
     clearcoatRoughness: 0.1,
   })

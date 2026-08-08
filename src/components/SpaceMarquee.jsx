@@ -23,7 +23,7 @@ function Unit({ hidden }) {
     <div className="flex shrink-0 items-center gap-12 pr-12" aria-hidden={hidden || undefined}>
       {HALF_WORDS.map((w, i) => (
         <span key={i} className="flex items-center gap-12 whitespace-nowrap">
-          <span className="font-display text-2xl font-light italic text-star-400/80 sm:text-3xl">
+          <span className="font-display text-2xl font-bold tracking-tight text-star-400/80 sm:text-3xl">
             {w}
           </span>
           <span className="text-ember-500">✦</span>
@@ -82,7 +82,7 @@ export default function SpaceMarquee() {
   }, [])
 
   return (
-    <section className="relative overflow-hidden border-y border-white/5 bg-space-950/40 py-6 backdrop-blur-sm">
+    <section className="relative overflow-hidden border-y border-star-300/20 bg-white/50 py-6 backdrop-blur-sm dark:bg-space-950/40">
       <div className="flex overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
         <div ref={trackRef} className="flex will-change-transform">
           <Unit />

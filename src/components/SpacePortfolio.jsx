@@ -52,16 +52,16 @@ export default function SpacePortfolio() {
     <section id="work" ref={rootRef} className="relative mx-auto max-w-7xl px-6 py-28 lg:px-10">
       <div className="mb-16 flex flex-wrap items-end justify-between gap-6">
         <div className="max-w-2xl">
-          <p className="mb-3 text-xs font-medium uppercase tracking-[0.3em] text-ember-300">Our Work</p>
-          <h2 className="font-display text-4xl font-light leading-tight text-star-100 sm:text-5xl">
-            Missions <span className="ember-text italic">launched</span>
+          <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-ember-500">Our Work</p>
+          <h2 className="font-display text-4xl font-semibold leading-[1.05] tracking-tight text-star-100 sm:text-5xl">
+            Missions <span className="ember-text font-light">launched</span>
           </h2>
         </div>
         <a
           href={EXTERNAL}
           target="_blank"
           rel="noreferrer"
-          className="text-sm text-star-400 transition-colors hover:text-ember-300"
+          className="text-sm text-star-400 transition-colors hover:text-ember-500"
         >
           View flagship project →
         </a>
@@ -89,18 +89,18 @@ export default function SpacePortfolio() {
                   }`}
                 >
                   <div className="mb-6 flex items-center justify-between">
-                    <span className="rounded-full border border-white/10 px-3 py-1 text-[11px] uppercase tracking-widest text-star-400">
+                    <span className="rounded-full border border-star-300/30 px-3 py-1 text-[11px] uppercase tracking-widest text-star-400">
                       {p.category}
                     </span>
                     {hasLink ? (
-                      <span className="text-star-600 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-ember-300">
+                      <span className="text-star-600 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-ember-500">
                         ↗
                       </span>
                     ) : (
-                      <span className="text-star-700">◆</span>
+                      <span className="text-star-500">◆</span>
                     )}
                   </div>
-                  <h3 className="font-display text-2xl text-star-100 transition-colors group-hover:text-ember-100">
+                  <h3 className="font-display text-2xl font-semibold tracking-tight text-star-100 transition-colors group-hover:text-ember-600">
                     {p.name}
                   </h3>
                   <p className="mt-3 text-sm leading-relaxed text-star-400">{p.description}</p>
@@ -108,7 +108,7 @@ export default function SpacePortfolio() {
                     {p.tags.map((t) => (
                       <span
                         key={t}
-                        className="rounded-md bg-white/5 px-2.5 py-1 text-[11px] font-medium text-star-300"
+                        className="rounded-md bg-star-100/5 px-2.5 py-1 text-[11px] font-medium text-star-300"
                       >
                         {t}
                       </span>

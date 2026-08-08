@@ -19,9 +19,10 @@ const smoothstep = (x) => {
 const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3)
 
 export default class SpaceScene {
-  constructor(mount) {
+  constructor(mount, theme = 'light', skipEntrance = false) {
     this.mount = mount
     this.disposed = false
+    this.isDark = theme === 'dark'
 
     // ─── Renderer ───
     this.renderer = new THREE.WebGLRenderer({
@@ -36,22 +37,22 @@ export default class SpaceScene {
     this.renderer.toneMappingExposure = 1.2
     mount.appendChild(this.renderer.domElement)
 
-    // ─── Scene ───
+    // ─── Scene (theme-aware: dark = deep space, light = daylight) ───
     this.scene = new THREE.Scene()
-    this.scene.background = new THREE.Color(0x070605)
-    this.scene.fog = new THREE.Fog(0x070605, 14, 60)
+    this.scene.background = new THREE.Color(this.isDark ? 0x070605 : 0xffffff)
+    this.scene.fog = new THREE.Fog(this.isDark ? 0x070605 : 0xffffff, 14, 60)
 
     // ─── Camera ───
     this.camera = new THREE.PerspectiveCamera(55, mount.clientWidth / mount.clientHeight, 0.1, 300)
     this.camera.position.set(0, 0.6, 0)
 
     // ─── Lights ───
-    const ambient = new THREE.AmbientLight(0xffe8dc, 0.7)
+    const ambient = new THREE.AmbientLight(this.isDark ? 0xffe8dc : 0xffffff, this.isDark ? 0.7 : 1.0)
     this.scene.add(ambient)
-    const key = new THREE.DirectionalLight(0xfff3ea, 2.2)
+    const key = new THREE.DirectionalLight(this.isDark ? 0xfff3ea : 0xffffff, this.isDark ? 2.2 : 2.4)
     key.position.set(4, 6, 4)
     this.scene.add(key)
-    const ember = new THREE.PointLight(0xf53003, 60, 30)
+    const ember = new THREE.PointLight(0xf53003, this.isDark ? 60 : 50, 30)
     ember.position.set(-4, 1, -6)
     this.scene.add(ember)
 
@@ -80,6 +81,7 @@ export default class SpaceScene {
     this.heroProgress = 0
 
     // ─── Starfield (deep box, recycled as camera flies) ───
+    // Light: dark warm-gray ink specks (NormalBlending). Dark: warm-white additive.
     this.starGeo = new THREE.BufferGeometry()
     const starPos = new Float32Array(STAR_COUNT * 3)
     const starColors = new Float32Array(STAR_COUNT * 3)
@@ -87,11 +89,19 @@ export default class SpaceScene {
       starPos[i] = (Math.random() - 0.5) * 160
       starPos[i + 1] = (Math.random() - 0.5) * 80
       starPos[i + 2] = -(2 + Math.random() * (SPACE_DEPTH - 2))
-      // Temperature variation: warm white ↔ cool blue-white
-      const warmth = 0.88 + Math.random() * 0.12
-      starColors[i]     = warmth * (0.92 + Math.random() * 0.08)
-      starColors[i + 1] = warmth * (0.92 + Math.random() * 0.08)
-      starColors[i + 2] = warmth
+      if (this.isDark) {
+        // Temperature variation: warm white ↔ cool blue-white
+        const warmth = 0.88 + Math.random() * 0.12
+        starColors[i]     = warmth * (0.92 + Math.random() * 0.08)
+        starColors[i + 1] = warmth * (0.92 + Math.random() * 0.08)
+        starColors[i + 2] = warmth
+      } else {
+        // Ink temperature variation: neutral dark ↔ slightly warm dark
+        const warmth = 0.85 + Math.random() * 0.15
+        starColors[i]     = warmth * (0.16 + Math.random() * 0.12)
+        starColors[i + 1] = warmth * (0.15 + Math.random() * 0.12)
+        starColors[i + 2] = warmth * (0.13 + Math.random() * 0.11)
+      }
     }
     this.starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3))
     this.starGeo.setAttribute('color', new THREE.BufferAttribute(starColors, 3))
@@ -99,13 +109,13 @@ export default class SpaceScene {
     const starMat = new THREE.PointsMaterial({
       map: starTex,
       color: 0xffffff,
-      size: 0.09,
+      size: this.isDark ? 0.09 : 0.1,
       transparent: true,
-      opacity: 0.85,
+      opacity: this.isDark ? 0.85 : 0.9,
       sizeAttenuation: true,
       depthWrite: false,
-      blending: THREE.AdditiveBlending,
       vertexColors: true,
+      ...(this.isDark ? { blending: THREE.AdditiveBlending } : {}),
     })
     this.stars = new THREE.Points(this.starGeo, starMat)
     this.scene.add(this.stars)
@@ -119,11 +129,19 @@ export default class SpaceScene {
       nearPos[i] = (Math.random() - 0.5) * 120
       nearPos[i + 1] = (Math.random() - 0.5) * 60
       nearPos[i + 2] = -(30 + Math.random() * (SPACE_DEPTH - 30))
-      // Temperature variation with a warmer bias for near stars
-      const warmth = 0.85 + Math.random() * 0.15
-      nearColors[i]     = warmth * (0.95 + Math.random() * 0.05)
-      nearColors[i + 1] = warmth * (0.88 + Math.random() * 0.12)
-      nearColors[i + 2] = warmth * (0.78 + Math.random() * 0.22)
+      if (this.isDark) {
+        // Temperature variation with a warmer bias for near stars
+        const warmth = 0.85 + Math.random() * 0.15
+        nearColors[i]     = warmth * (0.95 + Math.random() * 0.05)
+        nearColors[i + 1] = warmth * (0.88 + Math.random() * 0.12)
+        nearColors[i + 2] = warmth * (0.78 + Math.random() * 0.22)
+      } else {
+        // Slightly warmer bias for near stars (ember-tinted ink)
+        const warmth = 0.8 + Math.random() * 0.2
+        nearColors[i]     = warmth * (0.30 + Math.random() * 0.12)
+        nearColors[i + 1] = warmth * (0.24 + Math.random() * 0.12)
+        nearColors[i + 2] = warmth * (0.18 + Math.random() * 0.10)
+      }
     }
     this.nearStarGeo.setAttribute('position', new THREE.BufferAttribute(nearPos, 3))
     this.nearStarGeo.setAttribute('color', new THREE.BufferAttribute(nearColors, 3))
@@ -131,13 +149,13 @@ export default class SpaceScene {
     const nearMat = new THREE.PointsMaterial({
       map: bloomTex,
       color: 0xffffff,
-      size: 0.45,
+      size: this.isDark ? 0.45 : 0.5,
       transparent: true,
-      opacity: 0.8,
+      opacity: this.isDark ? 0.8 : 0.85,
       depthWrite: false,
-      blending: THREE.AdditiveBlending,
       sizeAttenuation: true,
       vertexColors: true,
+      ...(this.isDark ? { blending: THREE.AdditiveBlending } : {}),
     })
     this.nearStars = new THREE.Points(this.nearStarGeo, nearMat)
     this.scene.add(this.nearStars)
@@ -160,12 +178,12 @@ export default class SpaceScene {
       const sprite = new THREE.Sprite(
         new THREE.SpriteMaterial({
           map: nebulaTex,
-          color: 0xf53003,
+          color: this.isDark ? 0xf53003 : 0xf7a078,
           transparent: true,
-          opacity: 0.28,
-          blending: THREE.AdditiveBlending,
+          opacity: this.isDark ? 0.28 : 0.16,
           depthWrite: false,
           fog: false, // stay visible at any distance
+          ...(this.isDark ? { blending: THREE.AdditiveBlending } : {}),
         })
       )
       sprite.position.set(w.x, w.y, w.z)
@@ -190,12 +208,12 @@ export default class SpaceScene {
       const sprite = new THREE.Sprite(
         new THREE.SpriteMaterial({
           map: bandTex,
-          color: 0xffc9a0,
+          color: this.isDark ? 0xffc9a0 : 0xf0d9c2,
           transparent: true,
           opacity: b.o,
-          blending: THREE.AdditiveBlending,
           depthWrite: false,
           fog: false, // stay visible at any distance
+          ...(this.isDark ? { blending: THREE.AdditiveBlending } : {}),
         })
       )
       sprite.position.set(b.x, b.y, b.z)
@@ -220,12 +238,12 @@ export default class SpaceScene {
       const core = new THREE.Sprite(
         new THREE.SpriteMaterial({
           map: coreTex,
-          color: 0xffe8d0,
+          color: this.isDark ? 0xffe8d0 : 0xffd9b0,
           transparent: true,
-          opacity: 0.45,
-          blending: THREE.AdditiveBlending,
+          opacity: this.isDark ? 0.45 : 0.5,
           depthWrite: false,
           fog: false, // stay visible at any distance
+          ...(this.isDark ? { blending: THREE.AdditiveBlending } : {}),
         })
       )
       core.position.set(c.x, c.y, c.z)
@@ -248,12 +266,12 @@ export default class SpaceScene {
       const sprite = new THREE.Sprite(
         new THREE.SpriteMaterial({
           map: this.shootingStarTex,
-          color: 0xfff2e2,
+          color: this.isDark ? 0xfff2e2 : 0xf53003,
           transparent: true,
           opacity: 0,
           depthWrite: false,
-          blending: THREE.AdditiveBlending,
           fog: false, // stay bright at any distance
+          ...(this.isDark ? { blending: THREE.AdditiveBlending } : {}),
         })
       )
       sprite.scale.setScalar(0.001) // hidden until spawned
@@ -290,9 +308,10 @@ export default class SpaceScene {
 
      // ─── Entrance animation ───
      // Camera starts far back and warps forward — dramatic fly-in
-     // before normal scroll-driven control takes over.
+     // before normal scroll-driven control takes over. Skipped when the
+     // scene is rebuilt for a theme toggle (first load only).
      this.entranceProgress = 0
-     this.entranceComplete = false
+     this.entranceComplete = skipEntrance
      this.start()
   }
 
@@ -457,18 +476,20 @@ export default class SpaceScene {
 
       // Nebulas slowly breathe
       this.nebulas.forEach((n, i) => {
-        n.material.opacity = (0.22 + Math.sin(t * 0.3 + i * 1.7) * 0.06) * lensFade(n)
+        const base = this.isDark ? 0.22 : 0.15
+        n.material.opacity = (base + Math.sin(t * 0.3 + i * 1.7) * 0.06) * lensFade(n)
       })
 
       // Galaxy bands gently shimmer
       this.galaxyBands.forEach((n, i) => {
-        const base = 0.10 + (i % 2) * 0.03
-        n.material.opacity = (base + Math.sin(t * 0.2 + i * 1.3) * 0.025) * lensFade(n)
+        const base = this.isDark ? 0.10 + (i % 2) * 0.03 : 0.28 + (i % 2) * 0.08
+        const amp = this.isDark ? 0.025 : 0.03
+        n.material.opacity = (base + Math.sin(t * 0.2 + i * 1.3) * amp) * lensFade(n)
       })
 
       // Galaxy cores (fixed brightness, just faded at the lens)
       this.galaxyCores.forEach((c) => {
-        c.material.opacity = 0.45 * lensFade(c)
+        c.material.opacity = (this.isDark ? 0.45 : 0.5) * lensFade(c)
       })
 
       // ─── Starfield twinkle — multi-frequency composite opacity ───
@@ -476,14 +497,14 @@ export default class SpaceScene {
       // frequency pulse. The result is a gentle organic breathing that makes
       // the field feel alive without distracting from the scene.
       const starTwinkle =
-        0.85 +
+        (this.isDark ? 0.85 : 0.88) +
         0.08 * Math.sin(t * 0.6 + 1.2) +
         0.05 * Math.sin(t * 1.4 + 3.5) +
         0.03 * Math.sin(t * 2.3 + 0.8)
       this.stars.material.opacity = starTwinkle
 
       const nearTwinkle =
-        0.72 +
+        (this.isDark ? 0.72 : 0.82) +
         0.10 * Math.sin(t * 0.45 + 2.1) +
         0.06 * Math.sin(t * 1.05 + 4.2) +
         0.04 * Math.sin(t * 1.7 + 0.3)

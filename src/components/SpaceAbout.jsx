@@ -288,11 +288,11 @@ export default function SpaceAbout() {
       <div className="grid gap-14 lg:grid-cols-12 lg:gap-10">
         {/* Narrative */}
         <div className="lg:col-span-5">
-          <p className="v2-about-copy mb-3 text-xs font-medium uppercase tracking-[0.3em] text-ember-300">
+          <p className="v2-about-copy mb-3 text-xs font-medium uppercase tracking-[0.2em] text-ember-600">
             {ABOUT.eyebrow}
           </p>
-          <h2 className="v2-about-copy font-display text-4xl font-light leading-tight text-star-100 sm:text-5xl">
-            {ABOUT.heading} <span className="ember-text italic">{ABOUT.headingHighlight}</span>
+          <h2 className="v2-about-copy font-display text-4xl font-semibold leading-[1.05] tracking-tight text-star-100 sm:text-5xl">
+            {ABOUT.heading} <span className="ember-text font-light">{ABOUT.headingHighlight}</span>
           </h2>
           {ABOUT.paragraphs.map((p) => (
             <p key={p} className="v2-about-copy mt-5 leading-relaxed text-star-400">
@@ -349,11 +349,11 @@ export default function SpaceAbout() {
               >
                 {/* Outer boundary ring — farthest plane */}
                 <div
-                  className="absolute inset-[4%] rounded-full border border-white/[0.06]"
+                  className="absolute inset-[4%] rounded-full border border-star-300/20"
                   style={{ transform: 'translateZ(-40px)' }}
                 />
                 {/* Main orbit path — slowly rotating satellite */}
-                <div className="v2-orbit-ring animate-orbit-spin absolute inset-[16%] rounded-full border border-white/[0.14] sm:inset-[22%]">
+                <div className="v2-orbit-ring animate-orbit-spin absolute inset-[16%] rounded-full border border-star-300/40 sm:inset-[22%]">
                   <span className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ember-300 shadow-[0_0_12px_rgba(245,48,3,0.95)]" />
                   <span className="absolute left-1/2 top-0 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ember-500/25 blur-[3px]" />
                 </div>
@@ -389,7 +389,7 @@ export default function SpaceAbout() {
                           className="animate-float-node flex flex-col items-center gap-2"
                           style={{ animationDelay: `${i * 1.3}s` }}
                         >
-                          <span className="flex h-14 w-14 items-center justify-center rounded-full border border-ember-500/40 bg-space-900/90 text-ember-300 shadow-[0_0_25px_rgba(245,48,3,0.25),inset_0_1px_0_rgba(255,255,255,0.18),inset_0_-2px_6px_rgba(0,0,0,0.35)]">
+                          <span className="flex h-14 w-14 items-center justify-center rounded-full border border-ember-500/40 bg-space-900/90 text-ember-600 shadow-[0_0_25px_rgba(245,48,3,0.25),inset_0_1px_0_rgba(255,255,255,0.18),inset_0_-2px_6px_rgba(0,0,0,0.35)] dark:text-ember-300">
                             {ICONS[v.icon] || ICONS.spark}
                           </span>
                           <span className="whitespace-nowrap text-[10px] font-medium uppercase tracking-[0.2em] text-star-300">
@@ -466,8 +466,8 @@ export default function SpaceAbout() {
       {/* Value strip — full descriptions, clean editorial rows */}
       <div className="mt-20 grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
         {ABOUT.values.map((v) => (
-          <div key={v.id} className="v2-about-value border-t border-white/10 pt-6">
-            <h3 className="font-display text-xl text-star-100">{v.title}</h3>
+          <div key={v.id} className="v2-about-value border-t border-star-300/30 pt-6">
+            <h3 className="font-display text-xl font-semibold tracking-tight text-star-100">{v.title}</h3>
             <p className="mt-3 text-sm leading-relaxed text-star-400">{v.description}</p>
           </div>
         ))}

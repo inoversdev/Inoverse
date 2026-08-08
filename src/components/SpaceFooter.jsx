@@ -18,11 +18,11 @@ export default function SpaceFooter() {
   }
 
   return (
-    <footer className="relative border-t border-white/5 py-14">
+    <footer className="relative border-t border-star-300/20 py-14">
       <div className="mx-auto flex max-w-7xl flex-col items-center gap-10 px-6 lg:px-10">
         <div className="flex items-center gap-3">
           <img src="/logo.svg" alt="Inovers" className="h-10 w-10" />
-          <span className="font-display text-2xl text-star-100">
+          <span className="font-display text-2xl font-semibold tracking-tight text-star-100">
             Inovers<span className="ember-text">.</span>
           </span>
         </div>
@@ -33,7 +33,7 @@ export default function SpaceFooter() {
               key={l.target}
               href={`#${l.target}`}
               onClick={(e) => handleNav(e, l.target)}
-              className="text-sm text-star-400 transition-colors hover:text-ember-300"
+              className="text-sm text-star-400 transition-colors hover:text-ember-500"
             >
               {l.label}
             </a>

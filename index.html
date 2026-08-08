@@ -1,17 +1,26 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Inovers Tech Solutions — Custom software, systems, and technology solutions to help your business thrive in the digital age." />
-    <meta name="theme-color" content="#080706" />
+    <meta name="theme-color" content="#FFFFFF" />
     <title>Inovers Tech Solutions</title>
 
-    <!-- Fonts: Fraunces + Geist -->
+    <!-- Pre-paint theme: apply saved dark mode before first render (no flash) -->
+    <script>
+      try {
+        if (localStorage.getItem('inovers-theme') === 'dark') {
+          document.documentElement.classList.add('dark')
+        }
+      } catch (e) {}
+    </script>
+
+    <!-- Fonts: Geist (body) + Space Grotesk (display — the space-age voice) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,500;1,9..144,600&family=Geist:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet" />
   </head>
   <body>
     <div id="root"></div>

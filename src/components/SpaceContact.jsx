@@ -6,7 +6,7 @@ import { BRAND, CONTACT } from '../lib/content'
 gsap.registerPlugin(ScrollTrigger)
 
 const FIELD =
-  'w-full rounded-lg border border-white/10 bg-space-950/60 px-4 py-3 text-sm text-star-100 placeholder:text-star-600 outline-none transition-colors focus:border-ember-500/60'
+  'w-full rounded-lg border border-star-300/30 bg-white px-4 py-3 text-sm text-star-100 placeholder:text-star-600 outline-none transition-colors focus:border-ember-500/60 dark:bg-space-950/60'
 
 export default function SpaceContact() {
   const rootRef = useRef(null)
@@ -89,9 +89,9 @@ export default function SpaceContact() {
 
         <div className="relative grid gap-12 lg:grid-cols-2">
           <div className="v2-contact-block">
-            <p className="mb-3 text-xs font-medium uppercase tracking-[0.3em] text-ember-300">Contact</p>
-            <h2 className="font-display text-4xl font-light leading-tight text-star-100 sm:text-5xl">
-              Let's build something <span className="ember-text italic">together</span>
+            <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-ember-500">Contact</p>
+            <h2 className="font-display text-4xl font-semibold leading-[1.05] tracking-tight text-star-100 sm:text-5xl">
+              Let's build something <span className="ember-text font-light">together</span>
             </h2>
             <p className="mt-5 text-star-400">{CONTACT.subheading}</p>
 
@@ -106,7 +106,7 @@ export default function SpaceContact() {
           </div>
 
           <div className="v2-contact-block space-y-5">
-            <form onSubmit={handleSubmit} className="rounded-2xl border border-white/10 bg-white/5 p-6">
+            <form onSubmit={handleSubmit} className="rounded-2xl border border-star-300/30 bg-white/80 p-6 dark:bg-white/5">
               <p className="text-sm uppercase tracking-widest text-star-500">Email us</p>
               <div className="mt-4 space-y-3">
                 <div className="grid gap-3 sm:grid-cols-2">
@@ -151,14 +151,14 @@ export default function SpaceContact() {
                     >→</span>
                   </button>
                   {status === 'success' && (
-                    <p className="text-xs text-star-200">
+                    <p className="text-xs text-star-300">
                       {CONTACT.formAccessKey
                         ? "Message sent — we'll get back to you within 24 hours."
                         : 'Your email app is opening — press Send to deliver it.'}
                     </p>
                   )}
                   {status === 'error' && (
-                    <p className="text-xs text-ember-300">
+                    <p className="text-xs text-ember-600">
                       Send failed — please email {BRAND.email} directly.
                     </p>
                   )}
@@ -170,16 +170,16 @@ export default function SpaceContact() {
               href={BRAND.calendly}
               target="_blank"
               rel="noreferrer"
-              className="group flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-6 transition-all hover:border-ember-500/50 hover:bg-ember-500/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ember-400"
+              className="group flex items-center justify-between rounded-2xl border border-star-300/30 bg-white/80 p-6 transition-all hover:border-ember-500/50 hover:bg-ember-500/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ember-400 dark:bg-white/5 dark:hover:bg-ember-500/10"
             >
               <div>
                 <p className="text-sm uppercase tracking-widest text-star-500">Free consultation</p>
                 <p className="mt-1 text-lg text-star-100">Book a 30-minute call</p>
               </div>
-              <span className="text-2xl text-star-500 transition-all group-hover:translate-x-1 group-hover:text-ember-300">→</span>
+              <span className="text-2xl text-star-500 transition-all group-hover:translate-x-1 group-hover:text-ember-500">→</span>
             </a>
 
-            <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-6">
+            <div className="flex items-center justify-between rounded-2xl border border-star-300/30 bg-white/80 p-6 dark:bg-white/5">
               <p className="text-sm uppercase tracking-widest text-star-500">Phone</p>
               <p className="text-lg text-star-100">{BRAND.phone}</p>
             </div>

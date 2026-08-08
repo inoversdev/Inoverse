@@ -1,24 +1,28 @@
 @import "tailwindcss";
 
-/* ─── Inovers V2 Design Tokens ─── */
+/* dark: variant follows the .dark class on <html> (not OS preference) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─── Inovers V2 Design Tokens ───
+   space-* / star-* are runtime CSS variables — light (white) is the DEFAULT
+   base, `.dark` (on <html>) flips them back to the classic deep-space ink. */
 @theme {
   --font-sans: "Geist", "Plus Jakarta Sans", system-ui, sans-serif;
-  --font-display: "Fraunces", "Geist", serif;
+  --font-display: "Space Grotesk", "Geist", system-ui, sans-serif;
   --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* Deep space ink */
-  --color-space-950: #050404;
-  --color-space-900: #0a0808;
-  --color-space-800: #14100e;
-  --color-space-700: #1f1917;
-  --color-space-600: #2b2421;
+  /* Surface + text scales — resolved at runtime (theme-aware) */
+  --color-space-950: var(--space-950);
+  --color-space-900: var(--space-900);
+  --color-space-800: var(--space-800);
+  --color-space-700: var(--space-700);
+  --color-space-600: var(--space-600);
 
-  /* Warm star neutrals */
-  --color-star-100: #F5F1ED;
-  --color-star-300: #D8CFC7;
-  --color-star-400: #B3A69B;
-  --color-star-500: #8C7F74;
-  --color-star-600: #665C54;
+  --color-star-100: var(--star-100);
+  --color-star-300: var(--star-300);
+  --color-star-400: var(--star-400);
+  --color-star-500: var(--star-500);
+  --color-star-600: var(--star-600);
 
   /* Ember (same brand, glows harder on dark) */
   --color-ember-50: #FEF2ED;
@@ -29,6 +33,36 @@
   --color-ember-500: #F53003;
   --color-ember-600: #D42A02;
   --color-ember-700: #A92001;
+}
+
+/* ─── Light mode (DEFAULT — white base) ─── */
+:root {
+  --space-950: #FFFFFF;
+  --space-900: #FAFAFA;
+  --space-800: #F4F4F5;
+  --space-700: #E4E4E7;
+  --space-600: #D4D4D8;
+
+  --star-100: #111111;
+  --star-300: #3F3F46;
+  --star-400: #52525B;
+  --star-500: #71717A;
+  --star-600: #A1A1AA;
+}
+
+/* ─── Dark mode — the original deep-space ink ─── */
+.dark {
+  --space-950: #050404;
+  --space-900: #0a0808;
+  --space-800: #14100e;
+  --space-700: #1f1917;
+  --space-600: #2b2421;
+
+  --star-100: #F5F1ED;
+  --star-300: #D8CFC7;
+  --star-400: #B3A69B;
+  --star-500: #8C7F74;
+  --star-600: #665C54;
 }
 
 /* ─── Base ─── */
@@ -47,7 +81,10 @@ body {
 
 ::selection {
   background-color: var(--color-ember-500);
-  color: var(--color-space-950);
+  color: #FFFFFF;
+}
+.dark ::selection {
+  color: #050404;
 }
 
 /* ─── Scrollbar ─── */
@@ -55,7 +92,7 @@ body {
   width: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--color-space-900);
+  background: var(--color-space-800);
 }
 ::-webkit-scrollbar-thumb {
   background: var(--color-ember-600);
@@ -69,24 +106,37 @@ body {
   inset: 0;
   z-index: 9999;
   pointer-events: none;
-  opacity: 0.03;
+  opacity: 0.02;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 128 128' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-repeat: repeat;
   background-size: 128px 128px;
 }
+.dark .grain-overlay::after {
+  opacity: 0.03;
+}
 
-/* ─── Glass card ─── */
+/* ─── Glass card — light (white) mode ─── */
 .glass {
-  background: linear-gradient(160deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.65) 100%);
+  border: 1px solid rgba(17, 17, 17, 0.08);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 8px 32px rgba(17, 17, 17, 0.05);
+}
+/* Glass card — dark (space) mode: the original translucent white-on-black */
+.dark .glass {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: none;
 }
 
 /* Scrolled header: same glass material, but no all-around outline —
    just a hairline seat at the bottom edge. */
 .v2-header-glass {
   border: 1px solid transparent;
+  border-bottom-color: rgba(17, 17, 17, 0.08);
+}
+.dark .v2-header-glass {
   border-bottom-color: rgba(255, 255, 255, 0.06);
 }
 
@@ -127,14 +177,17 @@ body {
   transform: translateY(1px);
 }
 
-/* Primary — solid ember pill. */
+/* Primary — solid ember pill. Light: white text. Dark: ink text (original). */
 .v2-btn-primary {
   background: var(--color-ember-500);
-  color: var(--color-space-950);
+  color: #FFFFFF;
   padding: 0.75rem 1.75rem;
 }
 .v2-btn-primary:hover {
   background: var(--color-ember-400);
+}
+.dark .v2-btn-primary {
+  color: #050404;
 }
 /* Focus ring needs contrast against the solid ember plate: near-white. */
 .v2-btn-primary:focus-visible {
@@ -153,6 +206,9 @@ body {
 .v2-btn-ghost:hover {
   border-color: var(--color-ember-500);
   background: rgba(245, 48, 3, 0.06);
+  color: var(--color-ember-600);
+}
+.dark .v2-btn-ghost:hover {
   color: var(--color-ember-200);
 }
 /* Focus ring brightens against the hairline border. */
@@ -190,8 +246,14 @@ body {
   }
 }
 
-/* ─── Ember glow text ─── */
+/* ─── Ember glow text — light: solid ember (flat, readable); dark: gradient glow ─── */
 .ember-text {
+  color: var(--color-ember-400);
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+}
+.dark .ember-text {
   background: linear-gradient(120deg, #f53003 0%, #f97316 50%, #ffb27a 100%);
   -webkit-background-clip: text;
   background-clip: text;

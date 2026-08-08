@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { PROCESS } from '../lib/content'
@@ -35,9 +35,9 @@ export default function SpaceProcess() {
   return (
     <section id="process" ref={rootRef} className="relative mx-auto max-w-5xl px-6 py-28 lg:px-10">
       <div className="mb-16 max-w-2xl">
-        <p className="mb-3 text-xs font-medium uppercase tracking-[0.3em] text-ember-300">Process</p>
-        <h2 className="font-display text-4xl font-light leading-tight text-star-100 sm:text-5xl">
-          Our flight <span className="ember-text italic">plan</span>
+        <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-ember-600">Process</p>
+        <h2 className="font-display text-4xl font-semibold leading-[1.05] tracking-tight text-star-100 sm:text-5xl">
+          Our flight <span className="ember-text font-light">plan</span>
         </h2>
       </div>
 
@@ -54,11 +54,11 @@ export default function SpaceProcess() {
               }`}
             >
               <div className="flex w-full items-center gap-5 sm:w-1/2">
-                <span className="z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-ember-500/50 bg-space-900 text-sm font-semibold text-ember-300 shadow-[0_0_25px_rgba(245,48,3,0.35)]">
+                <span className="z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-ember-500/50 bg-space-900 text-sm font-semibold text-ember-600 shadow-[0_0_25px_rgba(245,48,3,0.35)]">
                   {p.step}
                 </span>
                 <div>
-                  <h3 className="font-display text-2xl text-star-100">{p.title}</h3>
+                  <h3 className="font-display text-2xl font-semibold tracking-tight text-star-100">{p.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-star-400">{p.description}</p>
                 </div>
               </div>

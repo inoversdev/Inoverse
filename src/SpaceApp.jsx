@@ -13,6 +13,7 @@ import SpacePortfolio from './components/SpacePortfolio'
 import SpaceProcess from './components/SpaceProcess'
 import SpaceContact from './components/SpaceContact'
 import SpaceFooter from './components/SpaceFooter'
+import { useTheme } from './theme'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -20,6 +21,9 @@ export default function SpaceApp() {
   const canvasRef = useRef(null)
   const sceneRef = useRef(null)
   const lenis = useLenis()
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
+  const prevTheme = useRef(theme)
 
   // Keep GSAP ScrollTrigger in lockstep with Lenis' virtual scroll —
   // this is what removes the delayed-feeling parallax/reveal animations.
@@ -30,9 +34,13 @@ export default function SpaceApp() {
     return () => lenis.off('scroll', onScroll)
   }, [lenis])
 
+  // (Re)build the 3D universe for the active theme — full re-skin on toggle.
+  // The entrance warp plays only on first load; theme toggles rebuild quietly.
   useEffect(() => {
     if (!canvasRef.current) return
-    const scene = new SpaceScene(canvasRef.current)
+    const skipEntrance = prevTheme.current !== theme
+    prevTheme.current = theme
+    const scene = new SpaceScene(canvasRef.current, theme, skipEntrance)
     sceneRef.current = scene
 
     // Drive the camera flight from overall page scroll (0..1)
@@ -63,28 +71,30 @@ export default function SpaceApp() {
       scene.dispose()
       sceneRef.current = null
     }
-  }, [])
+  }, [theme])
 
   return (
     <SmoothScroll>
       <div className="relative min-h-screen bg-space-950 text-star-100 grain-overlay">
         {/* Fixed universe */}
         <div ref={canvasRef} className="fixed inset-0 z-0" aria-hidden="true" />
-        {/* Vignette so text stays readable over stars */}
+        {/* Vignette — light: soft neutral depth; dark: original cinematic frame */}
         <div
           className="pointer-events-none fixed inset-0 z-[1]"
           style={{
-            background:
-              'radial-gradient(ellipse at center, transparent 40%, rgba(5,4,4,0.55) 100%)',
+            background: isDark
+              ? 'radial-gradient(ellipse at center, transparent 40%, rgba(5,4,4,0.55) 100%)'
+              : 'radial-gradient(ellipse at center, transparent 55%, rgba(17,17,17,0.045) 100%)',
           }}
           aria-hidden="true"
         />
-        {/* Cinematic white edge lights — soft glow along the frame edges */}
+        {/* Edge ambience — light: gentle ember; dark: original warm edge lights */}
         <div
           className="pointer-events-none fixed inset-0 z-[1]"
           style={{
-            background:
-              'radial-gradient(ellipse 60% 35% at 50% 0%, rgba(255,240,225,0.07), transparent 70%), radial-gradient(ellipse 60% 35% at 50% 100%, rgba(255,240,225,0.05), transparent 70%), radial-gradient(ellipse 30% 55% at 0% 50%, rgba(255,235,220,0.05), transparent 70%), radial-gradient(ellipse 30% 55% at 100% 50%, rgba(255,235,220,0.05), transparent 70%)',
+            background: isDark
+              ? 'radial-gradient(ellipse 60% 35% at 50% 0%, rgba(255,240,225,0.07), transparent 70%), radial-gradient(ellipse 60% 35% at 50% 100%, rgba(255,240,225,0.05), transparent 70%), radial-gradient(ellipse 30% 55% at 0% 50%, rgba(255,235,220,0.05), transparent 70%), radial-gradient(ellipse 30% 55% at 100% 50%, rgba(255,235,220,0.05), transparent 70%)'
+              : 'radial-gradient(ellipse 60% 35% at 50% 0%, rgba(245,48,3,0.05), transparent 70%), radial-gradient(ellipse 60% 35% at 50% 100%, rgba(245,48,3,0.03), transparent 70%), radial-gradient(ellipse 30% 55% at 0% 50%, rgba(245,48,3,0.03), transparent 70%), radial-gradient(ellipse 30% 55% at 100% 50%, rgba(245,48,3,0.03), transparent 70%)',
           }}
           aria-hidden="true"
         />
