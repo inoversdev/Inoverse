@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useLenis } from 'lenis/react'
 import { BRAND, NAV_LINKS } from '../lib/content'
 import { useTheme } from '../theme'
@@ -9,6 +10,9 @@ export default function SpaceNav() {
   const lenis = useLenis()
   const { theme, toggleTheme } = useTheme()
   const isDark = theme === 'dark'
+  const navigate = useNavigate()
+  const location = useLocation()
+  const isHome = location.pathname === '/'
 
   // Low-profile header: while the visitor is reading a body section, the
   // bar stays compact, and it tucks away entirely when scrolling down.
@@ -29,8 +33,7 @@ export default function SpaceNav() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const handleNav = (e, target) => {
-    e.preventDefault()
+  const scrollToTarget = (target) => {
     if (lenis) {
       lenis.scrollTo(`#${target}`, {
         offset: 0,
@@ -39,6 +42,17 @@ export default function SpaceNav() {
       })
     } else {
       document.getElementById(target)?.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
+  const handleNav = (e, target) => {
+    e.preventDefault()
+    if (isHome) {
+      scrollToTarget(target)
+    } else {
+      // Section links are home-page anchors. Navigate home with a
+      // scrollTo handoff — HomePage glides to the section once mounted.
+      navigate('/', { state: { scrollTo: target } })
     }
   }
 
@@ -53,7 +67,15 @@ export default function SpaceNav() {
           scrolled ? 'py-2.5' : 'py-4'
         }`}
       >
-        <a href="#" className="flex items-center gap-3" onClick={(e) => handleNav(e, 'top')}>
+        <a
+          href="#"
+          className="flex items-center gap-3"
+          onClick={(e) => {
+            e.preventDefault()
+            if (isHome) scrollToTarget('top')
+            else navigate('/', { state: { scrollTo: 'top' } })
+          }}
+        >
           <img
             src="/logo.svg"
             alt="Inovers"

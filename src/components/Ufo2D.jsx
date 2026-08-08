@@ -45,11 +45,14 @@ export default function Ufo2D({ variant = 'transit', className = '', size = 96 }
           <ellipse cx="20" cy="35" rx="40" ry="12" fill="rgba(245,48,3,0.10)" />
           <ellipse cx="12" cy="35" rx="27" ry="8" fill="rgba(245,48,3,0.24)" />
           <ellipse cx="5" cy="35" rx="15" ry="5" fill="rgba(255,138,92,0.6)" />
-          {/* trailing spark particles — drift back and fade */}
-          <circle className="ufo-particle" cx="-8" cy="33" r="2.2" fill="#ffb27a" />
-          <circle className="ufo-particle" cx="-18" cy="37" r="1.6" fill="#ff8a5c" style={{ animationDelay: '0.4s' }} />
-          <circle className="ufo-particle" cx="-28" cy="30" r="1.3" fill="#ffd9c9" style={{ animationDelay: '0.9s' }} />
-          <circle className="ufo-particle" cx="-36" cy="36" r="1" fill="#f53003" style={{ animationDelay: '1.4s' }} />
+          {/* trailing spark particles — drift back and fade, each on its
+              own timer so they twinkle independently instead of ticking
+              in lockstep */}
+          <circle className="ufo-particle" cx="-8" cy="33" r="2.2" fill="#ffb27a" style={{ animationDelay: '0s', animationDuration: '1.5s' }} />
+          <circle className="ufo-particle" cx="-18" cy="37" r="1.6" fill="#ff8a5c" style={{ animationDelay: '0.35s', animationDuration: '1.9s' }} />
+          <circle className="ufo-particle" cx="-28" cy="30" r="1.3" fill="#ffd9c9" style={{ animationDelay: '0.75s', animationDuration: '1.6s' }} />
+          <circle className="ufo-particle" cx="-36" cy="36" r="1" fill="#f53003" style={{ animationDelay: '1.15s', animationDuration: '2.1s' }} />
+          <circle className="ufo-particle" cx="-14" cy="29" r="1.4" fill="#ffb27a" style={{ animationDelay: '0.55s', animationDuration: '1.7s' }} />
         </g>
       )}
 
@@ -68,15 +71,17 @@ export default function Ufo2D({ variant = 'transit', className = '', size = 96 }
       {/* faint cockpit glow inside the dome */}
       <ellipse cx="60" cy="24" rx="7" ry="4" fill="rgba(255,178,122,0.25)" />
 
-      {/* rim lights — brighter, with a glow halo */}
+      {/* rim lights — chase sequentially around the hull like marquee
+          bulbs, instead of pulsing in unison */}
       {[0, 1, 2, 3, 4, 5, 6].map((i) => {
         const angle = Math.PI + (i / 6) * Math.PI // bottom half of the rim
         const x = 60 + Math.cos(angle) * 37
         const y = 34 + Math.sin(angle) * 6
+        const delay = `${i * 0.15}s`
         return (
           <g key={i}>
-            <circle cx={x} cy={y} r="3" fill="rgba(255,178,122,0.25)" className="ufo-rimlight" />
-            <circle cx={x} cy={y} r="1.6" fill="#ffd9c9" className="ufo-rimlight" />
+            <circle cx={x} cy={y} r="3" fill="rgba(255,178,122,0.25)" className="ufo-rimlight" style={{ animationDelay: delay }} />
+            <circle cx={x} cy={y} r="1.6" fill="#ffd9c9" className="ufo-rimlight" style={{ animationDelay: delay }} />
           </g>
         )
       })}

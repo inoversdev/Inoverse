@@ -1,11 +1,14 @@
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useLenis } from 'lenis/react'
 import { BRAND, FOOTER, NAV_LINKS } from '../lib/content'
 
 export default function SpaceFooter() {
   const lenis = useLenis()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const isHome = location.pathname === '/'
 
-  const handleNav = (e, target) => {
-    e.preventDefault()
+  const scrollToTarget = (target) => {
     if (lenis) {
       lenis.scrollTo(`#${target}`, {
         offset: 0,
@@ -14,6 +17,15 @@ export default function SpaceFooter() {
       })
     } else {
       document.getElementById(target)?.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
+  const handleNav = (e, target) => {
+    e.preventDefault()
+    if (isHome) {
+      scrollToTarget(target)
+    } else {
+      navigate('/', { state: { scrollTo: target } })
     }
   }
 

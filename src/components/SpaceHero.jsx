@@ -72,8 +72,11 @@ export default function SpaceHero() {
       ref={rootRef}
       className="relative flex min-h-screen items-center justify-center overflow-hidden px-6"
     >
-      {/* Soft glam glow — the UFO lighting this part of the sky */}
+      {/* Soft glam glow — the UFO lighting this part of the sky.
+          data-parallax: drifts slower than the pinned text as you scroll
+          into the hero, reading as a layer further back in the scene. */}
       <div
+        data-parallax="0.2"
         className="v2-hero-glow pointer-events-none absolute left-1/2 top-[38%] h-[62vh] w-[80vw] max-w-3xl -translate-x-1/2 -translate-y-1/2 rounded-full"
         style={{
           background:

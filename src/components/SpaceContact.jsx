@@ -85,11 +85,14 @@ export default function SpaceContact() {
   return (
     <section id="contact" ref={rootRef} className="relative mx-auto max-w-7xl px-6 py-28 lg:px-10">
       <div className="glass relative overflow-hidden rounded-3xl p-8 sm:p-14">
-        <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-ember-500/20 blur-[90px]" />
+        <div
+          data-parallax="0.12"
+          className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-ember-500/20 blur-[90px]"
+        />
 
         <div className="relative grid gap-12 lg:grid-cols-2">
           <div className="v2-contact-block">
-            <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-ember-500">Contact</p>
+            <p data-parallax="-0.1" className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-ember-500">Contact</p>
             <h2 className="font-display text-4xl font-semibold leading-[1.05] tracking-tight text-star-100 sm:text-5xl">
               Let's build something <span className="ember-text font-light">together</span>
             </h2>

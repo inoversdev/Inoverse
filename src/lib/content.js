@@ -79,18 +79,24 @@ export const ABOUT = {
   ],
 }
 
+// ─── What we Build (Services) — Instagram-style bento mosaic ───
+// Data-driven: add a service by pushing an entry here — the grid
+// reflows automatically. size: 'lg' anchor tiles get extra room for a
+// visual; 'sm' tiles cluster around them. media picks a placeholder
+// frame visual (browser / phones / flow); real screenshots can replace
+// these later via a `src` field. bullets feed the hover/expand overlay.
 export const SERVICES = [
   {
     id: 'web',
     icon: 'globe',
     title: 'Website Development',
-    promise: 'Built within 3 days',
-    description:
-      'Fast, modern, conversion ready websites engineered to launch in days not months.',
-    features: [
+    tagline: 'Conversion-ready sites, launched in 3 days.',
+    size: 'xl',
+    media: 'browser',
+    bullets: [
       'Landing pages & company sites',
       'E-commerce & booking systems',
-      'Performancefirst builds',
+      'Performance-first builds',
       'Analytics & SEO foundation',
     ],
   },
@@ -98,10 +104,10 @@ export const SERVICES = [
     id: 'software',
     icon: 'code',
     title: 'Software Development',
-    promise: 'Mobile · Web · Custom',
-    description:
-      'Custom software tailored to your business from mobile apps to web platforms built for scale.',
-    features: [
+    tagline: 'Mobile apps and web platforms built for scale.',
+    size: 'lg',
+    media: 'phones',
+    bullets: [
       'Mobile apps (iOS & Android)',
       'Web applications',
       'Custom business software',
@@ -112,10 +118,10 @@ export const SERVICES = [
     id: 'systems',
     icon: 'layers',
     title: 'Systems & Automation',
-    promise: 'Smarter operations',
-    description:
-      'Integrated business systems and intelligent automation that streamline how you operate.',
-    features: [
+    tagline: 'Smarter operations, end to end.',
+    size: 'lg',
+    media: 'flow',
+    bullets: [
       'Business process automation',
       'CRM & workflow systems',
       'Data analytics & dashboards',
@@ -139,6 +145,8 @@ export const INDUSTRIES = [
 // Real shipped projects + realistic placeholders (demo: true) so the
 // grid demonstrates the 20+ scale the CTO asked for. Delete the demo
 // entries as real launches replace them.
+// featured: true → shown in the 6-card showcase on the home page
+// (everything always appears on /projects).
 export const PROJECTS = [
   {
     id: 'dory',
@@ -149,6 +157,7 @@ export const PROJECTS = [
       'Filipino delivery platform food, groceries, essentials, riders, merchants, city operator model.',
     url: 'https://dorydelivery.com/',
     tags: ['Platform', 'Web'],
+    featured: true,
   },
   {
     id: 'dmap',
@@ -158,6 +167,7 @@ export const PROJECTS = [
     description: 'In-house web application by the Inovers team.',
     url: 'https://dmap.inovers.dev/',
     tags: ['Web App'],
+    featured: true,
   },
   {
     id: 'whatahotel',
@@ -167,6 +177,7 @@ export const PROJECTS = [
     description: 'Hotel management app for WhatAHotel.',
     url: 'https://www.whatahotel.com/',
     tags: ['Mobile', 'Hotel'],
+    featured: true,
   },
   {
     id: 'agenxure',
@@ -176,6 +187,7 @@ export const PROJECTS = [
     description: 'A serious, dedicated platform build by the Inovers team.',
     url: 'https://www.agenxure.com/',
     tags: ['Web', 'Platform'],
+    featured: true,
   },
   {
     id: 'ukay',
@@ -185,6 +197,7 @@ export const PROJECTS = [
     description: 'E-commerce app for everyone who wants to sell online with live selling.',
     url: null,
     tags: ['Mobile', 'E-commerce', 'Live Selling'],
+    featured: true,
   },
   {
     id: 'byahego',
@@ -194,6 +207,7 @@ export const PROJECTS = [
     description: 'Hotel, flight and car rental mobile app and web app system.',
     url: null,
     tags: ['Mobile', 'Web', 'Travel'],
+    featured: true,
   },
   {
     id: 'dorx',

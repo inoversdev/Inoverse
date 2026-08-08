@@ -129,22 +129,6 @@ export default function SpaceAbout() {
           }
         )
       })
-
-      // Value strip below the orbit
-      gsap.utils.toArray('.v2-about-value').forEach((el, i) => {
-        gsap.fromTo(
-          el,
-          { opacity: 0, y: 24 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.7,
-            delay: i * 0.08,
-            ease: 'power3.out',
-            scrollTrigger: { trigger: el, start: 'top 92%', once: true },
-          }
-        )
-      })
     }, rootRef)
     return () => ctx.revert()
   }, [])
@@ -350,16 +334,6 @@ export default function SpaceAbout() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Value strip — full descriptions, clean editorial rows */}
-      <div className="mt-20 grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
-        {ABOUT.values.map((v) => (
-          <div key={v.id} className="v2-about-value border-t border-star-300/30 pt-6">
-            <h3 className="font-display text-xl font-semibold tracking-tight text-star-100">{v.title}</h3>
-            <p className="mt-3 text-sm leading-relaxed text-star-400">{v.description}</p>
-          </div>
-        ))}
       </div>
     </section>
   )
