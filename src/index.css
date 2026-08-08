@@ -324,11 +324,11 @@ body {
 }
 
 /* ─── Aurora band (Hero → Services) — canvas curtains ─── */
-/* overflow-x-clip: animated content can create scrollable overflow even
-   under overflow-hidden (Chrome compositing quirk); clip + contain fix it. */
+/* Horizontal clip only (the canvas pixels animate, not transforms, so it
+   creates no scrollable overflow). No vertical clip: the cloud bleeds past
+   the band box and melts into the section below — no hard cutoff. */
 .aurora-band {
   overflow-x: clip;
-  contain: paint;
 }
 
 /* ─── About orbit — MiniOrbit-style crew chart ─── */

@@ -101,10 +101,10 @@ export default function AuroraBand() {
   }, [isDark])
 
   return (
-    <section className="aurora-band relative h-44 overflow-hidden overflow-x-clip sm:h-56" aria-hidden="true">
+    <section className="aurora-band relative h-44 overflow-x-clip sm:h-56" aria-hidden="true">
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 h-full w-full"
+        className="absolute inset-x-0 top-0 h-[135%] w-full"
         style={{ filter: 'blur(14px) saturate(1.15)' }}
       />
     </section>
