@@ -223,14 +223,29 @@ export default function SpaceAbout() {
                 className="v2-orbit-scene absolute inset-0 will-change-transform"
                 style={{ transform: `rotateX(${TILT}deg)`, transformStyle: 'preserve-3d' }}
               >
-                {/* Outer boundary ring — farthest plane */}
+                {/* Outer boundary ring — thick 3D hoop on the farthest
+                    plane (3 tube layers at different depths) */}
                 <div
-                  className="v2-orbit-ring absolute inset-[4%] rounded-full border border-star-300/20"
-                  style={{ transform: 'translateZ(-40px)' }}
-                />
-                {/* Main orbit — teams ring, rotating; carries the team
-                    satellites with counter-spun icons so they stay upright */}
-                <div className="v2-orbit-ring oc-ring-a absolute inset-[15%] rounded-full border border-star-300/40">
+                  className="v2-orbit-ring absolute inset-[4%]"
+                  style={{ transform: 'translateZ(-40px)', transformStyle: 'preserve-3d' }}
+                >
+                  <div className="absolute inset-0 rounded-full border border-star-300/15" style={{ transform: 'translateZ(-6px) scale(0.98)' }} />
+                  <div className="absolute inset-0 rounded-full border border-star-300/30" style={{ transform: 'translateZ(0) scale(1)' }} />
+                  <div className="absolute inset-0 rounded-full border border-star-300/20" style={{ transform: 'translateZ(6px) scale(1.02)' }} />
+                </div>
+
+                {/* Main orbit — teams ring, rotating; a 3D tube with
+                    Saturn-style shading. Carries the team satellites with
+                    counter-spun icons so they stay upright. */}
+                <div className="v2-orbit-ring oc-ring-a absolute inset-[15%]" style={{ transformStyle: 'preserve-3d' }}>
+                  {/* tube back */}
+                  <div className="absolute inset-0 rounded-full border border-star-300/25" style={{ transform: 'translateZ(-7px) scale(0.993)' }} />
+                  {/* tube mid */}
+                  <div className="absolute inset-0 rounded-full border border-star-300/50" style={{ transform: 'translateZ(0)' }} />
+                  {/* Saturn-style shaded band — gives the ring volume */}
+                  <div className="ring-shade pointer-events-none absolute inset-0 rounded-full" style={{ transform: 'translateZ(0)' }} />
+                  {/* tube front */}
+                  <div className="absolute inset-0 rounded-full border border-star-300/35" style={{ transform: 'translateZ(7px) scale(1.007)' }} />
                   {ORG_CHART.rings[1].roles.map((r, i) => (
                     <div
                       key={r.id}
@@ -242,7 +257,13 @@ export default function SpaceAbout() {
                     >
                       <div className="v2-orbit-node">
                         <div className="oc-spin-a flex flex-col items-center gap-2" title={r.description}>
-                          <span className="flex h-14 w-14 items-center justify-center rounded-full border border-ember-500/40 bg-space-900/90 text-ember-600 shadow-[0_0_25px_rgba(245,48,3,0.25),inset_0_1px_0_rgba(255,255,255,0.18),inset_0_-2px_6px_rgba(0,0,0,0.35)] sm:h-16 sm:w-16 dark:text-ember-300">
+                          <span
+                            className="relative flex h-14 w-14 items-center justify-center rounded-full border border-ember-500/40 text-ember-100 shadow-[0_0_25px_rgba(245,48,3,0.25),inset_0_3px_4px_rgba(255,255,255,0.3),inset_0_-7px_11px_rgba(0,0,0,0.8)] sm:h-16 sm:w-16"
+                            style={{
+                              background:
+                                'radial-gradient(circle at 30% 24%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 20%), radial-gradient(circle at 68% 78%, rgba(245,48,3,0.55) 0%, rgba(245,48,3,0) 45%), radial-gradient(circle at 34% 30%, #786858 0%, #2c221d 55%, #050403 100%)',
+                            }}
+                          >
                             {ICONS[r.icon] || ICONS.users}
                           </span>
                           <span className="whitespace-nowrap text-[10px] font-medium uppercase tracking-[0.2em] text-star-300">
@@ -254,9 +275,21 @@ export default function SpaceAbout() {
                   ))}
                 </div>
 
+                {/* Gyroscope ring — precesses in true 3D so the circles
+                    visibly tumble (ellipse → circle → edge-on) */}
+                <div
+                  className="oc-gyro pointer-events-none absolute inset-[24%] rounded-full border border-ember-500/30"
+                  style={{ transformStyle: 'preserve-3d' }}
+                >
+                  <span className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ember-400 shadow-[0_0_10px_rgba(245,48,3,0.9)]" />
+                </div>
+
                 {/* Inner ember dashed ring — leadership, counter-rotating,
-                    with a beacon dot */}
-                <div className="v2-orbit-ring oc-ring-b absolute inset-[33%] rounded-full border border-dashed border-ember-500/30">
+                    with a beacon dot; tube depth via 2 layers */}
+                <div className="v2-orbit-ring oc-ring-b absolute inset-[33%]" style={{ transformStyle: 'preserve-3d' }}>
+                  <div className="absolute inset-0 rounded-full border border-dashed border-ember-500/20" style={{ transform: 'translateZ(-4px) scale(0.997)' }} />
+                  <div className="absolute inset-0 rounded-full border border-dashed border-ember-500/35" style={{ transform: 'translateZ(0)' }} />
+                  <div className="absolute inset-0 rounded-full border border-dashed border-ember-500/25" style={{ transform: 'translateZ(4px) scale(1.003)' }} />
                   <span className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ember-500/80 shadow-[0_0_12px_rgba(245,48,3,0.9)]" />
                   {ORG_CHART.rings[0].roles.map((r, i) => (
                     <div
@@ -269,7 +302,13 @@ export default function SpaceAbout() {
                     >
                       <div className="v2-orbit-node">
                         <div className="oc-spin-b flex flex-col items-center gap-2" title={r.description}>
-                          <span className="flex h-12 w-12 items-center justify-center rounded-full border border-ember-500/45 bg-space-900/90 text-ember-600 shadow-[0_0_22px_rgba(245,48,3,0.3),inset_0_1px_0_rgba(255,255,255,0.18),inset_0_-2px_6px_rgba(0,0,0,0.35)] sm:h-14 sm:w-14 dark:text-ember-300">
+                          <span
+                            className="relative flex h-12 w-12 items-center justify-center rounded-full border border-ember-500/45 text-ember-100 shadow-[0_0_22px_rgba(245,48,3,0.3),inset_0_3px_3px_rgba(255,255,255,0.3),inset_0_-6px_9px_rgba(0,0,0,0.8)] sm:h-14 sm:w-14"
+                            style={{
+                              background:
+                                'radial-gradient(circle at 30% 24%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 20%), radial-gradient(circle at 68% 78%, rgba(245,48,3,0.55) 0%, rgba(245,48,3,0) 45%), radial-gradient(circle at 34% 30%, #786858 0%, #2c221d 55%, #050403 100%)',
+                            }}
+                          >
                             {ICONS[r.icon] || ICONS.users}
                           </span>
                           <span className="whitespace-nowrap text-[10px] font-semibold uppercase tracking-[0.2em] text-ember-600 dark:text-ember-300">

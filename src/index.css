@@ -357,6 +357,24 @@ body {
 .oc-spin-b {
   animation: orbit-spin 45s linear infinite;
 }
+/* Saturn-style shaded band — gives the main ring volume */
+.ring-shade {
+  background: radial-gradient(
+    circle,
+    transparent 57%,
+    rgba(245, 48, 3, 0.1) 61%,
+    rgba(245, 48, 3, 0.22) 65%,
+    transparent 70%
+  );
+}
+/* Gyroscope ring — precessing tumble in true 3D */
+.oc-gyro {
+  animation: gyro-tumble 26s linear infinite;
+}
+@keyframes gyro-tumble {
+  from { transform: rotateX(24deg) rotateY(0deg); }
+  to { transform: rotateX(24deg) rotateY(360deg); }
+}
 
 /* ─── Split-heading chars (V4 pattern) ─── */
 .sh-word {
@@ -383,6 +401,17 @@ body {
   position: relative;
   pointer-events: none;
   user-select: none;
+  /* squash-and-stretch "happy hum" — layered on the component's own root,
+     so it composes safely under whatever transform an ancestor wrapper
+     is driving (the transit flight path, or Process's scroll-scrubbed
+     x/rotation) instead of fighting it. */
+  animation: ufo-wiggle 2.6s ease-in-out infinite;
+}
+@keyframes ufo-wiggle {
+  0%, 100% { transform: scale(1, 1) rotate(0deg); }
+  25% { transform: scale(1.025, 0.975) rotate(-1.6deg); }
+  50% { transform: scale(0.98, 1.02) rotate(0deg); }
+  75% { transform: scale(1.025, 0.975) rotate(1.6deg); }
 }
 /* path variant — live trail: the Process scrub sets the flip/rotation
    INLINE (JS) because var() inside transform on SVG elements doesn't
@@ -390,26 +419,29 @@ body {
 .ufo-path-trail {
   transform-origin: 60px 35px;
 }
-/* transit: arc flight — enters low, rises to center, HOVERS while
-   beaming, then banks away (12s per pass) */
+/* transit: arc flight — enters low, rises to center, HOPS with a little
+   overshoot as it arrives, HOVERS while beaming, gives an extra wiggle
+   before banking away (12s per pass) */
 .ufo-track {
   animation: ufo-transit 12s linear infinite;
 }
 @keyframes ufo-transit {
   0% { transform: translateX(-170px) translateY(18px) rotate(-7deg); }
   36% { transform: translateX(calc(100vw * 0.5 - 70px)) translateY(6px) rotate(-2deg); }
+  41% { transform: translateX(calc(100vw * 0.5 + 8px)) translateY(-6px) rotate(4deg); }
   45% { transform: translateX(calc(100vw * 0.5)) translateY(0px) rotate(0deg); }
   59% { transform: translateX(calc(100vw * 0.5)) translateY(0px) rotate(0deg); }
+  65% { transform: translateX(calc(100vw * 0.5 + 14px)) translateY(-8px) rotate(-6deg); }
   72% { transform: translateX(calc(100vw * 0.5 + 80px)) translateY(10px) rotate(4deg); }
   100% { transform: translateX(calc(100vw + 170px)) translateY(18px) rotate(7deg); }
 }
-/* soft bob while in transit */
+/* bigger, bouncier bob while in transit */
 .ufo-bob {
-  animation: ufo-bob 3.2s ease-in-out infinite;
+  animation: ufo-bob 2.6s ease-in-out infinite;
 }
 @keyframes ufo-bob {
-  0%, 100% { transform: translateY(0) rotate(-2deg); }
-  50% { transform: translateY(-7px) rotate(2deg); }
+  0%, 100% { transform: translateY(0) rotate(-3deg) scale(1); }
+  50% { transform: translateY(-11px) rotate(3deg) scale(1.04); }
 }
 /* engine trail flicker */
 .ufo-trail {
@@ -419,13 +451,17 @@ body {
   0%, 100% { opacity: 0.9; }
   50% { opacity: 0.5; }
 }
-/* trailing spark particles — drift back from the engine and fade */
+/* trailing spark particles — a little upward flick, a scale pop, then
+   drift back and fall away, instead of a flat linear fade */
 .ufo-particle {
-  animation: ufo-particle 1.8s ease-out infinite;
+  animation-name: ufo-particle;
+  animation-timing-function: ease-out;
+  animation-iteration-count: infinite;
 }
 @keyframes ufo-particle {
-  0% { transform: translateX(0) translateY(0); opacity: 1; }
-  100% { transform: translateX(-22px) translateY(5px); opacity: 0; }
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  45% { transform: translate(-13px, -5px) scale(1.2); opacity: 1; }
+  100% { transform: translate(-25px, 7px) scale(0.5); opacity: 0; }
 }
 .ufo-glow {
   animation: ufo-glow-pulse 3s ease-in-out infinite;
@@ -434,12 +470,15 @@ body {
   0%, 100% { opacity: 0.7; }
   50% { opacity: 1; }
 }
+/* rim lights chase around the hull — each bulb's animationDelay (set
+   inline per-index in Ufo2D.jsx) staggers this same pulse so they read
+   as marquee lights instead of one uniform flash */
 .ufo-rimlight {
   animation: ufo-rim-pulse 1.6s ease-in-out infinite;
 }
 @keyframes ufo-rim-pulse {
-  0%, 100% { opacity: 0.35; }
-  50% { opacity: 1; }
+  0%, 100% { opacity: 0.3; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.2); }
 }
 /* delivery beam — appears while the UFO hovers over the pad
    (synced: beam ~45–58% of the 12s transit) */
@@ -464,16 +503,21 @@ body {
   63% { transform: scaleY(0.4); opacity: 0; }
   100% { transform: scaleY(0.4); opacity: 0; }
 }
-/* falling mission capsule inside the beam */
+/* falling mission capsule — squashes on landing (classic cartoon
+   impact) instead of just stopping dead */
 .ufo-capsule {
   animation: ufo-capsule-drop 12s linear infinite;
+  transform-box: fill-box;
+  transform-origin: center;
 }
 @keyframes ufo-capsule-drop {
-  0%, 51% { transform: translateY(0); opacity: 0; }
-  55% { transform: translateY(14px); opacity: 1; }
-  60% { transform: translateY(26px); opacity: 1; }
-  66% { transform: translateY(42px); opacity: 0; }
-  100% { transform: translateY(42px); opacity: 0; }
+  0%, 51% { transform: translateY(0) scale(1, 1); opacity: 0; }
+  55% { transform: translateY(14px) scale(1, 1); opacity: 1; }
+  58.5% { transform: translateY(27px) scale(1.5, 0.6); opacity: 1; }
+  61% { transform: translateY(23px) scale(0.85, 1.15); opacity: 1; }
+  63.5% { transform: translateY(25px) scale(1.05, 0.95); opacity: 1; }
+  66% { transform: translateY(42px) scale(1, 1); opacity: 0; }
+  100% { transform: translateY(42px) scale(1, 1); opacity: 0; }
 }
 
 /* ─── Delivery strip (portfolio) ─── */
@@ -523,12 +567,14 @@ body {
   color: var(--color-ember-600);
   transform: translateY(-1px);
 }
+/* Background/shadow now live on .mission-chip-indicator (the sliding
+   pill), not the button itself — otherwise the destination chip flashes
+   solid ember instantly while the indicator is still gliding toward it. */
 .mission-chip-active,
 .mission-chip-active:hover {
-  background: var(--color-ember-500);
-  border-color: var(--color-ember-500);
+  background: transparent;
+  border-color: transparent;
   color: #ffffff;
-  box-shadow: 0 6px 22px rgba(245, 48, 3, 0.28);
   transform: none;
 }
 .dark .mission-chip {
@@ -542,9 +588,24 @@ body {
 }
 .dark .mission-chip-active,
 .dark .mission-chip-active:hover {
-  background: var(--color-ember-500);
-  border-color: var(--color-ember-500);
+  background: transparent;
+  border-color: transparent;
   color: #050404;
+}
+.mission-chip-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 9999px;
+  background: var(--color-ember-500);
+  box-shadow: 0 6px 22px rgba(245, 48, 3, 0.28);
+  pointer-events: none;
+  z-index: 0;
+  transition:
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    height 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.2s ease-out;
 }
 
 /* mission card — mouse-follow ember glow */
@@ -586,6 +647,33 @@ body {
 }
 .flight-node-num {
   box-shadow: 0 0 25px rgba(245, 48, 3, 0.35);
+}
+
+/* ─── Border glow ring (ported from Inovers V4) — conic gradient that
+   tracks the cursor's angle around the card, intensifying near edges.
+   Layers on top of any existing spotlight glow (e.g. .mission-card's
+   radial ::before) rather than replacing it. ─── */
+.glow-ring {
+  position: relative;
+}
+.glow-ring::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  padding: 2px;
+  background: conic-gradient(
+    from var(--glow-angle, 0deg),
+    transparent 0%,
+    rgba(245, 48, 3, calc(var(--glow-intensity, 0) * 0.9)) 15%,
+    transparent 35%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: var(--glow-intensity, 0);
+  pointer-events: none;
+  transition: opacity 0.3s ease-out;
 }
 
 /* ─── Reduced motion ─── */
