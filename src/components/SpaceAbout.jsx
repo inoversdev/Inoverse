@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useLenis } from 'lenis/react'
@@ -7,7 +7,7 @@ import SplitHeading from './SplitHeading'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const TILT = 62 // degrees the orbital plane is pitched toward the viewer
+const TILT = 55 // degrees the orbital plane is pitched toward the viewer
 
 // Role icons for the organizational chart medallions
 const ICONS = {
@@ -52,24 +52,7 @@ const ICONS = {
   ),
 }
 
-// Medallion anchor points per ring — leadership sits on the inner ember
-// ring (top/bottom), teams on the outer main ring (top/right/bottom/left).
-const TEAM_POS = [
-  'left-1/2 top-[4%] sm:top-[6%] -translate-x-1/2 -translate-y-1/2',
-  'left-[82%] sm:left-[80%] top-1/2 -translate-x-1/2 -translate-y-1/2',
-  'left-1/2 bottom-[4%] sm:bottom-[6%] -translate-x-1/2 translate-y-1/2',
-  'left-[18%] sm:left-[20%] top-1/2 -translate-x-1/2 -translate-y-1/2',
-]
-const LEAD_POS = [
-  'left-1/2 top-[20%] sm:top-[24%] -translate-x-1/2 -translate-y-1/2',
-  'left-1/2 bottom-[20%] sm:bottom-[24%] -translate-x-1/2 translate-y-1/2',
-]
-
-// Per-node depth (billboard space) — nodes float above/below the plane
-const TEAM_DEPTHS = [-30, 26, -24, 30]
-const LEAD_DEPTHS = [44, 38]
-
-// Tiny specks drifting at different depths on the orbital plane
+// Tiny specks drifting on the orbital plane
 const DUST = [
   { l: '9%', t: '30%', z: -30, s: 2, d: 0 },
   { l: '20%', t: '72%', z: 18, s: 2, d: 0.9 },
@@ -81,12 +64,15 @@ const DUST = [
   { l: '69%', t: '47%', z: -48, s: 2, d: 2.9 },
 ]
 
+// Satellite placement: teams on the outer main ring (0/90/180/270°),
+// leadership on the inner ember ring (0/180°). Angles distribute the
+// medallions around the circle; the ring's own rotation carries them.
+const TEAM_ANGLES = [0, 90, 180, 270]
+const LEAD_ANGLES = [0, 180]
+
 export default function SpaceAbout() {
   const rootRef = useRef(null)
-  const sceneRef = useRef(null)
-  const orbitRef = useRef(null)
   const lenis = useLenis()
-  const [grabbing, setGrabbing] = useState(false)
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -105,20 +91,13 @@ export default function SpaceAbout() {
         )
       })
 
-      // Orbital system: the disc settles into its tilt as it fades in,
-      // rings breathe in, the core pops, medallions cascade into orbit.
-      const orbitTrig = { trigger: '.v2-orbit', start: 'top 85%', once: true }
+      // Orbital system: the disc settles in, rings breathe in, the core
+      // pops, satellites cascade into orbit.
+      const orbitTrig = { trigger: '.v2-orbit', start: 'top 82%', once: true }
       gsap.fromTo(
         '.v2-orbit-scene',
-        { opacity: 0, rotationX: 74, scale: 0.94 },
-        {
-          opacity: 1,
-          rotationX: TILT,
-          scale: 1,
-          duration: 1.6,
-          ease: 'power3.out',
-          scrollTrigger: orbitTrig,
-        }
+        { opacity: 0, scale: 0.94 },
+        { opacity: 1, scale: 1, duration: 1.5, ease: 'power3.out', scrollTrigger: orbitTrig }
       )
       gsap.fromTo(
         '.v2-orbit-ring',
@@ -139,13 +118,12 @@ export default function SpaceAbout() {
       gsap.utils.toArray('.v2-orbit-node').forEach((el, i) => {
         gsap.fromTo(
           el,
-          { opacity: 0, scale: 0.5, y: 16 },
+          { opacity: 0, scale: 0.5 },
           {
             opacity: 1,
             scale: 1,
-            y: 0,
             duration: 0.7,
-            delay: 0.15 + i * 0.12,
+            delay: 0.2 + i * 0.12,
             ease: 'power3.out',
             scrollTrigger: orbitTrig,
           }
@@ -169,127 +147,6 @@ export default function SpaceAbout() {
       })
     }, rootRef)
     return () => ctx.revert()
-  }, [])
-
-  // Drag-to-rotate — grab the orbital system and spin it. Horizontal drags
-  // turn it around Y, vertical drags tilt the disc (clamped so it never
-  // goes edge-on). On release the spin carries on with momentum, then a
-  // slow idle drift keeps the system alive. Disabled for reduced motion.
-  useEffect(() => {
-    const el = orbitRef.current
-    const scene = sceneRef.current
-    if (!el || !scene) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-
-    const DEG_PER_PX = 0.28
-    const X_MIN = 15
-    const X_MAX = 85
-    const clampX = (v) => Math.min(X_MAX, Math.max(X_MIN, v))
-
-    // Billboards (core + glow + medallions) counter-rotate against the LIVE
-    // scene rotation every frame, so they always face the camera while
-    // dragging. Queried from the container: the core/glow live OUTSIDE the
-    // rotating scene so they stay pinned to the center of the system.
-    const billboards = Array.from(el.querySelectorAll('.v2-orbit-billboard'))
-
-    let dragging = false
-    let lastX = 0
-    let lastY = 0
-    let lastT = 0
-    let velX = 0 // rotationX velocity (deg/s)
-    let velY = 0 // rotationY velocity (deg/s)
-    let rotX = TILT
-    let rotY = 0
-    let raf = 0
-    let prevT = performance.now()
-
-    const apply = () => {
-      gsap.set(scene, { rotationX: rotX, rotationY: rotY })
-      // Counter-rotate every billboard so icons/text keep facing the camera.
-      // Skip any billboard GSAP is still animating (e.g. the core's pop) so
-      // we never clobber a reveal in progress.
-      billboards.forEach((b) => {
-        if (gsap.getTweensOf(b).length === 0) {
-          b.style.transform = `translateZ(${b.dataset.depth}px) rotateX(${-rotX}deg) rotateY(${-rotY}deg)`
-        }
-      })
-    }
-
-    // Per-frame: momentum decay → idle drift. Skipped while the reveal
-    // tween owns the scene transform (getTweensOf > 0).
-    const loop = (now) => {
-      const dt = Math.min((now - prevT) / 1000, 0.05)
-      prevT = now
-      if (!dragging && gsap.getTweensOf(scene).length === 0) {
-        if (Math.abs(velY) > 0.5 || Math.abs(velX) > 0.5) {
-          rotX = clampX(rotX + velX * dt)
-          rotY += velY * dt
-          const decay = Math.exp(-2.2 * dt)
-          velX *= decay
-          velY *= decay
-        } else {
-          velX = 0
-          velY = 0
-          rotY += 3 * dt // idle drift — slow turn showing the 3D
-        }
-        apply()
-      }
-      raf = requestAnimationFrame(loop)
-    }
-    raf = requestAnimationFrame(loop)
-
-    const onDown = (e) => {
-      dragging = true
-      lastX = e.clientX
-      lastY = e.clientY
-      lastT = performance.now()
-      velX = 0
-      velY = 0
-      // If grabbed mid-reveal, lock the scene to its final state
-      gsap.killTweensOf(scene)
-      gsap.set(scene, { opacity: 1, scale: 1 })
-      el.setPointerCapture?.(e.pointerId)
-      setGrabbing(true)
-    }
-
-    const onMove = (e) => {
-      if (!dragging) return
-      const now = performance.now()
-      const dt = Math.max((now - lastT) / 1000, 0.001)
-      const dx = e.clientX - lastX
-      const dy = e.clientY - lastY
-      lastX = e.clientX
-      lastY = e.clientY
-      lastT = now
-      rotY += dx * DEG_PER_PX
-      rotX = clampX(rotX - dy * DEG_PER_PX)
-      velY = (dx * DEG_PER_PX) / dt
-      velX = (-dy * DEG_PER_PX) / dt
-      apply()
-    }
-
-    const onUp = (e) => {
-      if (!dragging) return
-      dragging = false
-      try {
-        el.releasePointerCapture?.(e.pointerId)
-      } catch {
-        /* pointer capture may already be gone */
-      }
-      setGrabbing(false)
-    }
-
-    el.addEventListener('pointerdown', onDown)
-    el.addEventListener('pointermove', onMove)
-    el.addEventListener('pointerup', onUp)
-    el.addEventListener('pointercancel', onUp)
-    return () => {
-      cancelAnimationFrame(raf)
-      el.removeEventListener('pointerdown', onDown)
-      el.removeEventListener('pointermove', onMove)
-      el.removeEventListener('pointerup', onUp)
-      el.removeEventListener('pointercancel', onUp)
-    }
   }, [])
 
   const handleCta = (e) => {
@@ -325,10 +182,7 @@ export default function SpaceAbout() {
             </p>
           ))}
           <div className="v2-about-copy mt-9 flex flex-wrap gap-4">
-            <button
-              onClick={handleCta}
-              className="v2-btn v2-btn-primary v2-btn-lg group"
-            >
+            <button onClick={handleCta} className="v2-btn v2-btn-primary v2-btn-lg group">
               {ABOUT.cta}
               <span
                 aria-hidden="true"
@@ -346,21 +200,13 @@ export default function SpaceAbout() {
           </div>
         </div>
 
-        {/* 3D orbital system — the organizational chart orbits the Inovers
-            core on a tilted plane: leadership on the inner ring, teams on
-            the outer ring; medallions stand upright at different depths. */}
+        {/* 3D orbital system — the organizational chart as orbiting
+            satellites: teams on the outer ring, leadership on the inner
+            ring, the Inovers core at the center. Pure CSS 3D motion. */}
         <div className="flex items-center lg:col-span-7">
-          <div
-            ref={orbitRef}
-            className={`v2-orbit relative mx-auto aspect-square w-full max-w-[560px] select-none ${
-              grabbing ? 'cursor-grabbing' : 'cursor-grab'
-            }`}
-            style={{ perspective: '1100px', touchAction: 'pan-y' }}
-          >
-            {/* Ambient ember atmosphere behind the whole system — wrapped
-                so its -inset-12 spread stays clipped to the orbit box
-                (prevents mobile horizontal overflow without flattening
-                the preserve-3d scene, which is a sibling). */}
+          <div className="v2-orbit relative mx-auto aspect-square w-full max-w-[560px]" style={{ perspective: '1100px' }}>
+            {/* Ambient ember atmosphere — clipped so it can't overflow on
+                mobile (wrapper keeps preserve-3d siblings intact). */}
             <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-full">
               <div
                 className="absolute -inset-12 rounded-full"
@@ -369,77 +215,71 @@ export default function SpaceAbout() {
                 }}
               />
             </div>
-            {/* The whole system gently bobs (preserve-3d keeps the
-                perspective chain intact through the animation) */}
+
+            {/* The whole system gently bobs */}
             <div className="animate-scene-bob absolute inset-0" style={{ transformStyle: 'preserve-3d' }}>
-              {/* The tilted disc (GSAP owns its transform) */}
+              {/* The tilted disc */}
               <div
-                ref={sceneRef}
                 className="v2-orbit-scene absolute inset-0 will-change-transform"
-                style={{ transformStyle: 'preserve-3d' }}
+                style={{ transform: `rotateX(${TILT}deg)`, transformStyle: 'preserve-3d' }}
               >
                 {/* Outer boundary ring — farthest plane */}
                 <div
-                  className="absolute inset-[4%] rounded-full border border-star-300/20"
+                  className="v2-orbit-ring absolute inset-[4%] rounded-full border border-star-300/20"
                   style={{ transform: 'translateZ(-40px)' }}
                 />
-                {/* Main orbit path — slowly rotating satellite */}
-                <div className="v2-orbit-ring animate-orbit-spin absolute inset-[16%] rounded-full border border-star-300/40 sm:inset-[22%]">
-                  <span className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ember-300 shadow-[0_0_12px_rgba(245,48,3,0.95)]" />
-                  <span className="absolute left-1/2 top-0 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ember-500/25 blur-[3px]" />
-                </div>
-                {/* Ember dashed ring — counter-rotating, slightly raised */}
-                <div className="absolute inset-0" style={{ transform: 'translateZ(14px)' }}>
-                  <div className="animate-orbit-spin-rev absolute inset-[24%] rounded-full border border-dashed border-ember-500/25 sm:inset-[30%]" />
-                </div>
-                {/* Inner ember ring — nearest plane */}
-                <div
-                  className="v2-orbit-ring absolute inset-[32%] rounded-full border border-ember-500/25 sm:inset-[38%]"
-                  style={{ transform: 'translateZ(24px)' }}
-                />
-
-                {/* Organizational chart medallions — billboarded, floating
-                    at varied depths. Teams (outer ring) first, leadership
-                    (inner ring) second. The wrapper carries preserve-3d so
-                    the billboard's rotateX keeps its depth instead of being
-                    flattened onto the disc. */}
-                {ORG_CHART.rings.map((ring, ri) => {
-                  const isLeader = ri === 0
-                  const pos = isLeader ? LEAD_POS : TEAM_POS
-                  const depths = isLeader ? LEAD_DEPTHS : TEAM_DEPTHS
-                  const medallion = isLeader ? 'h-14 w-14 sm:h-16 sm:w-16' : 'h-12 w-12 sm:h-14 sm:w-14'
-                  return ring.roles.map((r, i) => (
+                {/* Main orbit — teams ring, rotating; carries the team
+                    satellites with counter-spun icons so they stay upright */}
+                <div className="v2-orbit-ring oc-ring-a absolute inset-[15%] rounded-full border border-star-300/40">
+                  {ORG_CHART.rings[1].roles.map((r, i) => (
                     <div
                       key={r.id}
-                      className={`absolute ${pos[i]}`}
-                      style={{ transformStyle: 'preserve-3d' }}
+                      className="absolute left-1/2 top-1/2"
+                      style={{
+                        transform: `rotate(${TEAM_ANGLES[i]}deg) translateX(var(--orbit-main)) rotate(${-TEAM_ANGLES[i]}deg) rotateX(-${TILT}deg)`,
+                        transformStyle: 'preserve-3d',
+                      }}
                     >
-                      {/* GSAP reveal target — a plain div with NO positioning,
-                          so the cascade tween can't nullify the translate on
-                          the anchor wrapper above (translate: none bug). */}
                       <div className="v2-orbit-node">
-                        <div
-                          className="v2-orbit-billboard"
-                          data-depth={depths[i]}
-                          style={{ transform: `translateZ(${depths[i]}px) rotateX(-${TILT}deg)` }}
-                        >
-                          <div
-                            className="animate-float-node flex flex-col items-center gap-2"
-                            style={{ animationDelay: `${(ri * 4 + i) * 1.3}s` }}
-                            title={r.description}
-                          >
-                            <span className={`flex ${medallion} items-center justify-center rounded-full border border-ember-500/40 bg-space-900/90 text-ember-600 shadow-[0_0_25px_rgba(245,48,3,0.25),inset_0_1px_0_rgba(255,255,255,0.18),inset_0_-2px_6px_rgba(0,0,0,0.35)] dark:text-ember-300`}>
-                              {ICONS[r.icon] || ICONS.users}
-                            </span>
-                            <span className="whitespace-nowrap text-[10px] font-medium uppercase tracking-[0.2em] text-star-300">
-                              {r.title}
-                            </span>
-                          </div>
+                        <div className="oc-spin-a flex flex-col items-center gap-2" title={r.description}>
+                          <span className="flex h-14 w-14 items-center justify-center rounded-full border border-ember-500/40 bg-space-900/90 text-ember-600 shadow-[0_0_25px_rgba(245,48,3,0.25),inset_0_1px_0_rgba(255,255,255,0.18),inset_0_-2px_6px_rgba(0,0,0,0.35)] sm:h-16 sm:w-16 dark:text-ember-300">
+                            {ICONS[r.icon] || ICONS.users}
+                          </span>
+                          <span className="whitespace-nowrap text-[10px] font-medium uppercase tracking-[0.2em] text-star-300">
+                            {r.title}
+                          </span>
                         </div>
                       </div>
                     </div>
-                  ))
-                })}
+                  ))}
+                </div>
+
+                {/* Inner ember dashed ring — leadership, counter-rotating,
+                    with a beacon dot */}
+                <div className="v2-orbit-ring oc-ring-b absolute inset-[33%] rounded-full border border-dashed border-ember-500/30">
+                  <span className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ember-500/80 shadow-[0_0_12px_rgba(245,48,3,0.9)]" />
+                  {ORG_CHART.rings[0].roles.map((r, i) => (
+                    <div
+                      key={r.id}
+                      className="absolute left-1/2 top-1/2"
+                      style={{
+                        transform: `rotate(${LEAD_ANGLES[i]}deg) translateX(var(--orbit-inner)) rotate(${-LEAD_ANGLES[i]}deg) rotateX(-${TILT}deg)`,
+                        transformStyle: 'preserve-3d',
+                      }}
+                    >
+                      <div className="v2-orbit-node">
+                        <div className="oc-spin-b flex flex-col items-center gap-2" title={r.description}>
+                          <span className="flex h-12 w-12 items-center justify-center rounded-full border border-ember-500/45 bg-space-900/90 text-ember-600 shadow-[0_0_22px_rgba(245,48,3,0.3),inset_0_1px_0_rgba(255,255,255,0.18),inset_0_-2px_6px_rgba(0,0,0,0.35)] sm:h-14 sm:w-14 dark:text-ember-300">
+                            {ICONS[r.icon] || ICONS.users}
+                          </span>
+                          <span className="whitespace-nowrap text-[10px] font-semibold uppercase tracking-[0.2em] text-ember-600 dark:text-ember-300">
+                            {r.title}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
 
                 {/* Ambient dust at different depths */}
                 {DUST.map((p, i) => (
@@ -458,29 +298,13 @@ export default function SpaceAbout() {
                 ))}
               </div>
 
-              {/* Core + glow — deliberately OUTSIDE the rotating disc so the
-                  core stays pinned to the exact center of the system while
-                  the rings and medallions orbit around it. It shares the
-                  medallions' behaviour: billboarded per-frame by the drag
-                  loop (always faces the camera) and floating on the same
-                  float cycle — only its anchor differs: the middle.
-
-                  IMPORTANT: the centering lives on THIS static wrapper.
-                  GSAP's pop tween targets the billboard inside and nullifies
-                  the CSS translate property (translate: none), which would
-                  destroy Tailwind's -translate-x/y-1/2 centering — so the
-                  anchor must never sit on a GSAP-touched element. */}
+              {/* Core — pinned center, upright, floating */}
               <div
                 className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
                 style={{ transformStyle: 'preserve-3d' }}
               >
-                <div
-                  className="v2-orbit-core v2-orbit-billboard"
-                  data-depth="54"
-                  style={{ transform: `translateZ(54px) rotateX(-${TILT}deg)` }}
-                >
+                <div className="v2-orbit-core" style={{ transform: `translateZ(54px) rotateX(-${TILT}deg)` }}>
                   <div className="animate-float-node relative">
-                    {/* Glow hugging the orb — floats with it */}
                     <span
                       className="pointer-events-none absolute -inset-6 -z-10 rounded-full"
                       style={{
@@ -488,7 +312,6 @@ export default function SpaceAbout() {
                       }}
                     />
                     <div className="animate-core-pulse relative flex h-24 w-24 flex-col items-center justify-center rounded-full bg-gradient-to-br from-ember-300 via-ember-500 to-ember-700 shadow-[0_0_50px_rgba(245,48,3,0.45)] sm:h-28 sm:w-28">
-                      {/* Rim highlight for physical edge refraction */}
                       <span className="pointer-events-none absolute inset-0 rounded-full shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-2px_6px_rgba(0,0,0,0.25)]" />
                       <img src="/logo.svg" alt="Inovers" className="h-8 w-8 sm:h-9 sm:w-9" />
                       <span className="mt-1 font-display text-[11px] tracking-wide text-space-950">

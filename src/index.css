@@ -323,15 +323,31 @@ body {
   animation: scene-bob 9s ease-in-out infinite;
 }
 
-/* ─── MiniOrbit band (Hero → Services) ─── */
-.mini-orbit-spin {
-  animation: orbit-spin 40s linear infinite;
+/* ─── About orbit — MiniOrbit-style crew chart ─── */
+/* Orbit radii scale with the system size (desktop → mobile) */
+.v2-orbit {
+  --orbit-main: 190px;
+  --orbit-inner: 100px;
 }
-.mini-orbit-spin-rev {
-  animation: orbit-spin-rev 26s linear infinite;
+@media (max-width: 640px) {
+  .v2-orbit {
+    --orbit-main: 126px;
+    --orbit-inner: 64px;
+  }
 }
-.mini-sat-inner {
-  animation: orbit-spin-rev 40s linear infinite;
+/* Main (teams) ring — 70s forward; inner (leadership) ring — 45s reverse */
+.oc-ring-a {
+  animation: orbit-spin 70s linear infinite;
+}
+.oc-ring-b {
+  animation: orbit-spin-rev 45s linear infinite;
+}
+/* Icon counter-spins — keep medallion glyphs upright while orbiting */
+.oc-spin-a {
+  animation: orbit-spin-rev 70s linear infinite;
+}
+.oc-spin-b {
+  animation: orbit-spin 45s linear infinite;
 }
 
 /* ─── Split-heading chars (V4 pattern) ─── */
