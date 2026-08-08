@@ -102,14 +102,10 @@ export default function AuroraBand() {
 
   return (
     <section className="aurora-band relative h-44 overflow-hidden overflow-x-clip sm:h-56" aria-hidden="true">
-      {/* ember hairlines — top/bottom edges */}
-      <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-ember-500/35 to-transparent" />
-      <span className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-ember-500/20 to-transparent" />
-
       <canvas
         ref={canvasRef}
         className="absolute inset-0 h-full w-full"
-        style={{ filter: 'blur(10px) saturate(1.15)' }}
+        style={{ filter: 'blur(14px) saturate(1.15)' }}
       />
     </section>
   )
