@@ -75,18 +75,41 @@ export default function SpacePortfolio() {
 
   return (
     <section id="work" ref={rootRef} className="relative mx-auto max-w-7xl px-6 py-28 lg:px-10">
-      {/* ── UFO delivery strip — the saucer delivers missions ── */}
+      {/* ── UFO delivery strip — the saucer flies in, hovers, beams a
+             mission down to the pad, then banks away ── */}
+      {/* overflow-x-clip + contain: the animated flight transform leaks
+          scrollable overflow past overflow-hidden (Chrome compositing
+          quirk) when the saucer exits the strip's right edge. NOTE: don't
+          add overflow-hidden — its shorthand overrides overflow-x-clip. */}
       <div
-        className="pointer-events-none relative -mx-6 mb-6 h-24 overflow-hidden sm:-mx-10"
+        className="pointer-events-none relative -mx-6 mb-8 h-28 overflow-x-clip contain-paint sm:-mx-10"
         aria-hidden="true"
       >
+        {/* the saucer — arc flight with a hover while beaming */}
         <div className="ufo-track absolute top-2 left-0">
           <div className="ufo-bob">
-            <Ufo2D variant="transit" size={104} />
+            <Ufo2D variant="transit" size={108} />
           </div>
         </div>
-        {/* faint flight trail on the strip */}
-        <div className="absolute inset-x-0 top-14 h-px bg-gradient-to-r from-transparent via-ember-500/20 to-transparent" />
+
+        {/* dashed approach route — dashes flow toward the pad */}
+        <div className="ufo-route absolute inset-x-0 bottom-12 h-[3px] opacity-60" />
+
+        {/* twinkling stars on the strip */}
+        <span className="animate-dust absolute left-[12%] top-3 h-1.5 w-1.5 rounded-full bg-star-100/70" style={{ animationDelay: '0.6s' }} />
+        <span className="animate-dust absolute left-[30%] top-9 h-1 w-1 rounded-full bg-star-100/70" style={{ animationDelay: '1.4s' }} />
+        <span className="animate-dust absolute left-[74%] top-4 h-1.5 w-1.5 rounded-full bg-star-100/70" style={{ animationDelay: '2.2s' }} />
+        <span className="animate-dust absolute left-[89%] top-10 h-1 w-1 rounded-full bg-star-100/70" style={{ animationDelay: '0.9s' }} />
+
+        {/* delivery pad — target rings, landing ripples, spark */}
+        <div className="absolute bottom-5 left-1/2 -translate-x-1/2">
+          <span className="absolute -inset-3 rounded-full border border-ember-500/25" />
+          <span className="absolute -inset-5 rounded-full border border-dashed border-ember-500/15" />
+          <span className="relative block h-2 w-2 rounded-full bg-ember-500/80 shadow-[0_0_14px_rgba(245,48,3,0.9)]" />
+          <span className="ufo-ping-a absolute -inset-1 rounded-full border-2 border-ember-500/60" />
+          <span className="ufo-ping-b absolute -inset-1 rounded-full border border-ember-500/50" />
+          <span className="ufo-spark absolute -inset-4 flex items-center justify-center text-sm text-ember-500">✦</span>
+        </div>
       </div>
 
       <div className="mb-14 flex flex-wrap items-end justify-between gap-6">

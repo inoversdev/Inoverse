@@ -75,7 +75,7 @@ export default function SpaceApp() {
 
   return (
     <SmoothScroll>
-      <div className="relative min-h-screen bg-space-950 text-star-100 grain-overlay">
+      <div className="relative min-h-screen overflow-x-clip bg-space-950 text-star-100 grain-overlay">
         {/* Fixed universe */}
         <div ref={canvasRef} className="fixed inset-0 z-0" aria-hidden="true" />
         {/* Vignette — light: soft neutral depth; dark: original cinematic frame */}

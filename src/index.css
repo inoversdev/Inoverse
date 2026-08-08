@@ -384,16 +384,18 @@ body {
   pointer-events: none;
   user-select: none;
 }
-/* transit: continuous fly-across (12s per pass) */
+/* transit: arc flight — enters low, rises to center, HOVERS while
+   beaming, then banks away (12s per pass) */
 .ufo-track {
   animation: ufo-transit 12s linear infinite;
 }
 @keyframes ufo-transit {
-  0% { transform: translateX(-160px) translateY(0); }
-  40% { transform: translateX(calc(100vw * 0.4)) translateY(-8px); }
-  50% { transform: translateX(calc(100vw * 0.5)) translateY(0); }
-  60% { transform: translateX(calc(100vw * 0.6)) translateY(-8px); }
-  100% { transform: translateX(calc(100vw + 160px)) translateY(0); }
+  0% { transform: translateX(-170px) translateY(18px) rotate(-7deg); }
+  36% { transform: translateX(calc(100vw * 0.5 - 70px)) translateY(6px) rotate(-2deg); }
+  45% { transform: translateX(calc(100vw * 0.5)) translateY(0px) rotate(0deg); }
+  59% { transform: translateX(calc(100vw * 0.5)) translateY(0px) rotate(0deg); }
+  72% { transform: translateX(calc(100vw * 0.5 + 80px)) translateY(10px) rotate(4deg); }
+  100% { transform: translateX(calc(100vw + 170px)) translateY(18px) rotate(7deg); }
 }
 /* soft bob while in transit */
 .ufo-bob {
@@ -425,16 +427,16 @@ body {
   0%, 100% { opacity: 0.35; }
   50% { opacity: 1; }
 }
-/* delivery beam — appears while the UFO crosses the section center
-   (synced: beam at ~5.2–6.8s of the 12s transit) */
+/* delivery beam — appears while the UFO hovers over the pad
+   (synced: beam ~45–58% of the 12s transit) */
 .ufo-beam-group {
   animation: ufo-beam-cyc 12s linear infinite;
 }
 @keyframes ufo-beam-cyc {
-  0%, 42% { opacity: 0; }
-  46% { opacity: 1; }
-  58% { opacity: 1; }
-  64% { opacity: 0; }
+  0%, 44% { opacity: 0; }
+  47% { opacity: 1; }
+  57% { opacity: 1; }
+  63% { opacity: 0; }
   100% { opacity: 0; }
 }
 .ufo-beam {
@@ -442,10 +444,10 @@ body {
   animation: ufo-beam-pulse 12s linear infinite;
 }
 @keyframes ufo-beam-pulse {
-  0%, 42% { transform: scaleY(0.4); opacity: 0; }
-  46% { transform: scaleY(1); opacity: 0.9; }
-  58% { transform: scaleY(1); opacity: 0.9; }
-  64% { transform: scaleY(0.4); opacity: 0; }
+  0%, 44% { transform: scaleY(0.4); opacity: 0; }
+  47% { transform: scaleY(1); opacity: 0.9; }
+  57% { transform: scaleY(1); opacity: 0.9; }
+  63% { transform: scaleY(0.4); opacity: 0; }
   100% { transform: scaleY(0.4); opacity: 0; }
 }
 /* falling mission capsule inside the beam */
@@ -453,11 +455,56 @@ body {
   animation: ufo-capsule-drop 12s linear infinite;
 }
 @keyframes ufo-capsule-drop {
-  0%, 46% { transform: translateY(0); opacity: 0; }
-  50% { transform: translateY(14px); opacity: 1; }
-  56% { transform: translateY(18px); opacity: 1; }
-  62% { transform: translateY(26px); opacity: 0; }
-  100% { transform: translateY(26px); opacity: 0; }
+  0%, 51% { transform: translateY(0); opacity: 0; }
+  55% { transform: translateY(14px); opacity: 1; }
+  60% { transform: translateY(26px); opacity: 1; }
+  66% { transform: translateY(42px); opacity: 0; }
+  100% { transform: translateY(42px); opacity: 0; }
+}
+
+/* ─── Delivery pad (portfolio strip) ─── */
+/* landing ripples — double ring expanding where the capsule lands */
+.ufo-ping-a {
+  animation: ufo-ping 12s linear infinite;
+}
+.ufo-ping-b {
+  animation: ufo-ping 12s linear infinite;
+  animation-delay: 0.4s;
+}
+@keyframes ufo-ping {
+  0%, 55% { transform: scale(0.2); opacity: 0; }
+  61% { transform: scale(1); opacity: 0.9; }
+  72% { transform: scale(2); opacity: 0; }
+  100% { transform: scale(2); opacity: 0; }
+}
+/* landing spark — star flash at the pad */
+.ufo-spark {
+  animation: ufo-spark 12s linear infinite;
+}
+@keyframes ufo-spark {
+  0%, 57% { transform: scale(0); opacity: 0; }
+  62% { transform: scale(1.15); opacity: 1; }
+  69% { transform: scale(0.35); opacity: 0; }
+  100% { transform: scale(0.35); opacity: 0; }
+}
+/* dashed route line — dashes flow toward the pad */
+.ufo-route {
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(245, 48, 3, 0.3) 0 8px,
+    transparent 8px 20px
+  );
+  animation: ufo-route-flow 12s linear infinite;
+}
+@keyframes ufo-route-flow {
+  to { background-position-x: -168px; }
+}
+.dark .ufo-route {
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(245, 48, 3, 0.4) 0 8px,
+    transparent 8px 20px
+  );
 }
 
 /* ─── Mission grid — filter chips ─── */
