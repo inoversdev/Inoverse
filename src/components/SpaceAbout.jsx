@@ -223,29 +223,19 @@ export default function SpaceAbout() {
                 className="v2-orbit-scene absolute inset-0 will-change-transform"
                 style={{ transform: `rotateX(${TILT}deg)`, transformStyle: 'preserve-3d' }}
               >
-                {/* Outer boundary ring — thick 3D hoop on the farthest
-                    plane (3 tube layers at different depths) */}
+                {/* Outer boundary ring — farthest plane */}
                 <div
-                  className="v2-orbit-ring absolute inset-[4%]"
-                  style={{ transform: 'translateZ(-40px)', transformStyle: 'preserve-3d' }}
-                >
-                  <div className="absolute inset-0 rounded-full border border-star-300/15" style={{ transform: 'translateZ(-6px) scale(0.98)' }} />
-                  <div className="absolute inset-0 rounded-full border border-star-300/30" style={{ transform: 'translateZ(0) scale(1)' }} />
-                  <div className="absolute inset-0 rounded-full border border-star-300/20" style={{ transform: 'translateZ(6px) scale(1.02)' }} />
-                </div>
+                  className="v2-orbit-ring absolute inset-[4%] rounded-full border border-star-300/25"
+                  style={{ transform: 'translateZ(-40px)' }}
+                />
 
-                {/* Main orbit — teams ring, rotating; a 3D tube with
-                    Saturn-style shading. Carries the team satellites with
-                    counter-spun icons so they stay upright. */}
+                {/* Main orbit — teams ring, rotating; Saturn-style shading
+                    gives it volume without extra lines. Carries the team
+                    satellites with counter-spun icons so they stay upright. */}
                 <div className="v2-orbit-ring oc-ring-a absolute inset-[15%]" style={{ transformStyle: 'preserve-3d' }}>
-                  {/* tube back */}
-                  <div className="absolute inset-0 rounded-full border border-star-300/25" style={{ transform: 'translateZ(-7px) scale(0.993)' }} />
-                  {/* tube mid */}
-                  <div className="absolute inset-0 rounded-full border border-star-300/50" style={{ transform: 'translateZ(0)' }} />
-                  {/* Saturn-style shaded band — gives the ring volume */}
+                  <div className="absolute inset-0 rounded-full border border-star-300/45" style={{ transform: 'translateZ(0)' }} />
+                  {/* Saturn-style shaded band — ring volume, single layer */}
                   <div className="ring-shade pointer-events-none absolute inset-0 rounded-full" style={{ transform: 'translateZ(0)' }} />
-                  {/* tube front */}
-                  <div className="absolute inset-0 rounded-full border border-star-300/35" style={{ transform: 'translateZ(7px) scale(1.007)' }} />
                   {ORG_CHART.rings[1].roles.map((r, i) => (
                     <div
                       key={r.id}
@@ -285,11 +275,8 @@ export default function SpaceAbout() {
                 </div>
 
                 {/* Inner ember dashed ring — leadership, counter-rotating,
-                    with a beacon dot; tube depth via 2 layers */}
-                <div className="v2-orbit-ring oc-ring-b absolute inset-[33%]" style={{ transformStyle: 'preserve-3d' }}>
-                  <div className="absolute inset-0 rounded-full border border-dashed border-ember-500/20" style={{ transform: 'translateZ(-4px) scale(0.997)' }} />
-                  <div className="absolute inset-0 rounded-full border border-dashed border-ember-500/35" style={{ transform: 'translateZ(0)' }} />
-                  <div className="absolute inset-0 rounded-full border border-dashed border-ember-500/25" style={{ transform: 'translateZ(4px) scale(1.003)' }} />
+                    with a beacon dot */}
+                <div className="v2-orbit-ring oc-ring-b absolute inset-[33%] rounded-full border border-dashed border-ember-500/35" style={{ transformStyle: 'preserve-3d' }}>
                   <span className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ember-500/80 shadow-[0_0_12px_rgba(245,48,3,0.9)]" />
                   {ORG_CHART.rings[0].roles.map((r, i) => (
                     <div
