@@ -7,6 +7,8 @@ import SpaceServices from '../components/SpaceServices'
 import SpaceAbout from '../components/SpaceAbout'
 import SpacePortfolio from '../components/SpacePortfolio'
 import SpaceProcess from '../components/SpaceProcess'
+import WhyInoversSection from '../components/WhyInoversSection'
+import TestimonialsSection from '../components/TestimonialsSection'
 import SpaceContact from '../components/SpaceContact'
 
 // ─── / — the full single-page section stack ───
@@ -50,6 +52,8 @@ export default function HomePage() {
       <SpaceAbout />
       <SpacePortfolio />
       <SpaceProcess />
+      <WhyInoversSection />
+      <TestimonialsSection />
       <SpaceContact />
     </main>
   )

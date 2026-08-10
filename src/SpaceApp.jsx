@@ -10,8 +10,6 @@ import SpaceFooter from './components/SpaceFooter'
 import CursorAura from './components/effects/CursorAura'
 import HomePage from './pages/HomePage'
 import ProjectsPage from './pages/ProjectsPage'
-import WhyInoversPage from './pages/WhyInoversPage'
-import TestimonialsPage from './pages/TestimonialsPage'
 import { useParallaxLayers } from './hooks/useParallaxLayers'
 import { useTheme } from './theme'
 
@@ -154,8 +152,6 @@ export default function SpaceApp() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/projects" element={<ProjectsPage />} />
-            <Route path="/why-inovers" element={<WhyInoversPage />} />
-            <Route path="/testimonials" element={<TestimonialsPage />} />
           </Routes>
           <SpaceFooter />
         </div>

@@ -742,4 +742,28 @@ body {
   .grain-overlay::after {
     display: none;
   }
+
+  /* Exempt: the missions-strip UFO delivery loop (SpacePortfolio). It's
+     a small, contained, always-on ambient animation — not a scroll-
+     triggered flight like the 3D camera — so the blanket kill above
+     collapses it to one frozen frame instead of leaving it looping.
+     Restore its real duration/iteration so the saucer + portals keep
+     running under reduced motion. */
+  .ufo-track,
+  .ufo-portal-left,
+  .ufo-portal-right,
+  .ufo-portal-ring,
+  .ufo-portal-ring-2,
+  .ufo-bob,
+  .ufo-trail-pulse,
+  .ufo-glow-pulse,
+  .ufo-rim-pulse,
+  .ufo-beam-cyc,
+  .ufo-beam-pulse,
+  .ufo-capsule-drop,
+  .ufo-particle,
+  .ufo-wiggle {
+    animation-duration: revert !important;
+    animation-iteration-count: revert !important;
+  }
 }

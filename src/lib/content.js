@@ -13,8 +13,8 @@ export const BRAND = {
 export const NAV_LINKS = [
   { label: 'Services', kind: 'anchor', target: 'services' },
   { label: 'Work', kind: 'anchor', target: 'work' },
-  { label: 'Why Inovers', kind: 'route', to: '/why-inovers' },
-  { label: 'Testimonials', kind: 'route', to: '/testimonials' },
+  { label: 'Why Inovers', kind: 'anchor', target: 'why-inovers' },
+  { label: 'Testimonials', kind: 'anchor', target: 'testimonials' },
   { label: 'Contact', kind: 'anchor', target: 'contact' },
 ]
 
@@ -468,7 +468,7 @@ export const PROJECTS_PAGE = {
     heading: "Like what you see? Let's launch",
     accent: 'your mission next.',
     sub: 'A free 30-minute call — your goals, our playbook, zero commitment.',
-    secondary: { label: 'Read what clients say →', to: '/testimonials' },
+    secondary: null,
   },
 }
 
@@ -502,7 +502,7 @@ export const FOOTER = {
   copyright: '© 2024 Inovers. All rights reserved.',
 }
 
-// ─── /why-inovers — comparison deck + standards ───
+// ─── Why Inovers — comparison deck + standards (home section) ───
 // Compare rows are index-matched: row N of "us" answers row N of "them",
 // so the two columns line up claim-for-claim on desktop.
 export const WHY = {
@@ -531,15 +531,9 @@ export const WHY = {
     eyebrow: 'How we work',
     heading: 'The standards we hold.',
   },
-  cta: {
-    heading: "Like what you see? Let's launch",
-    accent: 'your mission next.',
-    sub: 'A free 30-minute call — your goals, our playbook, zero commitment.',
-    secondary: { label: 'Read what clients say →', to: '/testimonials' },
-  },
 }
 
-// ─── /testimonials — crew transmissions ───
+// ─── Testimonials — crew transmissions (home section) ───
 // Content honesty (plan §6): REAL quotes from named, consenting clients
 // are still pending from the CEO/CTO. These six are DUMMY entries (Mat's
 // call, 2026-08-10) — demo:true so the page renders a visible
@@ -628,7 +622,7 @@ export const TESTIMONIALS = [
   },
 ]
 
-// Page copy — holds the /testimonials shell even while the grid is empty.
+// Section copy — holds the shell even while the grid is empty.
 export const TESTIMONIALS_PAGE = {
   eyebrow: 'What clients say',
   heading: "Signals from the crews we've flown with",
@@ -637,10 +631,4 @@ export const TESTIMONIALS_PAGE = {
   holdNote: "We're gathering real words from the crews we've flown with — they'll appear here as they come in.",
   holdHeading: 'Transmissions incoming',
   demoRibbon: 'Sample layout — awaiting client sign-off',
-  cta: {
-    heading: 'Ready to be the next',
-    accent: 'mission we launch?',
-    sub: 'A free 30-minute call — your goals, our playbook, zero commitment.',
-    secondary: { label: 'See why crews choose us →', to: '/why-inovers' },
-  },
 }

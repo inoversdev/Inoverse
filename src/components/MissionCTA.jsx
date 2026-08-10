@@ -1,10 +1,8 @@
 import { Link } from 'react-router-dom'
 import { BRAND } from '../lib/content'
 
-// ─── Shared closing CTA band — extracted from ProjectsPage so /projects,
-// /why-inovers and /testimonials all close the same way. `secondary`
-// (optional) adds a second, quieter link to another sub-page — how the
-// three pages cross-link into one loop.
+// ─── Closing CTA band — used by /projects. `secondary` (optional) adds
+// a second, quieter link to another page.
 export default function MissionCTA({ heading, accent, sub, secondary }) {
   return (
     <section className="relative mx-auto max-w-7xl px-6 pb-28 lg:px-10">

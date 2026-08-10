@@ -16,7 +16,7 @@ const Cross = ({ className = '', ...props }) => (
   </svg>
 )
 
-// ─── /why-inovers — the two flight paths ───
+// ─── Why Inovers — the two flight paths ───
 // Inovers card (glass + ember) vs Typical agencies (flat, muted) —
 // deliberately NOT a red/green traffic-light pair, that palette doesn't
 // exist anywhere else on v2. Rows are index-matched so both columns
@@ -26,6 +26,9 @@ const Cross = ({ className = '', ...props }) => (
 // deck scrolls through view. No document-height/pin games — the AppShell
 // drives its 3D camera off a body-level scroll trigger and a pinned
 // section would inject height after that trigger already measured.
+//
+// Renders a plain <div> — it's mounted inside WhyInoversSection's own
+// <section>, not a page section on its own.
 export default function CompareDeck() {
   const rootRef = useRef(null)
 
@@ -84,7 +87,7 @@ export default function CompareDeck() {
   }, [])
 
   return (
-    <section ref={rootRef} className="relative mx-auto max-w-6xl px-6 pb-24 lg:px-10">
+    <div ref={rootRef} className="relative mb-16">
       <div className="grid gap-6 md:grid-cols-2">
         <div
           className="compare-card-us glass rounded-3xl p-8 transition-transform duration-300 [transform-style:preserve-3d] hover:[transform:rotateX(3deg)_rotateY(-3deg)] motion-reduce:hover:transform-none"
@@ -118,6 +121,6 @@ export default function CompareDeck() {
           </ul>
         </div>
       </div>
-    </section>
+    </div>
   )
 }
