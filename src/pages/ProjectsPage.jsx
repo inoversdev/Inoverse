@@ -2,7 +2,6 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { INDUSTRIES, PROJECTS, PROJECTS_PAGE } from '../lib/content'
-import { applyCardReveal } from '../lib/cardReveal'
 import MissionCard from '../components/MissionCard'
 import PageHero from '../components/PageHero'
 import MissionCTA from '../components/MissionCTA'
@@ -77,15 +76,33 @@ export default function ProjectsPage() {
     return () => window.removeEventListener('resize', remeasure)
   }, [])
 
-  // Entrance reveal — v4 "Selected work" choreography: alternating
-  // horizontal slide (even ←, odd →), per-card trigger, reversible.
+  // Entrance reveal — scale-in with blur: each card grows 0.9→1 and
+  // sharpens (blur 8px→0) as it scrolls from the viewport bottom edge
+  // to 55% height, scrubbed to scroll (reverses buttery-smooth).
   // Re-runs on filter changes: ctx.revert() kills the old per-card
   // triggers (no leak), fresh ones are created for the remounted grid.
   // The height morph re-measures after settling (750ms ≈ 0.7s morph).
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
-      applyCardReveal(rootRef, '.mission-card', { x: 80 })
+      gsap.utils.toArray('.mission-card').forEach((card) => {
+        gsap.fromTo(
+          card,
+          { scale: 0.9, opacity: 0, filter: 'blur(8px)' },
+          {
+            scale: 1,
+            opacity: 1,
+            filter: 'blur(0px)',
+            ease: 'none',
+            scrollTrigger: {
+              trigger: card,
+              start: 'top bottom',
+              end: 'top 55%',
+              scrub: 0.5,
+            },
+          }
+        )
+      })
     }, rootRef)
     const t = setTimeout(() => ScrollTrigger.refresh(), 750)
     return () => {

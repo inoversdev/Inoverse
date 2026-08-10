@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { BRAND, PROJECTS } from '../lib/content'
-import { applyCardReveal } from '../lib/cardReveal'
 import MissionCard from './MissionCard'
 import SplitHeading from './SplitHeading'
 import Ufo2D from './Ufo2D'
@@ -17,12 +16,30 @@ export default function SpacePortfolio() {
   // grid (all 20 + industry filters) lives on /projects.
   const featured = PROJECTS.filter((p) => p.featured)
 
-  // Mission card reveal — v4 "Selected work" choreography: alternating
-  // horizontal slide (even ←, odd →), per-card trigger, reversible.
+  // Mission card reveal — scale-in with blur: cards grow 0.9→1 and
+  // sharpen (blur 8px→0) as they scroll from the viewport bottom to 55%
+  // height, scrubbed to scroll so it reverses buttery-smooth.
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
-      applyCardReveal(rootRef, '.mission-card', { x: 80 })
+      gsap.utils.toArray('.mission-card').forEach((card) => {
+        gsap.fromTo(
+          card,
+          { scale: 0.9, opacity: 0, filter: 'blur(8px)' },
+          {
+            scale: 1,
+            opacity: 1,
+            filter: 'blur(0px)',
+            ease: 'none',
+            scrollTrigger: {
+              trigger: card,
+              start: 'top bottom',
+              end: 'top 55%',
+              scrub: 0.5,
+            },
+          }
+        )
+      })
     }, rootRef)
     return () => ctx.revert()
   }, [])
