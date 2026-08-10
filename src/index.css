@@ -419,21 +419,79 @@ body {
 .ufo-path-trail {
   transform-origin: 60px 35px;
 }
-/* transit: arc flight — enters low, rises to center, HOPS with a little
-   overshoot as it arrives, HOVERS while beaming, gives an extra wiggle
-   before banking away (12s per pass) */
+/* transit: the saucer's delivery run — EMERGES from the left portal
+   (center 4% in), rises to the strip CENTER (saucer centered, not
+   left-edge), HOPS with a little overshoot as it arrives, HOVERS while
+   beaming, then banks away and DIVES into the right portal (center 96%)
+   (12s per pass). All positions are % of the strip (the wrapper is
+   strip-sized), so the run is viewport-independent and portal-aligned. */
 .ufo-track {
   animation: ufo-transit 12s linear infinite;
 }
 @keyframes ufo-transit {
-  0% { transform: translateX(-170px) translateY(18px) rotate(-7deg); }
-  36% { transform: translateX(calc(100vw * 0.5 - 70px)) translateY(6px) rotate(-2deg); }
-  41% { transform: translateX(calc(100vw * 0.5 + 8px)) translateY(-6px) rotate(4deg); }
-  45% { transform: translateX(calc(100vw * 0.5)) translateY(0px) rotate(0deg); }
-  59% { transform: translateX(calc(100vw * 0.5)) translateY(0px) rotate(0deg); }
-  65% { transform: translateX(calc(100vw * 0.5 + 14px)) translateY(-8px) rotate(-6deg); }
-  72% { transform: translateX(calc(100vw * 0.5 + 80px)) translateY(10px) rotate(4deg); }
-  100% { transform: translateX(calc(100vw + 170px)) translateY(18px) rotate(7deg); }
+  0%   { transform: translateX(calc(4% - 37px)) translateY(10px) rotate(-8deg); opacity: 0; }
+  5%   { opacity: 1; }
+  36%  { transform: translateX(calc(50% - 114px)) translateY(6px) rotate(-2deg); }
+  41%  { transform: translateX(calc(50% - 36px)) translateY(-6px) rotate(4deg); }
+  45%  { transform: translateX(calc(50% - 44px)) translateY(0px) rotate(0deg); }
+  59%  { transform: translateX(calc(50% - 44px)) translateY(0px) rotate(0deg); }
+  65%  { transform: translateX(calc(50% - 30px)) translateY(-8px) rotate(-6deg); }
+  72%  { transform: translateX(calc(50% + 36px)) translateY(10px) rotate(4deg); }
+  93%  { transform: translateX(calc(96% - 37px)) translateY(8px) rotate(7deg); opacity: 1; }
+  100% { transform: translateX(calc(96% - 37px)) translateY(10px) rotate(8deg); opacity: 0; }
+}
+
+/* ─── Delivery portals — the saucer enters/exits through these. They
+       only APPEAR while the saucer is passing through (opacity +
+       scale gated on the 12s cycle), never static on the strip. The
+       ring spin runs continuously but is masked by the wrapper's
+       opacity. scale (the property) is animated so it composes with
+       the wrapper's positioning instead of fighting it. ─── */
+.ufo-portal {
+  opacity: 0;
+}
+.ufo-portal-left {
+  animation: portal-left 12s linear infinite;
+}
+.ufo-portal-right {
+  animation: portal-right 12s linear infinite;
+}
+@keyframes portal-left {
+  0%, 4%   { opacity: 0; scale: 0.55; }
+  8%       { opacity: 1; scale: 1; }
+  16%      { opacity: 1; scale: 1.05; }
+  24%, 100% { opacity: 0; scale: 1.1; }
+}
+@keyframes portal-right {
+  0%, 80%  { opacity: 0; scale: 0.55; }
+  84%      { opacity: 1; scale: 1; }
+  93%      { opacity: 1; scale: 1.05; }
+  100%     { opacity: 0; scale: 1.1; }
+}
+.ufo-portal-core {
+  position: absolute;
+  inset: 22%;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(245, 48, 3, 0.35), transparent 70%);
+  box-shadow: 0 0 22px rgba(245, 48, 3, 0.35);
+}
+.ufo-portal-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 2px solid rgba(245, 48, 3, 0.55);
+  box-shadow: 0 0 16px rgba(245, 48, 3, 0.4), inset 0 0 12px rgba(245, 48, 3, 0.25);
+  animation: portal-spin 7s linear infinite;
+}
+.ufo-portal-ring-2 {
+  inset: 7px;
+  border-style: dashed;
+  border-color: rgba(245, 48, 3, 0.4);
+  animation-duration: 4.5s;
+  animation-direction: reverse;
+}
+@keyframes portal-spin {
+  to { transform: rotate(360deg); }
 }
 /* bigger, bouncier bob while in transit */
 .ufo-bob {
@@ -520,26 +578,7 @@ body {
   100% { transform: translateY(42px) scale(1, 1); opacity: 0; }
 }
 
-/* ─── Delivery strip (portfolio) ─── */
-/* dashed route line — dashes flow toward the strip's center */
-.ufo-route {
-  background-image: repeating-linear-gradient(
-    90deg,
-    rgba(245, 48, 3, 0.3) 0 8px,
-    transparent 8px 20px
-  );
-  animation: ufo-route-flow 12s linear infinite;
-}
-@keyframes ufo-route-flow {
-  to { background-position-x: -168px; }
-}
-.dark .ufo-route {
-  background-image: repeating-linear-gradient(
-    90deg,
-    rgba(245, 48, 3, 0.4) 0 8px,
-    transparent 8px 20px
-  );
-}
+/* ─── Delivery scene (portfolio) — the Mars landing strip ─── */
 
 /* ─── Mission grid — filter chips ─── */
 .mission-chip {

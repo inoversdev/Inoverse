@@ -1,9 +1,10 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { BRAND, INDUSTRIES, PROJECTS } from '../lib/content'
+import { INDUSTRIES, PROJECTS, PROJECTS_PAGE } from '../lib/content'
 import MissionCard from '../components/MissionCard'
-import SplitHeading from '../components/SplitHeading'
+import PageHero from '../components/PageHero'
+import MissionCTA from '../components/MissionCTA'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -144,20 +145,12 @@ export default function ProjectsPage() {
 
   return (
     <div ref={rootRef}>
-      {/* ── Page heading ── */}
-      <section className="relative mx-auto max-w-7xl px-6 pt-40 pb-16 lg:px-10 lg:pt-48">
-        <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-ember-500">Our Work</p>
-        <SplitHeading
-          as="h1"
-          text="All missions launched"
-          accent="launched"
-          className="font-display text-4xl font-semibold leading-[1.05] tracking-tight text-star-100 sm:text-5xl lg:text-6xl"
-        />
-        <p className="mt-5 max-w-lg leading-relaxed text-star-400">
-          The full fleet — every project we've shipped, from restaurant systems to hotel
-          platforms. Filter by industry to find the work that fits your business.
-        </p>
-      </section>
+      <PageHero
+        eyebrow={PROJECTS_PAGE.eyebrow}
+        heading={PROJECTS_PAGE.heading}
+        accent={PROJECTS_PAGE.headingAccent}
+        lede={PROJECTS_PAGE.lede}
+      />
 
       <section className="relative mx-auto max-w-7xl px-6 pb-16 lg:px-10">
         {/* ── Industry filter — business-owner friendly categories ── */}
@@ -223,34 +216,12 @@ export default function ProjectsPage() {
         </div>
       </section>
 
-      {/* ── Closing Book a Call band ── */}
-      <section className="relative mx-auto max-w-7xl px-6 pb-28 lg:px-10">
-        <div className="glass relative overflow-hidden rounded-3xl px-8 py-16 text-center sm:px-14">
-          <div
-            data-parallax="0.12"
-            className="pointer-events-none absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-ember-500/20 blur-[90px]"
-          />
-          <h2 className="relative font-display text-3xl font-semibold leading-[1.1] tracking-tight text-star-100 sm:text-4xl">
-            Like what you see? Let's launch{' '}
-            <span className="ember-text font-light">your mission</span> next.
-          </h2>
-          <p className="relative mx-auto mt-4 max-w-md text-sm leading-relaxed text-star-400">
-            A free 30-minute call — your goals, our playbook, zero commitment.
-          </p>
-          <a
-            href={BRAND.calendly}
-            target="_blank"
-            rel="noreferrer"
-            className="v2-btn v2-btn-primary v2-btn-lg group relative mt-8"
-          >
-            Book a Call
-            <span
-              aria-hidden="true"
-              className="transition-transform duration-300 ease-out group-hover:translate-x-1 motion-reduce:translate-x-0 motion-reduce:transition-none"
-            >→</span>
-          </a>
-        </div>
-      </section>
+      <MissionCTA
+        heading={PROJECTS_PAGE.cta.heading}
+        accent={PROJECTS_PAGE.cta.accent}
+        sub={PROJECTS_PAGE.cta.sub}
+        secondary={PROJECTS_PAGE.cta.secondary}
+      />
     </div>
   )
 }

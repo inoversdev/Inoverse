@@ -11,11 +11,21 @@ export const BRAND = {
 }
 
 export const NAV_LINKS = [
-  { label: 'Services', target: 'services' },
-  { label: 'About', target: 'about' },
-  { label: 'Work', target: 'work' },
-  { label: 'Process', target: 'process' },
-  { label: 'Contact', target: 'contact' },
+  { label: 'Services', kind: 'anchor', target: 'services' },
+  { label: 'Work', kind: 'anchor', target: 'work' },
+  { label: 'Why Inovers', kind: 'route', to: '/why-inovers' },
+  { label: 'Testimonials', kind: 'route', to: '/testimonials' },
+  { label: 'Contact', kind: 'anchor', target: 'contact' },
+]
+
+// Fuller list for the footer — includes anchors that got bumped out of
+// the top bar to make room for the two new routes, plus a direct link
+// to the full project manifest.
+export const FOOTER_LINKS = [
+  ...NAV_LINKS,
+  { label: 'About', kind: 'anchor', target: 'about' },
+  { label: 'Process', kind: 'anchor', target: 'process' },
+  { label: 'All work', kind: 'route', to: '/projects' },
 ]
 
 export const HERO = {
@@ -79,54 +89,100 @@ export const ABOUT = {
   ],
 }
 
-// ─── What we Build (Services) — Instagram-style bento mosaic ───
-// Data-driven: add a service by pushing an entry here — the grid
-// reflows automatically. size: 'lg' anchor tiles get extra room for a
-// visual; 'sm' tiles cluster around them. media picks a placeholder
-// frame visual (browser / phones / flow); real screenshots can replace
-// these later via a `src` field. bullets feed the hover/expand overlay.
+// ─── What we Build (Services) — interlocking zigzag masonry ───
+// Section header copy — adopted from Mat's pixel mockup (2026-08-09).
+export const servicesHeading = 'We build digital experiences that drive results.'
+export const servicesSubtitle =
+  'Web solutions that are fast, responsive, and designed to help your business grow.'
+
+// Each service = { text card, media block } pair. Pairs alternate sides
+// down the page (even rows: text left / media right; odd rows: media
+// left / text right). media.grid picks the desktop tile grid; each item
+// carries a span hint ('lg:col-span-2 lg:row-span-2' etc.) so the
+// screenshot tiles form a true bento mosaic, not a uniform grid. On
+// mobile the spans collapse and tiles stack full-width. media.items are
+// screenshot refs — `src: null` renders an empty browser/phone chrome
+// placeholder; drop a path in and the real screenshot renders in the
+// same slot (layout never breaks on the swap). Text details are the
+// original service copy: promise + description + feature bullets.
 export const SERVICES = [
   {
     id: 'web',
+    index: '01',
     icon: 'globe',
     title: 'Website Development',
-    tagline: 'Conversion-ready sites, launched in 3 days.',
-    size: 'xl',
-    media: 'browser',
-    bullets: [
+    promise: 'Built within 3 days',
+    description:
+      'Fast, modern, conversion ready websites engineered to launch in days not months.',
+    features: [
       'Landing pages & company sites',
       'E-commerce & booking systems',
       'Performance-first builds',
       'Analytics & SEO foundation',
     ],
+    media: {
+      grid: 'lg:grid-cols-3 lg:grid-rows-3',
+      items: [
+        { shape: 'browser', src: null, span: 'lg:col-span-2 lg:row-span-2' }, // big wide hero
+        { shape: 'browser', src: null, span: '' },
+        { shape: 'browser', src: null, span: '' },
+        { shape: 'browser', src: null, span: '' },
+        { shape: 'browser', src: null, span: '' },
+        { shape: 'browser', src: null, span: '' },
+      ],
+    },
   },
   {
     id: 'software',
+    index: '02',
     icon: 'code',
     title: 'Software Development',
-    tagline: 'Mobile apps and web platforms built for scale.',
-    size: 'lg',
-    media: 'phones',
-    bullets: [
+    promise: 'Mobile · Web · Custom',
+    description:
+      'Custom software tailored to your business from mobile apps to web platforms built for scale.',
+    features: [
       'Mobile apps (iOS & Android)',
       'Web applications',
       'Custom business software',
       'AI integrations',
     ],
+    media: {
+      grid: 'lg:grid-cols-4 lg:grid-rows-3',
+      items: [
+        { shape: 'phone', src: null, span: 'lg:col-span-2 lg:row-span-2' }, // big phone hero
+        { shape: 'browser', src: null, span: '' },
+        { shape: 'phone', src: null, span: '' },
+        { shape: 'browser', src: null, span: 'lg:col-span-2' }, // wide web
+        { shape: 'phone', src: null, span: 'lg:col-span-2' }, // wide mobile
+        { shape: 'browser', src: null, span: 'lg:col-span-2' }, // wide web
+      ],
+    },
   },
   {
     id: 'systems',
+    index: '03',
     icon: 'layers',
     title: 'Systems & Automation',
-    tagline: 'Smarter operations, end to end.',
-    size: 'lg',
-    media: 'flow',
-    bullets: [
+    promise: 'Smarter operations',
+    description:
+      'Integrated business systems and intelligent automation that streamline how you operate.',
+    features: [
       'Business process automation',
       'CRM & workflow systems',
       'Data analytics & dashboards',
       'System architecture & strategy',
     ],
+    media: {
+      grid: 'lg:grid-cols-4 lg:grid-rows-3',
+      items: [
+        { shape: 'browser', src: null, span: 'lg:col-span-2 lg:row-span-2' }, // big dashboard first
+        { shape: 'browser', src: null, span: '' },
+        { shape: 'browser', src: null, span: '' },
+        { shape: 'browser', src: null, span: 'lg:col-span-2' }, // wide
+        { shape: 'browser', src: null, span: 'lg:col-span-2' }, // wide
+        { shape: 'browser', src: null, span: 'lg:col-span-2' }, // wide
+      ],
+    },
   },
 ]
 
@@ -402,6 +458,20 @@ export const PROCESS = [
   },
 ]
 
+// ─── /projects — page shell copy (PageHero + closing CTA) ───
+export const PROJECTS_PAGE = {
+  eyebrow: 'Our Work',
+  heading: 'All missions launched',
+  headingAccent: 'launched',
+  lede: "The full fleet — every project we've shipped, from restaurant systems to hotel platforms. Filter by industry to find the work that fits your business.",
+  cta: {
+    heading: "Like what you see? Let's launch",
+    accent: 'your mission next.',
+    sub: 'A free 30-minute call — your goals, our playbook, zero commitment.',
+    secondary: { label: 'Read what clients say →', to: '/testimonials' },
+  },
+}
+
 export const CONTACT = {
   heading: "Let's build something together",
   subheading:
@@ -430,4 +500,69 @@ export const FOOTER = {
   blurb:
     'Custom software, systems, and technology solutions — helping your business thrive in the digital age.',
   copyright: '© 2024 Inovers. All rights reserved.',
+}
+
+// ─── /why-inovers — comparison deck + standards ───
+// Compare rows are index-matched: row N of "us" answers row N of "them",
+// so the two columns line up claim-for-claim on desktop.
+export const WHY = {
+  eyebrow: 'Why Inovers',
+  heading: 'Why crews fly with Inovers',
+  headingAccent: 'Inovers',
+  lede:
+    'Two ways to ship software. One keeps you close to the work. The other keeps you waiting.',
+  compare: {
+    usLabel: 'Inovers',
+    themLabel: 'Typical agencies',
+    rows: [
+      { us: 'You work with the people who build', them: 'Account managers between you and the work' },
+      { us: 'Working checkpoints, not a black box', them: 'Progress hidden until the big reveal' },
+      { us: 'Focused launches in as little as 3 days', them: 'Months of process for weeks of work' },
+      { us: 'Design and engineering move together', them: 'Design and engineering in separate silos' },
+      { us: 'Clear scope before code begins', them: 'Scope creep without a shared plan' },
+    ],
+  },
+  standards: {
+    eyebrow: 'How we work',
+    heading: 'The standards we hold.',
+  },
+  cta: {
+    heading: "Like what you see? Let's launch",
+    accent: 'your mission next.',
+    sub: 'A free 30-minute call — your goals, our playbook, zero commitment.',
+    secondary: { label: 'Read what clients say →', to: '/testimonials' },
+  },
+}
+
+// ─── /testimonials — crew transmissions ───
+// Content honesty (plan §6): ships EMPTY until the CEO/CTO supplies real
+// quotes from named, consenting clients. No invented people, no rating
+// without a real source. `status: 'live'` + a populated array is the only
+// switch that turns the hold state into the grid.
+export const TESTIMONIALS_META = {
+  status: 'pending', // 'pending' | 'live'
+  average: null, // e.g. 4.9 — ONLY with a real source
+  count: null, // e.g. 50
+  source: null, // e.g. 'Google Reviews' — required if average is set
+}
+
+export const TESTIMONIALS = [] // entry shape:
+// { id, quote, name, role, company, initials, avatar: 'ember'|'violet'|'teal'|'blue'|'amber'|'sky',
+//   rating: 5, demo: false }
+
+// Page copy — holds the /testimonials shell even while the grid is empty.
+export const TESTIMONIALS_PAGE = {
+  eyebrow: 'What clients say',
+  heading: "Signals from the crews we've flown with",
+  headingAccent: "crews we've flown with",
+  lede: 'Real words from teams who traded silence and hand-offs for a direct line to the people building their product.',
+  holdNote: "We're gathering real words from the crews we've flown with — they'll appear here as they come in.",
+  holdHeading: 'Transmissions incoming',
+  demoRibbon: 'Sample layout — awaiting client sign-off',
+  cta: {
+    heading: 'Ready to be the next',
+    accent: 'mission we launch?',
+    sub: 'A free 30-minute call — your goals, our playbook, zero commitment.',
+    secondary: { label: 'See why crews choose us →', to: '/why-inovers' },
+  },
 }

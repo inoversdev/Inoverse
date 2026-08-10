@@ -1,7 +1,12 @@
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useLenis } from 'lenis/react'
-import { BRAND, FOOTER, NAV_LINKS } from '../lib/content'
+import { BRAND, FOOTER, FOOTER_LINKS } from '../lib/content'
 
+// ─── Footer — typed FOOTER_LINKS renderer ───
+// Same contract as the top bar: anchors scroll home sections (with a
+// navigate-home handoff from other routes), routes use react-router
+// <Link>. Fed the fuller list — About + Process live here since the top
+// bar dropped them for the two new routes.
 export default function SpaceFooter() {
   const lenis = useLenis()
   const navigate = useNavigate()
@@ -40,16 +45,26 @@ export default function SpaceFooter() {
         </div>
 
         <nav className="flex flex-wrap items-center justify-center gap-8">
-          {NAV_LINKS.map((l) => (
-            <a
-              key={l.target}
-              href={`#${l.target}`}
-              onClick={(e) => handleNav(e, l.target)}
-              className="text-sm text-star-400 transition-colors hover:text-ember-500"
-            >
-              {l.label}
-            </a>
-          ))}
+          {FOOTER_LINKS.map((l) =>
+            l.kind === 'route' ? (
+              <Link
+                key={l.to}
+                to={l.to}
+                className="text-sm text-star-400 transition-colors hover:text-ember-500"
+              >
+                {l.label}
+              </Link>
+            ) : (
+              <a
+                key={l.target}
+                href={`#${l.target}`}
+                onClick={(e) => handleNav(e, l.target)}
+                className="text-sm text-star-400 transition-colors hover:text-ember-500"
+              >
+                {l.label}
+              </a>
+            )
+          )}
         </nav>
 
         <div className="flex flex-wrap items-center justify-center gap-6 text-xs text-star-600">

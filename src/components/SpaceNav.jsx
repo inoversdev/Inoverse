@@ -1,12 +1,20 @@
-import { useEffect, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useLenis } from 'lenis/react'
 import { BRAND, NAV_LINKS } from '../lib/content'
 import { useTheme } from '../theme'
 
+// ─── Top navigation — typed NAV_LINKS renderer ───
+// kind:'anchor' → home-section scroll (or navigate home with a scrollTo
+// handoff when on another route); kind:'route' → react-router <Link> with
+// an ember active state on the matching pathname.
+// Desktop links appear at lg+; below lg a full-screen glass drawer takes
+// over (the bar was at its ceiling with five links + Book Call + toggle).
 export default function SpaceNav() {
   const [scrolled, setScrolled] = useState(false)
   const [hidden, setHidden] = useState(false)
+  const [open, setOpen] = useState(false)
+  const burgerRef = useRef(null)
   const lenis = useLenis()
   const { theme, toggleTheme } = useTheme()
   const isDark = theme === 'dark'
@@ -56,6 +64,97 @@ export default function SpaceNav() {
     }
   }
 
+  // ── Mobile drawer ──
+  // Lenis owns the scroll; CSS overflow can't hold it, so stop/start it.
+  const closeDrawer = () => {
+    setOpen(false)
+    lenis?.start()
+    burgerRef.current?.focus()
+  }
+  const toggleDrawer = () => {
+    const next = !open
+    setOpen(next)
+    if (next) lenis?.stop()
+    else lenis?.start()
+  }
+
+  // Escape closes the drawer.
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e) => {
+      if (e.key === 'Escape') closeDrawer()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open])
+
+  // Route change (drawer link selected) → close + restore scroll.
+  useEffect(() => {
+    if (open) {
+      setOpen(false)
+      lenis?.start()
+      burgerRef.current?.focus()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname])
+
+  const linkCls = (active) =>
+    `relative text-sm transition-colors hover:text-ember-500 ${
+      active ? 'text-ember-500' : 'text-star-300'
+    }`
+
+  const renderLink = (l) => {
+    if (l.kind === 'route') {
+      const active = location.pathname === l.to
+      return (
+        <Link
+          key={l.to}
+          to={l.to}
+          className={`${linkCls(active)} ${active ? 'after:absolute after:inset-x-0 after:-bottom-1 after:h-0.5 after:bg-ember-500' : ''}`}
+        >
+          {l.label}
+        </Link>
+      )
+    }
+    return (
+      <a
+        key={l.target}
+        href={`#${l.target}`}
+        onClick={(e) => handleNav(e, l.target)}
+        className={linkCls(false)}
+      >
+        {l.label}
+      </a>
+    )
+  }
+
+  const renderDrawerLink = (l) => {
+    const cls =
+      'block py-3 text-2xl font-medium tracking-tight transition-colors hover:text-ember-500'
+    if (l.kind === 'route') {
+      const active = location.pathname === l.to
+      return (
+        <Link key={l.to} to={l.to} className={`${cls} ${active ? 'text-ember-500' : 'text-star-200'}`}>
+          {l.label}
+        </Link>
+      )
+    }
+    return (
+      <a
+        key={l.target}
+        href={`#${l.target}`}
+        onClick={(e) => {
+          handleNav(e, l.target)
+          closeDrawer()
+        }}
+        className={`${cls} text-star-200`}
+      >
+        {l.label}
+      </a>
+    )
+  }
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-500 ${
@@ -89,17 +188,8 @@ export default function SpaceNav() {
         </a>
 
         <div className="flex items-center gap-3">
-          <nav className={`hidden items-center md:flex ${scrolled ? 'gap-6' : 'gap-8'} transition-all duration-500`}>
-            {NAV_LINKS.map((l) => (
-              <a
-                key={l.target}
-                href={`#${l.target}`}
-                onClick={(e) => handleNav(e, l.target)}
-                className="text-sm text-star-300 transition-colors hover:text-ember-500"
-              >
-                {l.label}
-              </a>
-            ))}
+          <nav className={`hidden items-center lg:flex ${scrolled ? 'gap-6' : 'gap-8'} transition-all duration-500`}>
+            {NAV_LINKS.map((l) => renderLink(l))}
             <a
               href={BRAND.calendly}
               target="_blank"
@@ -132,8 +222,60 @@ export default function SpaceNav() {
               </svg>
             )}
           </button>
+
+          {/* Mobile hamburger — below lg the drawer is the only nav */}
+          <button
+            ref={burgerRef}
+            onClick={toggleDrawer}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-star-300/30 text-star-400 transition-all duration-500 hover:border-ember-500/60 hover:text-ember-500 active:scale-90 lg:hidden"
+          >
+            {open ? (
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+                <path d="M4 7h16M4 12h16M4 17h16" />
+              </svg>
+            )}
+          </button>
         </div>
       </div>
+
+      {/* Mobile drawer — full-screen glass panel. Header stays above it
+          (z-50 > z-40) so the hamburger turns into a close button. */}
+      {open && (
+        <div id="mobile-menu" className="fixed inset-0 z-40 lg:hidden" aria-modal="true" role="dialog">
+          <div className="absolute inset-0 bg-space-950/70 backdrop-blur-sm" onClick={closeDrawer} />
+          <nav className="glass v2-header-glass absolute inset-0 flex flex-col justify-between px-8 pt-28 pb-12">
+            <div className="flex flex-col">
+              {NAV_LINKS.map((l) => renderDrawerLink(l))}
+            </div>
+            <div className="flex flex-col gap-6">
+              <a
+                href={BRAND.calendly}
+                target="_blank"
+                rel="noreferrer"
+                onClick={closeDrawer}
+                className="v2-btn v2-btn-primary v2-btn-lg w-full"
+              >
+                Book a Call
+              </a>
+              <button
+                onClick={() => {
+                  toggleTheme()
+                }}
+                className="flex items-center justify-center gap-2 text-sm text-star-400 transition-colors hover:text-ember-500"
+              >
+                {isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              </button>
+            </div>
+          </nav>
+        </div>
+      )}
     </header>
   )
 }

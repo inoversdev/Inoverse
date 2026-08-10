@@ -21,7 +21,10 @@ gsap.registerPlugin(ScrollTrigger)
 // the four node anchors exactly, so the numbered circles sit ON the curve:
 //   N1 (40,150) upper-left · N2 (260,280) mid-right
 //   N3 (40,430) lower-left · N4 (150,600) bottom-center
-const MOBILE_PATH_D = 'M 40 40 C 40 100, 40 100, 40 150 C 40 200, 260 210, 260 280 C 260 350, 40 360, 40 430 C 40 500, 150 510, 150 600'
+// The N3→N4 leg hugs the left rail (x ≤ 32) until it is BELOW the step-4
+// text block (y ≈ 555), then dives right into the bottom-center node —
+// the curve never slices through the "Launch & Grow" copy.
+const MOBILE_PATH_D = 'M 40 40 C 40 100, 40 100, 40 150 C 40 200, 260 210, 260 280 C 260 350, 40 360, 40 430 C 32 470, 32 495, 32 555 C 32 585, 90 595, 150 600'
 const MOBILE_VIEW_W = 300
 const MOBILE_VIEW_H = 700
 
@@ -157,7 +160,7 @@ export default function SpaceProcess() {
     { circle: 'left-[13%] top-[21%]', text: 'left-[27%] top-[21%] w-[61%] text-left' },
     { circle: 'left-[87%] top-[40%]', text: 'left-[12%] top-[40%] w-[61%] text-left' },
     { circle: 'left-[13%] top-[61%]', text: 'left-[27%] top-[61%] w-[61%] text-left' },
-    { circle: 'left-1/2 top-[86%]', text: 'left-1/2 top-[70%] w-[80%] -translate-x-1/2 text-center' },
+    { circle: 'left-1/2 top-[86%]', text: 'left-1/2 top-[74%] w-[80%] -translate-x-1/2 text-center' },
   ]
 
   return (
@@ -255,7 +258,7 @@ export default function SpaceProcess() {
           {PROCESS.map((p, i) => {
             const pos = MOBILE_NODES[i]
             return (
-              <div key={p.step} className="v2-process-item-m pointer-events-none absolute inset-0">
+              <div key={p.step} className="v2-process-item-m pointer-events-none absolute inset-0 z-10">
                 <span
                   className={`flight-node-num absolute z-10 flex h-[52px] w-[52px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-ember-500/50 bg-space-900 text-sm font-semibold text-ember-600 dark:text-ember-300 ${pos.circle}`}
                 >

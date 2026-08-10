@@ -42,31 +42,66 @@ export default function SpacePortfolio() {
 
   return (
     <section id="work" ref={rootRef} className="relative mx-auto max-w-7xl px-6 py-28 lg:px-10">
-      {/* ── UFO delivery strip — the saucer flies in, hovers, beams a
-             mission down to the pad, then banks away ── */}
-      {/* overflow-x-clip + contain: the animated flight transform leaks
-          scrollable overflow past overflow-hidden (Chrome compositing
-          quirk) when the saucer exits the strip's right edge. NOTE: don't
-          add overflow-hidden — its shorthand overrides overflow-x-clip. */}
+      {/* ── Delivery strip — the saucer's classic delivery run over the
+             Martian dunes: flies in, hovers, beams a mission down, then
+             banks away. 12s loop, synced with the beam/capsule timings
+             inside Ufo2D (beam ~47-58%, capsule ~51-66%).
+             overflow-x-clip + contain: the animated flight transform
+             leaks scrollable overflow past overflow-hidden (Chrome
+             compositing quirk) when the saucer exits the strip's right
+             edge. NOTE: don't add overflow-hidden — its shorthand
+             overrides overflow-x-clip. ── */}
       <div
-        className="pointer-events-none relative -mx-6 mb-8 h-28 overflow-x-clip contain-paint sm:-mx-10"
+        className="pointer-events-none relative -mx-6 mb-8 h-36 overflow-x-clip contain-paint sm:-mx-10 sm:h-64"
         aria-hidden="true"
       >
-        {/* the saucer — arc flight with a hover while beaming */}
-        <div className="ufo-track absolute top-2 left-0">
-          <div className="ufo-bob">
-            <Ufo2D variant="transit" size={108} />
+        {/* Martian ground — layered dunes at the horizon */}
+        <svg className="absolute inset-x-0 bottom-0 h-[30%] w-full" viewBox="0 0 400 100" preserveAspectRatio="none">
+          <path
+            d="M0 100 L0 58 Q 90 40 180 56 T 400 52 L400 100 Z"
+            className="fill-ember-500/10 dark:fill-ember-700/40"
+          />
+          <path
+            d="M0 100 L0 72 Q 110 56 230 70 T 400 66 L400 100 Z"
+            className="fill-ember-500/20 dark:fill-ember-600/50"
+          />
+        </svg>
+
+        {/* the saucer — the classic delivery run, flying low over the
+            dunes. The wrapper spans the full strip (w-full) so the
+            %-based flight keyframes move the saucer across the strip,
+            not across its own width. Flight line is responsive: mobile
+            shrinks the saucer (scale .7) and flies at 34% so the
+            entry/exit dips never clip the horizon; desktop flies at
+            46%. */}
+        <div className="ufo-track absolute top-[34%] left-0 w-full sm:top-[46%]">
+          <div className="max-sm:scale-[0.7]">
+            <div className="ufo-bob">
+              <Ufo2D variant="transit" size={88} />
+            </div>
           </div>
         </div>
 
-        {/* dashed approach route — dashes flow across the strip */}
-        <div className="ufo-route absolute inset-x-0 bottom-12 h-[3px] opacity-60" />
+        {/* Portals — the saucer emerges from the left portal, delivers,
+            then dives into the right portal. Each portal only APPEARS
+            while the saucer is passing through it (fades in/out on the
+            12s cycle), never static. Centers sit at 4% / 96% of the
+            strip — the exact spots the saucer's run starts and ends. */}
+        <div className="ufo-portal ufo-portal-left absolute left-[calc(4%-32px)] top-[calc(55%-32px)] h-16 w-16 sm:left-[calc(4%-48px)] sm:top-[calc(55%-48px)] sm:h-24 sm:w-24">
+          <span className="ufo-portal-core" />
+          <span className="ufo-portal-ring" />
+          <span className="ufo-portal-ring ufo-portal-ring-2" />
+        </div>
+        <div className="ufo-portal ufo-portal-right absolute right-[calc(4%-32px)] top-[calc(55%-32px)] h-16 w-16 sm:right-[calc(4%-48px)] sm:top-[calc(55%-48px)] sm:h-24 sm:w-24">
+          <span className="ufo-portal-core" />
+          <span className="ufo-portal-ring" />
+          <span className="ufo-portal-ring ufo-portal-ring-2" />
+        </div>
 
-        {/* twinkling stars on the strip */}
+        {/* twinkling stars in the sky */}
         <span className="animate-dust absolute left-[12%] top-3 h-1.5 w-1.5 rounded-full bg-star-100/70" style={{ animationDelay: '0.6s' }} />
         <span className="animate-dust absolute left-[30%] top-9 h-1 w-1 rounded-full bg-star-100/70" style={{ animationDelay: '1.4s' }} />
         <span className="animate-dust absolute left-[74%] top-4 h-1.5 w-1.5 rounded-full bg-star-100/70" style={{ animationDelay: '2.2s' }} />
-        <span className="animate-dust absolute left-[89%] top-10 h-1 w-1 rounded-full bg-star-100/70" style={{ animationDelay: '0.9s' }} />
       </div>
 
       <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
