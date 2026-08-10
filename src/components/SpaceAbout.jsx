@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { useLenis } from 'lenis/react'
 import { ABOUT, BRAND } from '../lib/content'
 import SplitHeading from './SplitHeading'
 import OrbitSystem from './OrbitSystem'
@@ -10,7 +10,6 @@ gsap.registerPlugin(ScrollTrigger)
 
 export default function SpaceAbout() {
   const rootRef = useRef(null)
-  const lenis = useLenis()
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -32,19 +31,6 @@ export default function SpaceAbout() {
     return () => ctx.revert()
   }, [])
 
-  const handleCta = (e) => {
-    e.preventDefault()
-    if (lenis) {
-      lenis.scrollTo('#contact', {
-        offset: 0,
-        duration: 1.4,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      })
-    } else {
-      document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })
-    }
-  }
-
   return (
     <section id="about" ref={rootRef} className="relative mx-auto max-w-7xl px-6 py-28 lg:px-10">
       <div className="grid gap-14 lg:grid-cols-12 lg:gap-10">
@@ -65,13 +51,19 @@ export default function SpaceAbout() {
             </p>
           ))}
           <div className="v2-about-copy mt-9 flex flex-wrap gap-4">
-            <button onClick={handleCta} className="v2-btn v2-btn-primary v2-btn-lg group">
+            {/* Crews → the /crew page — the About section is the crew's
+                home ("The crew behind Inovers"), so its primary action
+                opens the crew (Mat's call 2026-08-10). */}
+            <Link to="/crew" className="v2-btn v2-btn-primary v2-btn-lg group">
               {ABOUT.cta}
               <span
                 aria-hidden="true"
                 className="transition-transform duration-300 ease-out group-hover:translate-x-1 motion-reduce:translate-x-0 motion-reduce:transition-none"
               >→</span>
-            </button>
+            </Link>
+            {/* Work With Us → books the free call directly (Mat's call
+                2026-08-10): working with Inovers starts with the
+                booking, not the form. */}
             <a
               href={BRAND.calendly}
               target="_blank"

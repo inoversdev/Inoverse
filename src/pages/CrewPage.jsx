@@ -251,7 +251,9 @@ export default function CrewPage() {
           <div ref={contentInnerRef}>
             {filtered.length ? (
               <div key={activeFilter}>
-                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {/* Compact profile cards, centered wrap — the
+                    dorydelivery.com/about layout (Mat's call 2026-08-10) */}
+                <div className="flex flex-wrap justify-center gap-6 lg:gap-8">
                   {filtered.map((m) => (
                     <CrewCard key={m.id} member={m} />
                   ))}

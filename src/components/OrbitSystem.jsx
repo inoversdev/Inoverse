@@ -258,139 +258,139 @@ export default function OrbitSystem() {
       </div>
 
       {/* The whole system gently bobs */}
-      <div className="animate-scene-bob absolute inset-0" style={{ transformStyle: 'preserve-3d' }}>
-        {/* The tilted disc */}
-        <div
-          ref={sceneRef}
-          className="v2-orbit-scene absolute inset-0 will-change-transform"
-          style={{ transform: `rotateX(${TILT}deg)`, transformStyle: 'preserve-3d' }}
-        >
-          {/* Outer boundary ring — farthest plane */}
-          <div
-            className="v2-orbit-ring absolute inset-[4%] rounded-full border border-star-300/25"
-            style={{ transform: 'translateZ(-40px)' }}
-          />
-
-          {/* Main orbit — teams ring, rotating; Saturn-style shading
-              gives it volume without extra lines. Carries the team
-              satellites with counter-spun icons so they stay upright. */}
-          <div className="v2-orbit-ring oc-ring-a absolute inset-[15%]" style={{ transformStyle: 'preserve-3d' }}>
-            <div className="absolute inset-0 rounded-full border border-star-300/45" style={{ transform: 'translateZ(0)' }} />
-            <div className="ring-shade pointer-events-none absolute inset-0 rounded-full" style={{ transform: 'translateZ(0)' }} />
-            {ORG_CHART.rings[1].roles.map((r, i) => (
+            <div className="animate-scene-bob absolute inset-0" style={{ transformStyle: 'preserve-3d' }}>
+              {/* The tilted disc */}
               <div
-                key={r.id}
-                className="v2-orbit-billboard absolute left-1/2 top-1/2"
-                data-base={`rotate(${TEAM_ANGLES[i]}deg) translateX(var(--orbit-main)) rotate(${-TEAM_ANGLES[i]}deg)`}
-                style={{
-                  transform: `rotate(${TEAM_ANGLES[i]}deg) translateX(var(--orbit-main)) rotate(${-TEAM_ANGLES[i]}deg) rotateX(-${TILT}deg)`,
-                  transformStyle: 'preserve-3d',
-                }}
+                ref={sceneRef}
+                className="v2-orbit-scene absolute inset-0 will-change-transform"
+                style={{ transform: `rotateX(${TILT}deg)`, transformStyle: 'preserve-3d' }}
               >
-                <div className="v2-orbit-node">
-                  <div className="oc-spin-a flex flex-col items-center gap-2" title={r.description}>
-                    <span
-                      className="relative flex h-14 w-14 items-center justify-center rounded-full border border-ember-500/40 text-ember-100 shadow-[0_0_25px_rgba(245,48,3,0.25),inset_0_3px_4px_rgba(255,255,255,0.3),inset_0_-7px_11px_rgba(0,0,0,0.8)] sm:h-16 sm:w-16"
+                {/* Outer boundary ring — farthest plane */}
+                <div
+                  className="v2-orbit-ring absolute inset-[4%] rounded-full border border-star-300/25"
+                  style={{ transform: 'translateZ(-40px)' }}
+                />
+
+                {/* Main orbit — teams ring, rotating; Saturn-style shading
+                    gives it volume without extra lines. Carries the team
+                    satellites with counter-spun icons so they stay upright. */}
+                <div className="v2-orbit-ring oc-ring-a absolute inset-[15%]" style={{ transformStyle: 'preserve-3d' }}>
+                  <div className="absolute inset-0 rounded-full border border-star-300/45" style={{ transform: 'translateZ(0)' }} />
+                  <div className="ring-shade pointer-events-none absolute inset-0 rounded-full" style={{ transform: 'translateZ(0)' }} />
+                  {ORG_CHART.rings[1].roles.map((r, i) => (
+                    <div
+                      key={r.id}
+                      className="v2-orbit-billboard absolute left-1/2 top-1/2"
+                      data-base={`rotate(${TEAM_ANGLES[i]}deg) translateX(var(--orbit-main)) rotate(${-TEAM_ANGLES[i]}deg)`}
                       style={{
-                        background:
-                          'radial-gradient(circle at 30% 24%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 20%), radial-gradient(circle at 68% 78%, rgba(245,48,3,0.55) 0%, rgba(245,48,3,0) 45%), radial-gradient(circle at 34% 30%, #786858 0%, #2c221d 55%, #050403 100%)',
+                        transform: `rotate(${TEAM_ANGLES[i]}deg) translateX(var(--orbit-main)) rotate(${-TEAM_ANGLES[i]}deg) rotateX(-${TILT}deg)`,
+                        transformStyle: 'preserve-3d',
                       }}
                     >
-                      {ICONS[r.icon] || ICONS.users}
-                    </span>
-                    <span className="whitespace-nowrap text-[10px] font-medium uppercase tracking-[0.2em] text-star-300">
-                      {r.title}
-                    </span>
-                  </div>
+                      <div className="v2-orbit-node">
+                        <div className="oc-spin-a flex flex-col items-center gap-2" title={r.description}>
+                          <span
+                            className="relative flex h-14 w-14 items-center justify-center rounded-full border border-ember-500/40 text-ember-100 shadow-[0_0_25px_rgba(245,48,3,0.25),inset_0_3px_4px_rgba(255,255,255,0.3),inset_0_-7px_11px_rgba(0,0,0,0.8)] sm:h-16 sm:w-16"
+                            style={{
+                              background:
+                                'radial-gradient(circle at 30% 24%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 20%), radial-gradient(circle at 68% 78%, rgba(245,48,3,0.55) 0%, rgba(245,48,3,0) 45%), radial-gradient(circle at 34% 30%, #786858 0%, #2c221d 55%, #050403 100%)',
+                            }}
+                          >
+                            {ICONS[r.icon] || ICONS.users}
+                          </span>
+                          <span className="whitespace-nowrap text-[10px] font-medium uppercase tracking-[0.2em] text-star-300">
+                            {r.title}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
-            ))}
-          </div>
 
-          {/* Gyroscope ring — precesses in true 3D so the circles
-              visibly tumble (ellipse → circle → edge-on) */}
-          <div
-            className="oc-gyro pointer-events-none absolute inset-[24%] rounded-full border border-ember-500/30"
-            style={{ transformStyle: 'preserve-3d' }}
-          >
-            <span className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ember-400 shadow-[0_0_10px_rgba(245,48,3,0.9)]" />
-          </div>
+                {/* Gyroscope ring — precesses in true 3D so the circles
+                    visibly tumble (ellipse → circle → edge-on) */}
+                <div
+                  className="oc-gyro pointer-events-none absolute inset-[24%] rounded-full border border-ember-500/30"
+                  style={{ transformStyle: 'preserve-3d' }}
+                >
+                  <span className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ember-400 shadow-[0_0_10px_rgba(245,48,3,0.9)]" />
+                </div>
 
-          {/* Inner ember dashed ring — leadership, counter-rotating,
-              with a beacon dot */}
-          <div className="v2-orbit-ring oc-ring-b absolute inset-[33%] rounded-full border border-dashed border-ember-500/35" style={{ transformStyle: 'preserve-3d' }}>
-            <span className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ember-500/80 shadow-[0_0_12px_rgba(245,48,3,0.9)]" />
-            {ORG_CHART.rings[0].roles.map((r, i) => (
-              <div
-                key={r.id}
-                className="v2-orbit-billboard absolute left-1/2 top-1/2"
-                data-base={`rotate(${LEAD_ANGLES[i]}deg) translateX(var(--orbit-inner)) rotate(${-LEAD_ANGLES[i]}deg)`}
-                style={{
-                  transform: `rotate(${LEAD_ANGLES[i]}deg) translateX(var(--orbit-inner)) rotate(${-LEAD_ANGLES[i]}deg) rotateX(-${TILT}deg)`,
-                  transformStyle: 'preserve-3d',
-                }}
-              >
-                <div className="v2-orbit-node">
-                  <div className="oc-spin-b flex flex-col items-center gap-2" title={r.description}>
-                    <span
-                      className="relative flex h-12 w-12 items-center justify-center rounded-full border border-ember-500/45 text-ember-100 shadow-[0_0_22px_rgba(245,48,3,0.3),inset_0_3px_3px_rgba(255,255,255,0.3),inset_0_-6px_9px_rgba(0,0,0,0.8)] sm:h-14 sm:w-14"
+                {/* Inner ember dashed ring — leadership, counter-rotating,
+                    with a beacon dot */}
+                <div className="v2-orbit-ring oc-ring-b absolute inset-[33%] rounded-full border border-dashed border-ember-500/35" style={{ transformStyle: 'preserve-3d' }}>
+                  <span className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ember-500/80 shadow-[0_0_12px_rgba(245,48,3,0.9)]" />
+                  {ORG_CHART.rings[0].roles.map((r, i) => (
+                    <div
+                      key={r.id}
+                      className="v2-orbit-billboard absolute left-1/2 top-1/2"
+                      data-base={`rotate(${LEAD_ANGLES[i]}deg) translateX(var(--orbit-inner)) rotate(${-LEAD_ANGLES[i]}deg)`}
                       style={{
-                        background:
-                          'radial-gradient(circle at 30% 24%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 20%), radial-gradient(circle at 68% 78%, rgba(245,48,3,0.55) 0%, rgba(245,48,3,0) 45%), radial-gradient(circle at 34% 30%, #786858 0%, #2c221d 55%, #050403 100%)',
+                        transform: `rotate(${LEAD_ANGLES[i]}deg) translateX(var(--orbit-inner)) rotate(${-LEAD_ANGLES[i]}deg) rotateX(-${TILT}deg)`,
+                        transformStyle: 'preserve-3d',
                       }}
                     >
-                      {ICONS[r.icon] || ICONS.users}
-                    </span>
-                    <span className="whitespace-nowrap text-[10px] font-semibold uppercase tracking-[0.2em] text-ember-600 dark:text-ember-300">
-                      {r.title}
-                    </span>
+                      <div className="v2-orbit-node">
+                        <div className="oc-spin-b flex flex-col items-center gap-2" title={r.description}>
+                          <span
+                            className="relative flex h-12 w-12 items-center justify-center rounded-full border border-ember-500/45 text-ember-100 shadow-[0_0_22px_rgba(245,48,3,0.3),inset_0_3px_3px_rgba(255,255,255,0.3),inset_0_-6px_9px_rgba(0,0,0,0.8)] sm:h-14 sm:w-14"
+                            style={{
+                              background:
+                                'radial-gradient(circle at 30% 24%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 20%), radial-gradient(circle at 68% 78%, rgba(245,48,3,0.55) 0%, rgba(245,48,3,0) 45%), radial-gradient(circle at 34% 30%, #786858 0%, #2c221d 55%, #050403 100%)',
+                            }}
+                          >
+                            {ICONS[r.icon] || ICONS.users}
+                          </span>
+                          <span className="whitespace-nowrap text-[10px] font-semibold uppercase tracking-[0.2em] text-ember-600 dark:text-ember-300">
+                            {r.title}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Ambient dust at different depths */}
+                {DUST.map((p, i) => (
+                  <span
+                    key={i}
+                    className="animate-dust absolute rounded-full bg-star-100/60"
+                    style={{
+                      left: p.l,
+                      top: p.t,
+                      width: p.s,
+                      height: p.s,
+                      transform: `translateZ(${p.z}px)`,
+                      animationDelay: `${p.d}s`,
+                    }}
+                  />
+                ))}
+              </div>
+
+              {/* Core — pinned center, upright, floating */}
+              <div
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                style={{ transformStyle: 'preserve-3d' }}
+              >
+                <div className="v2-orbit-core v2-orbit-billboard" data-base="translateZ(54px)" style={{ transform: `translateZ(54px) rotateX(-${TILT}deg)` }}>
+                  <div className="animate-float-node relative">
+                    <span
+                      className="pointer-events-none absolute -inset-6 -z-10 rounded-full"
+                      style={{
+                        background: 'radial-gradient(circle, rgba(245,48,3,0.30), transparent 65%)',
+                      }}
+                    />
+                    <div className="animate-core-pulse relative flex h-24 w-24 flex-col items-center justify-center rounded-full bg-gradient-to-br from-ember-300 via-ember-500 to-ember-700 shadow-[0_0_50px_rgba(245,48,3,0.45)] sm:h-28 sm:w-28">
+                      <span className="pointer-events-none absolute inset-0 rounded-full shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-2px_6px_rgba(0,0,0,0.25)]" />
+                      <img src="/logo.svg" alt={BRAND.name} className="h-8 w-8 sm:h-9 sm:w-9" />
+                      <span className="mt-1 font-display text-[11px] tracking-wide text-space-950">
+                        {ORG_CHART.core.title}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Ambient dust at different depths */}
-          {DUST.map((p, i) => (
-            <span
-              key={i}
-              className="animate-dust absolute rounded-full bg-star-100/60"
-              style={{
-                left: p.l,
-                top: p.t,
-                width: p.s,
-                height: p.s,
-                transform: `translateZ(${p.z}px)`,
-                animationDelay: `${p.d}s`,
-              }}
-            />
-          ))}
-        </div>
-
-        {/* Core — pinned center, upright, floating */}
-        <div
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-          style={{ transformStyle: 'preserve-3d' }}
-        >
-          <div className="v2-orbit-core v2-orbit-billboard" data-base="translateZ(54px)" style={{ transform: `translateZ(54px) rotateX(-${TILT}deg)` }}>
-            <div className="animate-float-node relative">
-              <span
-                className="pointer-events-none absolute -inset-6 -z-10 rounded-full"
-                style={{
-                  background: 'radial-gradient(circle, rgba(245,48,3,0.30), transparent 65%)',
-                }}
-              />
-              <div className="animate-core-pulse relative flex h-24 w-24 flex-col items-center justify-center rounded-full bg-gradient-to-br from-ember-300 via-ember-500 to-ember-700 shadow-[0_0_50px_rgba(245,48,3,0.45)] sm:h-28 sm:w-28">
-                <span className="pointer-events-none absolute inset-0 rounded-full shadow-[inset_0_1px_0_rgba(255,255,255,0.35),inset_0_-2px_6px_rgba(0,0,0,0.25)]" />
-                <img src="/logo.svg" alt={BRAND.name} className="h-8 w-8 sm:h-9 sm:w-9" />
-                <span className="mt-1 font-display text-[11px] tracking-wide text-space-950">
-                  {ORG_CHART.core.title}
-                </span>
               </div>
             </div>
-          </div>
-        </div>
       </div>
-    </div>
   )
 }
