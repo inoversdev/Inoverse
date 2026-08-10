@@ -1,11 +1,6 @@
 // ─── MissionCard — shared project card for the home showcase and the
 // /projects grid. One source of truth for how a mission renders. ───
-import { useEffect, useRef } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { applyBorderGlow, clearBorderGlow } from '../lib/borderGlow'
-
-gsap.registerPlugin(ScrollTrigger)
 
 // Try to resolve a clean 256px favicon from the project's live domain —
 // the pixel size so it stays sharp even when scaled through the card.
@@ -61,71 +56,9 @@ export default function MissionCard({ project }) {
   const p = project
   const hasLink = p.url != null
   const logo = favicon(p.url)
-  const rootRef = useRef(null)
-  const cardRef = useRef(null)
-
-  // Subtle scroll parallax — the card drifts slightly against the page
-  // (same feel as the site-wide [data-parallax] layer, but self-managed
-  //  so it survives React re-mounts from filter changes).
-  useEffect(() => {
-    const el = rootRef.current
-    if (!el || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        el,
-        { y: -72 },
-        {
-          y: 72,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: el,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 0.6,
-          },
-        }
-      )
-    }, el)
-    return () => ctx.revert()
-  }, [])
-
-  // v4-style 3D cursor tilt — rotateX/rotateY follow the pointer (÷15
-  // like v4's tilt cards) with a 50px z-lift, eased back on leave.
-  // Hover-capable pointers only; the touch devices get the static card.
-  useEffect(() => {
-    const card = cardRef.current
-    if (!card) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
-    const onMove = (e) => {
-      const r = card.getBoundingClientRect()
-      const x = e.clientX - r.left
-      const y = e.clientY - r.top
-      const cx = r.width / 2
-      const cy = r.height / 2
-      gsap.to(card, {
-        rotationX: (y - cy) / 15,
-        rotationY: (cx - x) / 15,
-        z: 50,
-        duration: 0.5,
-        ease: 'power3.out',
-      })
-    }
-    const onLeave = () => {
-      gsap.to(card, { rotationX: 0, rotationY: 0, z: 0, duration: 0.5, ease: 'power3.out' })
-    }
-    card.addEventListener('mousemove', onMove)
-    card.addEventListener('mouseleave', onLeave)
-    return () => {
-      card.removeEventListener('mousemove', onMove)
-      card.removeEventListener('mouseleave', onLeave)
-    }
-  }, [])
 
   return (
-    <div ref={rootRef} style={{ perspective: '1000px' }}>
     <a
-      ref={cardRef}
       key={p.id}
       href={hasLink ? p.url : undefined}
       target={hasLink ? '_blank' : undefined}
@@ -137,10 +70,9 @@ export default function MissionCard({ project }) {
         applyBorderGlow(e)
       }}
       onMouseLeave={clearBorderGlow}
-      className={`mission-card glow-ring group glass relative min-w-0 overflow-hidden rounded-2xl p-6 hover:border-ember-500/40 hover:shadow-[0_0_50px_rgba(245,48,3,0.12)] ${
+      className={`mission-card glow-ring group glass relative min-w-0 overflow-hidden rounded-2xl p-6 transition-all duration-500 hover:-translate-y-1 hover:border-ember-500/40 hover:shadow-[0_0_50px_rgba(245,48,3,0.12)] ${
         hasLink ? 'cursor-pointer' : 'cursor-default'
       }`}
-      style={{ transformStyle: 'preserve-3d' }}
     >
       {/* Logo zone — live favicon for shipped projects, stylised monogram
           for the rest. Both fade right-to-left via the same CSS mask. */}
@@ -191,6 +123,5 @@ export default function MissionCard({ project }) {
         ))}
       </div>
     </a>
-    </div>
   )
 }

@@ -677,10 +677,6 @@ body {
                      collapse to a sliver; block gives them the card box */
   position: relative;
   overflow: hidden;
-  /* NO transform transition — GSAP owns transform (3D tilt + reveal).
-     Border/shadow/opacity still glide on hover. */
-  transition: border-color 0.35s ease-out, box-shadow 0.35s ease-out;
-  will-change: transform;
 }
 .mission-card::before {
   content: '';

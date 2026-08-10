@@ -76,44 +76,49 @@ export default function ProjectsPage() {
     return () => window.removeEventListener('resize', remeasure)
   }, [])
 
-  // Entrance reveal — v4's case-card choreography: cards slide in
-  // alternating sides (even ←, odd →), reversing when scrolled back.
+  // Entrance reveal for the whole grid, once.
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
-      gsap.utils.toArray('.mission-card').forEach((card, i) => {
-        gsap.from(card, {
-          x: i % 2 ? 80 : -80,
-          opacity: 0,
-          duration: 0.9,
+      gsap.fromTo(
+        '.mission-card',
+        { opacity: 0, y: 26, scale: 0.98 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.55,
+          stagger: 0.05,
           ease: 'power3.out',
           scrollTrigger: {
-            trigger: card,
-            start: 'top 92%',
-            toggleActions: 'play none none reverse',
+            trigger: rootRef.current,
+            start: 'top 85%',
+            once: true,
           },
-        })
-      })
+        }
+      )
     }, rootRef)
     return () => ctx.revert()
   }, [])
 
-  // Replay the alternating slide whenever the filter changes (keyed
-  // remount of the grid is handled by React — we just re-run the
-  // entrance tween). Uses useLayoutEffect so the "from" state is set
-  // before the browser paints.
+  // Replay the stagger whenever the filter changes (keyed remount of the
+  // grid is handled by React — we just re-run the entrance tween). Uses
+  // useLayoutEffect so the "from" state is set before the browser paints.
   useLayoutEffect(() => {
     if (!contentInnerRef.current) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    gsap.utils.toArray('.mission-card').forEach((card, i) => {
-      gsap.from(card, {
-        x: i % 2 ? 60 : -60,
-        opacity: 0,
+    gsap.fromTo(
+      '.mission-card',
+      { opacity: 0, y: 32, scale: 0.85, rotateZ: 2 },
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        rotateZ: 0,
         duration: 0.6,
-        ease: 'power3.out',
+        stagger: 0.05,
+        ease: 'back.out(1.4)',
         overwrite: 'auto',
-      })
-    })
+      }
+    )
   }, [activeFilter])
 
   // Filter clicks shrink the OUTGOING cards first, then swap.
