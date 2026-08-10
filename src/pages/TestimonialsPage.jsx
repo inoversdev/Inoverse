@@ -65,10 +65,10 @@ export default function TestimonialsPage() {
         lede={TESTIMONIALS_PAGE.lede}
       />
 
-      {/* Content honesty (plan §6.1): no rating badge and no cards until
-          real, sourced quotes exist. `status: 'live'` flips the hold
-          state off — TESTIMONIALS_META/array are the only switches. */}
-      {TESTIMONIALS_META.status === 'live' ? (
+      {/* Content honesty (plan §6.1): demo entries render with a visible
+          sample-layout ribbon; real quotes (status 'live') turn it off;
+          an empty array falls back to the hold state. */}
+      {TESTIMONIALS.length > 0 ? (
         <>
           <RatingBadge />
           <TestimonialGrid />

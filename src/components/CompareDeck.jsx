@@ -5,13 +5,13 @@ import { WHY } from '../lib/content'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const Check = (props) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 shrink-0" {...props}>
+const Check = ({ className = '', ...props }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`h-4 w-4 shrink-0 ${className}`} {...props}>
     <path d="M20 6L9 17l-5-5" />
   </svg>
 )
-const Cross = (props) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 shrink-0" {...props}>
+const Cross = ({ className = '', ...props }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`h-4 w-4 shrink-0 ${className}`} {...props}>
     <path d="M18 6L6 18M6 6l12 12" />
   </svg>
 )

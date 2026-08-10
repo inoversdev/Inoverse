@@ -535,10 +535,12 @@ export const WHY = {
 }
 
 // ─── /testimonials — crew transmissions ───
-// Content honesty (plan §6): ships EMPTY until the CEO/CTO supplies real
-// quotes from named, consenting clients. No invented people, no rating
-// without a real source. `status: 'live'` + a populated array is the only
-// switch that turns the hold state into the grid.
+// Content honesty (plan §6): REAL quotes from named, consenting clients
+// are still pending from the CEO/CTO. These six are DUMMY entries (Mat's
+// call, 2026-08-10) — demo:true so the page renders a visible
+// "Sample layout — awaiting client sign-off" ribbon, never passing as
+// real endorsements. Swap this array for real quotes when they land.
+// `status: 'live'` + a real average/source turns the demo ribbon off.
 export const TESTIMONIALS_META = {
   status: 'pending', // 'pending' | 'live'
   average: null, // e.g. 4.9 — ONLY with a real source
@@ -546,9 +548,80 @@ export const TESTIMONIALS_META = {
   source: null, // e.g. 'Google Reviews' — required if average is set
 }
 
-export const TESTIMONIALS = [] // entry shape:
-// { id, quote, name, role, company, initials, avatar: 'ember'|'violet'|'teal'|'blue'|'amber'|'sky',
-//   rating: 5, demo: false }
+export const TESTIMONIALS = [
+  {
+    id: 'juan',
+    quote:
+      'We went from a messy manual workflow to a system our team actually uses every day. Direct communication, no layers, real results.',
+    name: 'Juan Ramos',
+    role: 'Operations Head',
+    company: 'Logistics',
+    initials: 'JR',
+    avatar: 'ember',
+    rating: 5,
+    demo: true,
+  },
+  {
+    id: 'mia',
+    quote:
+      'The launch was fast, but what stood out was the clarity. We always knew what was being built and why. Exactly the partner we needed.',
+    name: 'Mia Cruz',
+    role: 'Founder',
+    company: 'Commerce Startup',
+    initials: 'MC',
+    avatar: 'violet',
+    rating: 5,
+    demo: true,
+  },
+  {
+    id: 'david',
+    quote:
+      'Working across borders felt seamless. Clear checkpoints, honest updates, and software that shipped on schedule. Highly recommended.',
+    name: 'David Santos',
+    role: 'Product Lead',
+    company: 'Travel',
+    initials: 'DS',
+    avatar: 'teal',
+    rating: 5,
+    demo: true,
+  },
+  {
+    id: 'anna',
+    quote:
+      'They turned a rough idea into a product our customers love. Weekly working demos meant no surprises — just steady progress.',
+    name: 'Anna Torres',
+    role: 'CEO',
+    company: 'Delivery Platform',
+    initials: 'AT',
+    avatar: 'blue',
+    rating: 5,
+    demo: true,
+  },
+  {
+    id: 'karla',
+    quote:
+      'The AI integration they built actually saves our team hours every week. Practical, well-guarded, and exactly what we asked for.',
+    name: 'Karla Perez',
+    role: 'COO',
+    company: 'Business Services',
+    initials: 'KP',
+    avatar: 'amber',
+    rating: 5,
+    demo: true,
+  },
+  {
+    id: 'marco',
+    quote:
+      'From first conversation to launch, it felt like one team. Fast, honest, and the app performs beautifully on real devices.',
+    name: 'Marco Lim',
+    role: 'Founder',
+    company: 'Hospitality App',
+    initials: 'ML',
+    avatar: 'sky',
+    rating: 5,
+    demo: true,
+  },
+]
 
 // Page copy — holds the /testimonials shell even while the grid is empty.
 export const TESTIMONIALS_PAGE = {
