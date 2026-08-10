@@ -36,7 +36,8 @@ function DummyLogo({ id, name }) {
   return (
     <svg
       viewBox="0 0 100 100"
-      className="mission-card-logo pointer-events-none absolute right-0 top-1/2 h-4/5 max-h-40 -translate-y-1/2 opacity-[0.18] transition-opacity duration-500 group-hover:opacity-[0.30]"
+      style={{ width: '150px', height: '150px' }}
+      className="mission-card-logo pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 opacity-[0.18] transition-opacity duration-500 group-hover:opacity-[0.30]"
       aria-hidden="true"
     >
       <circle cx="50" cy="50" r="50" fill={t.bg} />
@@ -71,9 +72,9 @@ export default function MissionCard({ project }) {
     const ctx = gsap.context(() => {
       gsap.fromTo(
         el,
-        { y: -48 },
+        { y: -72 },
         {
-          y: 48,
+          y: 72,
           ease: 'none',
           scrollTrigger: {
             trigger: el,
@@ -113,7 +114,8 @@ export default function MissionCard({ project }) {
           alt=""
           loading="lazy"
           onError={(e) => { e.currentTarget.style.display = 'none' }}
-          className="mission-card-logo pointer-events-none absolute right-0 top-1/2 h-4/5 max-h-40 -translate-y-1/2 object-contain opacity-[0.18] transition-opacity duration-500 group-hover:opacity-[0.30]"
+          className="mission-card-logo pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 opacity-[0.18] transition-opacity duration-500 group-hover:opacity-[0.30]"
+          style={{ width: '150px', height: '150px', objectFit: 'contain' }}
         />
       ) : (
         <DummyLogo id={p.id} name={p.name} />

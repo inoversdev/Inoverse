@@ -672,6 +672,9 @@ body {
 
 /* mission card — mouse-follow ember glow */
 .mission-card {
+  display: block; /* anchor default is inline → absolute children (logos)
+                     resolve against a degenerate containing block and
+                     collapse to a sliver; block gives them the card box */
   position: relative;
   overflow: hidden;
 }
