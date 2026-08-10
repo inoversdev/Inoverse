@@ -2,8 +2,6 @@
 // /projects grid. One source of truth for how a mission renders. ───
 import { applyBorderGlow, clearBorderGlow } from '../lib/borderGlow'
 
-const EXTERNAL = 'https://dorydelivery.com/'
-
 // Try to resolve a clean 256px favicon from the project's live domain —
 // the pixel size so it stays sharp even when scaled through the card.
 // Falls back to nothing when the project has no url (concept / pre-launch).
@@ -18,13 +16,12 @@ function favicon(url) {
 export default function MissionCard({ project }) {
   const p = project
   const hasLink = p.url != null
-  const hrefFor = p.url || EXTERNAL
   const logo = favicon(p.url)
 
   return (
     <a
       key={p.id}
-      href={hasLink ? hrefFor : undefined}
+      href={hasLink ? p.url : undefined}
       target={hasLink ? '_blank' : undefined}
       rel={hasLink ? 'noreferrer' : undefined}
       onMouseMove={(e) => {
