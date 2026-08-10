@@ -79,34 +79,25 @@ export default function ProjectsPage() {
 
   // Entrance reveal — v4 "Selected work" choreography: alternating
   // horizontal slide (even ←, odd →), per-card trigger, reversible.
+  // Re-runs on filter changes: ctx.revert() kills the old per-card
+  // triggers (no leak), fresh ones are created for the remounted grid.
+  // The height morph re-measures after settling (750ms ≈ 0.7s morph).
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
       applyCardReveal(rootRef, '.mission-card', { x: 80 })
     }, rootRef)
-    return () => ctx.revert()
-  }, [])
-
-  // Replay a smooth fade-scale whenever the filter changes (keyed
-  // remount of the grid is handled by React — we just re-run the
-  // entrance tween). Uses useLayoutEffect so the "from" state is set
-  // before the browser paints.
-  useLayoutEffect(() => {
-    if (!contentInnerRef.current) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    gsap.fromTo(
-      '.mission-card',
-      { opacity: 0, scale: 0.94 },
-      {
-        opacity: 1,
-        scale: 1,
-        duration: 0.6,
-        stagger: 0.04,
-        ease: 'power2.out',
-        overwrite: 'auto',
-      }
-    )
+    const t = setTimeout(() => ScrollTrigger.refresh(), 750)
+    return () => {
+      clearTimeout(t)
+      ctx.revert()
+    }
   }, [activeFilter])
+
+  // (Filter-change replay is handled by the reveal effect above — it
+  // re-runs on activeFilter, so the previous mount-time fromTo replay
+  // was removed: it fought the reveal tweens for opacity and left
+  // cards stuck at 0 after scrolling (the "invisible cards" bug).)
 
   // Filter clicks shrink the OUTGOING cards first, then swap.
   const handleFilterChange = (cat) => {

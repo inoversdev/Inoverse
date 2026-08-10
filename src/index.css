@@ -670,8 +670,10 @@ body {
     opacity 0.2s ease-out;
 }
 
-/* mission card — mouse-follow ember glow */
-.mission-card {
+/* mission + crew cards — mouse-follow ember glow (one surface treatment,
+   two grids: /projects and /crew) */
+.mission-card,
+.crew-card {
   display: block; /* anchor default is inline → absolute children (logos)
                      resolve against a degenerate containing block and
                      collapse to a sliver; block gives them the card box */
@@ -679,7 +681,8 @@ body {
   overflow: hidden;
   will-change: transform; /* scrubbed scale/opacity runs at 60fps */
 }
-.mission-card::before {
+.mission-card::before,
+.crew-card::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -693,10 +696,12 @@ body {
   transition: opacity 0.35s ease-out;
   pointer-events: none;
 }
-.mission-card:hover::before {
+.mission-card:hover::before,
+.crew-card:hover::before {
   opacity: 1;
 }
-.dark .mission-card::before {
+.dark .mission-card::before,
+.dark .crew-card::before {
   background: radial-gradient(
     220px circle at var(--mx, 50%) var(--my, 50%),
     rgba(245, 48, 3, 0.22),

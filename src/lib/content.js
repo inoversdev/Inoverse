@@ -10,9 +10,17 @@ export const BRAND = {
   tagline: 'Innovating the Future, Together',
 }
 
+// Top bar. 'Crew' sits next to 'Work' — the two "see the actual output /
+// see the actual people" links — and is the bar's only route link; the
+// rest are home-section anchors. Six links fit: measured at the lg
+// breakpoint (1024px — where the desktop bar replaces the mobile drawer)
+// the row uses 818px of 944px, leaving 126px of slack; at 1280px+ the
+// slack is 382px. That 126px is the real ceiling — a seventh link needs
+// a re-measure, not a guess.
 export const NAV_LINKS = [
   { label: 'Services', kind: 'anchor', target: 'services' },
   { label: 'Work', kind: 'anchor', target: 'work' },
+  { label: 'Crew', kind: 'route', to: '/crew' },
   { label: 'Why Inovers', kind: 'anchor', target: 'why-inovers' },
   { label: 'Testimonials', kind: 'anchor', target: 'testimonials' },
   { label: 'Contact', kind: 'anchor', target: 'contact' },
@@ -862,6 +870,178 @@ export const ORG_CHART = {
   ],
 }
 
+// ─── /crew — department taxonomy, derived from ORG_CHART ───
+// Never hand-type a second taxonomy: the filter chips on /crew and the
+// medallions on the orbital chart read from the same source, so they
+// cannot drift apart. Ring 0 (Leadership) collapses to its ring LABEL —
+// its roles are individual seats (CEO, CTO), too narrow to be useful
+// filters — while ring 1's role titles are the real team departments.
+// Yields: Leadership · Engineering · Design · QA · Product.
+export const DEPARTMENTS = [
+  ORG_CHART.rings[0].label,
+  ...ORG_CHART.rings[1].roles.map((r) => r.title),
+]
+
+// ─── Crew — PLACEHOLDER people (content honesty, Mat's call 2026-08-10) ───
+// These are NOT real employees and must never read as any. Real names,
+// photos and bios are pending from the CEO/CTO. Every entry is named after
+// the SEAT, not after an invented human, so nothing here can be mistaken
+// for a person who doesn't exist — the same rule TESTIMONIALS follows.
+// `demo: true` is what raises the visible ribbon above the grid.
+//
+// Going live (plan §7) is a pure data swap, no component change:
+//   1. set `photo` to a real image path — CrewCard branches on its
+//      truthiness and renders an <img> instead of the initials disc;
+//   2. swap `name` / `role` / `bio` to the real values;
+//   3. flip `demo` to false — ALL of them or none. A partial swap keeps
+//      demo:true everywhere and the ribbon stays up (same all-or-nothing
+//      honesty rule as TESTIMONIALS_META.status).
+export const CREW = [
+  {
+    id: 'lead-ceo',
+    name: 'Crew Lead — CEO',
+    role: 'Chief Executive Officer',
+    department: 'Leadership',
+    initials: 'CEO',
+    avatar: 'ember',
+    bio: 'Sets direction and keeps every mission aligned to the client’s goals.',
+    photo: null,
+    demo: true,
+  },
+  {
+    id: 'lead-cto',
+    name: 'Flight Director — CTO',
+    role: 'Chief Technology Officer',
+    department: 'Leadership',
+    initials: 'CTO',
+    avatar: 'amber',
+    bio: 'Owns the technical call on every build — architecture, stack, and delivery.',
+    photo: null,
+    demo: true,
+  },
+  {
+    id: 'eng-web',
+    name: 'Engineer — Web',
+    role: 'Full-Stack Web Engineer',
+    department: 'Engineering',
+    initials: 'WEB',
+    avatar: 'blue',
+    bio: 'Builds the sites and dashboards clients live in every day.',
+    photo: null,
+    demo: true,
+  },
+  {
+    id: 'eng-mobile',
+    name: 'Engineer — Mobile',
+    role: 'Mobile Engineer',
+    department: 'Engineering',
+    initials: 'MOB',
+    avatar: 'teal',
+    bio: 'Ships the iOS and Android side of a product, tested on real devices.',
+    photo: null,
+    demo: true,
+  },
+  {
+    id: 'eng-systems',
+    name: 'Engineer — Systems',
+    role: 'Systems & Integrations Engineer',
+    department: 'Engineering',
+    initials: 'SYS',
+    avatar: 'violet',
+    bio: 'Wires the back office together — APIs, data, and everything between them.',
+    photo: null,
+    demo: true,
+  },
+  {
+    id: 'design-product',
+    name: 'Designer — Product',
+    role: 'Product & UI Designer',
+    department: 'Design',
+    initials: 'UI',
+    avatar: 'sky',
+    bio: 'Turns scope into screens people can use without a manual.',
+    photo: null,
+    demo: true,
+  },
+  {
+    id: 'design-brand',
+    name: 'Designer — Brand',
+    role: 'Brand & Visual Designer',
+    department: 'Design',
+    initials: 'BR',
+    avatar: 'violet',
+    bio: 'Keeps every launch looking like it belongs to the same company.',
+    photo: null,
+    demo: true,
+  },
+  {
+    id: 'qa-functional',
+    name: 'QA — Functional',
+    role: 'QA Engineer',
+    department: 'QA',
+    initials: 'QA',
+    avatar: 'teal',
+    bio: 'Breaks the build on purpose so the client never has to.',
+    photo: null,
+    demo: true,
+  },
+  {
+    id: 'qa-release',
+    name: 'QA — Release',
+    role: 'Release & Regression QA',
+    department: 'QA',
+    initials: 'REL',
+    avatar: 'amber',
+    bio: 'Guards the last mile — regression passes and the go/no-go before launch.',
+    photo: null,
+    demo: true,
+  },
+  {
+    id: 'product-delivery',
+    name: 'Product Lead — Delivery',
+    role: 'Product & Delivery Lead',
+    department: 'Product',
+    initials: 'PD',
+    avatar: 'ember',
+    bio: 'Holds scope, schedule, and the weekly checkpoint the client actually sees.',
+    photo: null,
+    demo: true,
+  },
+]
+
+// ─── /crew — page shell copy (PageHero + orbit band + grid + CTA) ───
+// Every string /crew renders lives here; CrewPage/CrewCard hold none.
+export const CREW_PAGE = {
+  eyebrow: 'The Crew',
+  heading: 'The people flying the mission',
+  headingAccent: 'flying the mission',
+  lede: 'Every launch has a crew behind it. Meet the people who scope, design, build, and ship what Inovers delivers.',
+  // Raised automatically while any CREW entry carries demo:true.
+  demoRibbon: 'Sample crew — placeholder roles while we collect real names and photos',
+  allLabel: 'All',
+  filterLabel: 'Filter crew by department',
+  counterNoun: 'crew',
+  emptyState: 'No crew in this department yet.',
+  orbit: {
+    eyebrow: 'Mission structure',
+    caption:
+      'Leadership at the centre, teams in orbit — how a build is staffed from the first call to launch day.',
+  },
+  // Compact teaser that replaced the orbit in the home About section.
+  teaser: {
+    eyebrow: 'The crew',
+    line: 'Leadership, engineering, design, QA, and product — one team, no hand-offs, no account managers in between.',
+    link: 'Meet the full crew',
+    to: '/crew',
+  },
+  cta: {
+    heading: 'Want this crew on',
+    accent: 'your next mission?',
+    sub: 'Book a free call and tell us what you’re building.',
+    secondary: { label: 'See our work', to: '/projects' },
+  },
+}
+
 export const PROCESS = [
   {
     step: '01',
@@ -899,7 +1079,8 @@ export const PROJECTS_PAGE = {
     heading: "Like what you see? Let's launch",
     accent: 'your mission next.',
     sub: 'A free 30-minute call — your goals, our playbook, zero commitment.',
-    secondary: null,
+    // Cross-link so /projects and /crew stay one hop from each other.
+    secondary: { label: 'Meet the crew', to: '/crew' },
   },
 }
 

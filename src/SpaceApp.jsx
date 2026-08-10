@@ -10,6 +10,7 @@ import SpaceFooter from './components/SpaceFooter'
 import CursorAura from './components/effects/CursorAura'
 import HomePage from './pages/HomePage'
 import ProjectsPage from './pages/ProjectsPage'
+import CrewPage from './pages/CrewPage'
 import { useParallaxLayers } from './hooks/useParallaxLayers'
 import { useTheme } from './theme'
 
@@ -152,6 +153,7 @@ export default function SpaceApp() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/projects" element={<ProjectsPage />} />
+            <Route path="/crew" element={<CrewPage />} />
           </Routes>
           <SpaceFooter />
         </div>

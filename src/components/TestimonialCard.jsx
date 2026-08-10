@@ -1,13 +1,6 @@
-// Literal class map — Tailwind can't see template-literal classes
-// (bit us once already on the mobile order- classes in ProjectsPage).
-const AVATAR = {
-  ember: 'from-ember-500 to-ember-300',
-  violet: 'from-violet-600 to-fuchsia-400',
-  teal: 'from-teal-600 to-emerald-400',
-  blue: 'from-blue-700 to-sky-400',
-  amber: 'from-amber-600 to-orange-400',
-  sky: 'from-sky-700 to-cyan-400',
-}
+// Avatar tints live in one shared literal class map (lib/avatars) — CrewCard
+// renders the same discs, and Tailwind can't see template-literal classes.
+import { avatarClass } from '../lib/avatars'
 
 const Star = (props) => (
   <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5" {...props}>
@@ -32,7 +25,7 @@ export default function TestimonialCard({ item }) {
       <p className="relative text-sm leading-relaxed text-star-300">{item.quote}</p>
       <div className="mt-auto flex items-center gap-3 border-t border-star-300/15 pt-4">
         <div
-          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br text-sm font-bold text-white ${AVATAR[item.avatar] ?? AVATAR.ember}`}
+          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br text-sm font-bold text-white ${avatarClass(item.avatar)}`}
         >
           {item.initials}
         </div>
