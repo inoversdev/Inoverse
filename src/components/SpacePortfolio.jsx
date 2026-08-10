@@ -16,25 +16,26 @@ export default function SpacePortfolio() {
   // grid (all 20 + industry filters) lives on /projects.
   const featured = PROJECTS.filter((p) => p.featured)
 
-  // Mission card reveal — "face-up cascade": cards start edge-on
-  // (rotateY ±85°, pivoting on the outer edge) and flip face-up like a
-  // deck being dealt, staggered. Custom Inovers motion.
+  // Mission card reveal — Apple-style grow-into-place: each card scales
+  // up (0.88 → 1) and fades in (0 → 1) as it scrolls from the viewport
+  // bottom edge to 55% height, scrubbed to scroll so it reverses
+  // buttery-smooth when scrolling back. No discrete triggers.
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
-      gsap.utils.toArray('.mission-card').forEach((card, i) => {
+      gsap.utils.toArray('.mission-card').forEach((card) => {
         gsap.fromTo(
           card,
-          { opacity: 0, rotateY: i % 2 ? 85 : -85, transformOrigin: i % 2 ? 'right center' : 'left center' },
+          { scale: 0.88, opacity: 0 },
           {
+            scale: 1,
             opacity: 1,
-            rotateY: 0,
-            duration: 0.9,
-            ease: 'back.out(1.8)',
+            ease: 'none',
             scrollTrigger: {
-              trigger: rootRef.current,
-              start: 'top 85%',
-              once: true,
+              trigger: card,
+              start: 'top bottom',
+              end: 'top 55%',
+              scrub: 0.5,
             },
           }
         )
@@ -137,7 +138,7 @@ export default function SpacePortfolio() {
 
       {/* ── The six featured missions — 3×2 desktop / 2 col tablet / 1 col
              mobile. No filters here; filtering lives on /projects. ── */}
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3" style={{ perspective: '1100px' }}>
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {featured.map((p) => (
           <MissionCard key={p.id} project={p} />
         ))}

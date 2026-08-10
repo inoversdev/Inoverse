@@ -76,25 +76,25 @@ export default function ProjectsPage() {
     return () => window.removeEventListener('resize', remeasure)
   }, [])
 
-  // Entrance reveal — "face-up cascade": cards start edge-on (rotateY
-  // ±85°, pivoting on the outer edge) and flip face-up like a deck
-  // being dealt, staggered. Custom Inovers motion.
+  // Entrance reveal — Apple-style grow-into-place: each card scales up
+  // (0.88 → 1) and fades in as it scrolls from the viewport bottom edge
+  // to 55% height, scrubbed to scroll (reverses buttery-smooth).
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
-      gsap.utils.toArray('.mission-card').forEach((card, i) => {
+      gsap.utils.toArray('.mission-card').forEach((card) => {
         gsap.fromTo(
           card,
-          { opacity: 0, rotateY: i % 2 ? 85 : -85, transformOrigin: i % 2 ? 'right center' : 'left center' },
+          { scale: 0.88, opacity: 0 },
           {
+            scale: 1,
             opacity: 1,
-            rotateY: 0,
-            duration: 0.9,
-            ease: 'back.out(1.8)',
+            ease: 'none',
             scrollTrigger: {
-              trigger: rootRef.current,
-              start: 'top 85%',
-              once: true,
+              trigger: card,
+              start: 'top bottom',
+              end: 'top 55%',
+              scrub: 0.5,
             },
           }
         )
@@ -103,26 +103,25 @@ export default function ProjectsPage() {
     return () => ctx.revert()
   }, [])
 
-  // Replay the face-up cascade whenever the filter changes (keyed
+  // Replay a smooth fade-scale whenever the filter changes (keyed
   // remount of the grid is handled by React — we just re-run the
   // entrance tween). Uses useLayoutEffect so the "from" state is set
   // before the browser paints.
   useLayoutEffect(() => {
     if (!contentInnerRef.current) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    gsap.utils.toArray('.mission-card').forEach((card, i) => {
-      gsap.fromTo(
-        card,
-        { opacity: 0, rotateY: i % 2 ? 75 : -75, transformOrigin: i % 2 ? 'right center' : 'left center' },
-        {
-          opacity: 1,
-          rotateY: 0,
-          duration: 0.7,
-          ease: 'back.out(1.7)',
-          overwrite: 'auto',
-        }
-      )
-    })
+    gsap.fromTo(
+      '.mission-card',
+      { opacity: 0, scale: 0.94 },
+      {
+        opacity: 1,
+        scale: 1,
+        duration: 0.6,
+        stagger: 0.04,
+        ease: 'power2.out',
+        overwrite: 'auto',
+      }
+    )
   }, [activeFilter])
 
   // Filter clicks shrink the OUTGOING cards first, then swap.
@@ -227,7 +226,7 @@ export default function ProjectsPage() {
           <div ref={contentInnerRef}>
             {filtered.length ? (
               <div key={activeFilter}>
-                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3" style={{ perspective: '1100px' }}>
+                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                   {filtered.map((p) => (
                     <MissionCard key={p.id} project={p} />
                   ))}

@@ -677,6 +677,7 @@ body {
                      collapse to a sliver; block gives them the card box */
   position: relative;
   overflow: hidden;
+  will-change: transform; /* scrubbed scale/opacity runs at 60fps */
 }
 .mission-card::before {
   content: '';
