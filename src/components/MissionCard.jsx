@@ -44,7 +44,7 @@ export default function MissionCard({ project }) {
           alt=""
           loading="lazy"
           onError={(e) => { e.currentTarget.style.display = 'none' }}
-          className="mission-card-logo pointer-events-none absolute right-0 top-1/2 h-4/5 max-h-40 -translate-y-1/2 object-contain opacity-[0.08] transition-opacity duration-500 group-hover:opacity-[0.14]"
+          className="mission-card-logo pointer-events-none absolute right-0 top-1/2 h-4/5 max-h-40 -translate-y-1/2 object-contain opacity-[0.18] transition-opacity duration-500 group-hover:opacity-[0.30]"
         />
       )}
 
