@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ABOUT, STATS, WHY } from '../lib/content'
+import { applyCardReveal } from '../lib/cardReveal'
 import SplitHeading from './SplitHeading'
 import CompareDeck from './CompareDeck'
 
@@ -44,17 +45,8 @@ function StandardsGrid() {
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
-      gsap.utils.toArray('.standard-card').forEach((card, i) => {
-        gsap.from(card, {
-          rotationY: i % 2 ? -40 : 40,
-          y: 60,
-          opacity: 0,
-          transformOrigin: i % 2 ? 'left center' : 'right center',
-          duration: 0.9,
-          ease: 'power3.out',
-          scrollTrigger: { trigger: card, start: 'top 92%', once: true },
-        })
-      })
+      // Standards grid — v4 alternating slide + icon spin-pop.
+      applyCardReveal(rootRef, '.standard-card', { x: 80, rotation: 0, icon: 'div.mb-4' })
     }, rootRef)
     return () => ctx.revert()
   }, [])

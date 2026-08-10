@@ -2,27 +2,21 @@ import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { TESTIMONIALS, TESTIMONIALS_PAGE } from '../lib/content'
+import { applyCardReveal } from '../lib/cardReveal'
 import SplitHeading from './SplitHeading'
 import RatingBadge from './RatingBadge'
 import TestimonialCard from './TestimonialCard'
 
 gsap.registerPlugin(ScrollTrigger)
 
-// ─── Testimonial grid — rise + star-pop stagger, ported from v4 ───
+// ─── Testimonial grid — v4 alternating slide + star-pop stagger ───
 function TestimonialGrid() {
   const rootRef = useRef(null)
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
-      gsap.from('.testimonial-card', {
-        y: 70,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.09,
-        ease: 'power3.out',
-        scrollTrigger: { trigger: rootRef.current, start: 'top 88%', once: true },
-      })
+      applyCardReveal(rootRef, '.testimonial-card', { x: 80 })
       gsap.from('.testimonial-stars svg', {
         scale: 0,
         rotation: 180,

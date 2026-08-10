@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { INDUSTRIES, PROJECTS, PROJECTS_PAGE } from '../lib/content'
+import { applyCardReveal } from '../lib/cardReveal'
 import MissionCard from '../components/MissionCard'
 import PageHero from '../components/PageHero'
 import MissionCTA from '../components/MissionCTA'
@@ -76,29 +77,12 @@ export default function ProjectsPage() {
     return () => window.removeEventListener('resize', remeasure)
   }, [])
 
-  // Entrance reveal — Apple-style grow-into-place: each card scales up
-  // (0.88 → 1) and fades in as it scrolls from the viewport bottom edge
-  // to 55% height, scrubbed to scroll (reverses buttery-smooth).
+  // Entrance reveal — v4 "Selected work" choreography: alternating
+  // horizontal slide (even ←, odd →), per-card trigger, reversible.
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
-      gsap.utils.toArray('.mission-card').forEach((card) => {
-        gsap.fromTo(
-          card,
-          { scale: 0.88, opacity: 0 },
-          {
-            scale: 1,
-            opacity: 1,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: card,
-              start: 'top bottom',
-              end: 'top 55%',
-              scrub: 0.5,
-            },
-          }
-        )
-      })
+      applyCardReveal(rootRef, '.mission-card', { x: 80 })
     }, rootRef)
     return () => ctx.revert()
   }, [])

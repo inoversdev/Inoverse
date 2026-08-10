@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { SERVICES, STATS, servicesHeading, servicesSubtitle } from '../lib/content'
+import { applyCardReveal } from '../lib/cardReveal'
 import SplitHeading from './SplitHeading'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -136,26 +137,9 @@ export default function SpaceServices() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Card entrance — distance + scale together reads heavier/more
-      // premium than a plain fade-up.
-      gsap.utils.toArray('.v2-service-card').forEach((card) => {
-        gsap.fromTo(
-          card,
-          { opacity: 0, y: 70, scale: 0.94 },
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.9,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: card,
-              start: 'top 92%',
-              once: true,
-            },
-          }
-        )
-      })
+      // Card entrance — v4 "What we make" choreography: alternating
+      // slide + slight rotation, reversible per card; icon spin-pops.
+      applyCardReveal(rootRef, '.v2-service-card', { x: 90, rotation: 4, icon: 'span.inline-flex' })
 
       // Media blocks — gentler rise.
       gsap.utils.toArray('.v2-service-media').forEach((block) => {
