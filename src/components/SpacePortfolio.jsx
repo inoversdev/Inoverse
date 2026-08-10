@@ -16,22 +16,25 @@ export default function SpacePortfolio() {
   // grid (all 20 + industry filters) lives on /projects.
   const featured = PROJECTS.filter((p) => p.featured)
 
-  // Mission card reveal on scroll.
+  // Mission card reveal — "mission deploy": cards flip up from a slight
+  // back-tilt (rotateX) with an overshoot, staggered. Custom Inovers
+  // motion, distinct from v4's side-slide.
   useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
       gsap.fromTo(
         '.mission-card',
-        { opacity: 0, y: 26, scale: 0.98 },
+        { opacity: 0, y: 56, rotateX: -18 },
         {
           opacity: 1,
           y: 0,
-          scale: 1,
-          duration: 0.55,
-          stagger: 0.05,
-          ease: 'power3.out',
+          rotateX: 0,
+          duration: 0.8,
+          stagger: 0.06,
+          ease: 'back.out(1.7)',
           scrollTrigger: {
             trigger: rootRef.current,
-            start: 'top 82%',
+            start: 'top 85%',
             once: true,
           },
         }
@@ -134,7 +137,7 @@ export default function SpacePortfolio() {
 
       {/* ── The six featured missions — 3×2 desktop / 2 col tablet / 1 col
              mobile. No filters here; filtering lives on /projects. ── */}
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3" style={{ perspective: '1100px' }}>
         {featured.map((p) => (
           <MissionCard key={p.id} project={p} />
         ))}
