@@ -703,48 +703,6 @@ body {
   );
 }
 
-/* ─── Custom card motion — ember scan-sweep ───
-   A skewed light band that glides across the glass on hover. Rides
-   above the spotlight but under the text (z layering below the
-   relative content). */
-.mission-card-sheen {
-  position: absolute;
-  top: -35%;
-  bottom: -35%;
-  left: -30%;
-  width: 34%;
-  background: linear-gradient(
-    105deg,
-    transparent 0%,
-    rgba(245, 48, 3, 0.05) 40%,
-    rgba(255, 255, 255, 0.14) 50%,
-    rgba(245, 48, 3, 0.05) 60%,
-    transparent 100%
-  );
-  transform: translateX(-160%) skewX(-14deg);
-  transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
-  pointer-events: none;
-  z-index: 1;
-}
-.mission-card:hover .mission-card-sheen {
-  transform: translateX(560%) skewX(-14deg);
-}
-.dark .mission-card-sheen {
-  background: linear-gradient(
-    105deg,
-    transparent 0%,
-    rgba(245, 48, 3, 0.06) 40%,
-    rgba(255, 255, 255, 0.10) 50%,
-    rgba(245, 48, 3, 0.06) 60%,
-    transparent 100%
-  );
-}
-@media (prefers-reduced-motion: reduce) {
-  .mission-card-sheen {
-    display: none;
-  }
-}
-
 /* Live-company logo — pinned right, fading left into the card.
    mask-image clips the right-to-left ramp so the logo bleeds into the
    glass surface; low opacity keeps it atmospheric, never competing. */

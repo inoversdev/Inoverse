@@ -32,7 +32,7 @@ function DummyLogo({ id, name }) {
     <svg
       viewBox="0 0 100 100"
       style={{ width: '150px', height: '150px' }}
-      className="mission-card-logo pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 opacity-[0.18] transition-[opacity,transform] duration-500 group-hover:scale-105 group-hover:opacity-[0.30]"
+      className="mission-card-logo pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 opacity-[0.18] transition-opacity duration-500 group-hover:opacity-[0.30]"
       aria-hidden="true"
     >
       <circle cx="50" cy="50" r="50" fill={t.bg} />
@@ -74,10 +74,6 @@ export default function MissionCard({ project }) {
         hasLink ? 'cursor-pointer' : 'cursor-default'
       }`}
     >
-      {/* Ember scan-sweep — a skewed light band that glides across the
-          glass on hover (custom Inovers motion, no v4 import). */}
-      <span aria-hidden="true" className="mission-card-sheen" />
-
       {/* Logo zone — live favicon for shipped projects, stylised monogram
           for the rest. Both fade right-to-left via the same CSS mask. */}
       {logo ? (
@@ -86,7 +82,7 @@ export default function MissionCard({ project }) {
           alt=""
           loading="lazy"
           onError={(e) => { e.currentTarget.style.display = 'none' }}
-          className="mission-card-logo pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 opacity-[0.18] transition-[opacity,transform] duration-500 group-hover:scale-105 group-hover:opacity-[0.30]"
+          className="mission-card-logo pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 opacity-[0.18] transition-opacity duration-500 group-hover:opacity-[0.30]"
           style={{ width: '150px', height: '150px', objectFit: 'contain' }}
         />
       ) : (

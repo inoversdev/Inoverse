@@ -76,53 +76,53 @@ export default function ProjectsPage() {
     return () => window.removeEventListener('resize', remeasure)
   }, [])
 
-  // Entrance reveal — "mission deploy": cards flip up from a slight
-  // back-tilt (rotateX) with an overshoot, staggered. Custom Inovers
-  // motion, distinct from v4's side-slide.
+  // Entrance reveal — "face-up cascade": cards start edge-on (rotateY
+  // ±85°, pivoting on the outer edge) and flip face-up like a deck
+  // being dealt, staggered. Custom Inovers motion.
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
-      gsap.fromTo(
-        '.mission-card',
-        { opacity: 0, y: 56, rotateX: -18 },
-        {
-          opacity: 1,
-          y: 0,
-          rotateX: 0,
-          duration: 0.8,
-          stagger: 0.06,
-          ease: 'back.out(1.7)',
-          scrollTrigger: {
-            trigger: rootRef.current,
-            start: 'top 85%',
-            once: true,
-          },
-        }
-      )
+      gsap.utils.toArray('.mission-card').forEach((card, i) => {
+        gsap.fromTo(
+          card,
+          { opacity: 0, rotateY: i % 2 ? 85 : -85, transformOrigin: i % 2 ? 'right center' : 'left center' },
+          {
+            opacity: 1,
+            rotateY: 0,
+            duration: 0.9,
+            ease: 'back.out(1.8)',
+            scrollTrigger: {
+              trigger: rootRef.current,
+              start: 'top 85%',
+              once: true,
+            },
+          }
+        )
+      })
     }, rootRef)
     return () => ctx.revert()
   }, [])
 
-  // Replay the deploy stagger whenever the filter changes (keyed
+  // Replay the face-up cascade whenever the filter changes (keyed
   // remount of the grid is handled by React — we just re-run the
   // entrance tween). Uses useLayoutEffect so the "from" state is set
   // before the browser paints.
   useLayoutEffect(() => {
     if (!contentInnerRef.current) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    gsap.fromTo(
-      '.mission-card',
-      { opacity: 0, y: 48, rotateX: -14 },
-      {
-        opacity: 1,
-        y: 0,
-        rotateX: 0,
-        duration: 0.65,
-        stagger: 0.05,
-        ease: 'back.out(1.6)',
-        overwrite: 'auto',
-      }
-    )
+    gsap.utils.toArray('.mission-card').forEach((card, i) => {
+      gsap.fromTo(
+        card,
+        { opacity: 0, rotateY: i % 2 ? 75 : -75, transformOrigin: i % 2 ? 'right center' : 'left center' },
+        {
+          opacity: 1,
+          rotateY: 0,
+          duration: 0.7,
+          ease: 'back.out(1.7)',
+          overwrite: 'auto',
+        }
+      )
+    })
   }, [activeFilter])
 
   // Filter clicks shrink the OUTGOING cards first, then swap.
