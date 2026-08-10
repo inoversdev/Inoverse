@@ -27,21 +27,34 @@ export default function HomePage() {
     if (!target) return
     window.history.replaceState({}, '')
 
-    const ease = (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
-    let attempts = 0
-    const tryScroll = () => {
-      if (document.getElementById(target)) {
-        if (lenis) {
-          lenis.scrollTo(`#${target}`, { offset: 0, duration: 1.4, easing: ease })
-        } else {
-          document.getElementById(target)?.scrollIntoView({ behavior: 'smooth' })
+    // Wait out SpaceApp's route-change refresh window first (rAF +
+    // 120ms ScrollTrigger.refresh calls). Each refresh now re-measures
+    // Lenis (SpaceApp's refresh→lenis.resize() bridge), which updates
+    // Lenis's scroll limit to the NEW page's height — without that, a
+    // glide to a section beyond the previous page's limit is clamped
+    // (observed freeze at 5522 = old limit). 160ms > the last refresh
+    // timer, so the glide below runs against a correct limit.
+    const settle = setTimeout(startGlide, 160)
+
+    function startGlide() {
+      const ease = (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+      let attempts = 0
+      const tryScroll = () => {
+        if (document.getElementById(target)) {
+          if (lenis) {
+            lenis.scrollTo(`#${target}`, { offset: 0, duration: 1.4, easing: ease })
+          } else {
+            document.getElementById(target)?.scrollIntoView({ behavior: 'smooth' })
+          }
+        } else if (attempts < 20) {
+          attempts += 1
+          setTimeout(tryScroll, 50)
         }
-      } else if (attempts < 20) {
-        attempts += 1
-        setTimeout(tryScroll, 50)
       }
+      tryScroll()
     }
-    tryScroll()
+
+    return () => clearTimeout(settle)
   }, [location.state, lenis])
 
   return (

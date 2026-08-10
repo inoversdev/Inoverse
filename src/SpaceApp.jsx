@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { Suspense, lazy, useEffect, useRef } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -9,10 +9,16 @@ import SpaceNav from './components/SpaceNav'
 import SpaceFooter from './components/SpaceFooter'
 import CursorAura from './components/effects/CursorAura'
 import HomePage from './pages/HomePage'
-import ProjectsPage from './pages/ProjectsPage'
-import CrewPage from './pages/CrewPage'
 import { useParallaxLayers } from './hooks/useParallaxLayers'
 import { useTheme } from './theme'
+
+// Home ("/") is where almost every visit starts, so it stays eager — no
+// benefit to lazy-loading the default route, only a waterfall delay.
+// /projects and /crew are secondary: split into their own chunks so a
+// home visit never downloads their code (Mat's call 2026-08-10 —
+// "optimize the website").
+const ProjectsPage = lazy(() => import('./pages/ProjectsPage'))
+const CrewPage = lazy(() => import('./pages/CrewPage'))
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -38,11 +44,23 @@ export default function SpaceApp() {
 
   // Keep GSAP ScrollTrigger in lockstep with Lenis' virtual scroll —
   // this is what removes the delayed-feeling parallax/reveal animations.
+  // ALSO: re-measure Lenis whenever ScrollTrigger refreshes. Lenis root
+  // mode only recalculates its scroll limit on resize/load, and route
+  // changes don't fire either — without this, a cross-page anchor glide
+  // to a section beyond the PREVIOUS page's limit gets silently clamped
+  // (observed: /projects → #contact froze at 5522 = 6340 − 818, the
+  // projects-page limit). ScrollTrigger.refresh() runs on every route
+  // change (below), so the limit is always fresh before a glide starts.
   useEffect(() => {
     if (!lenis) return
     const onScroll = () => ScrollTrigger.update()
+    const onRefresh = () => lenis.resize()
     lenis.on('scroll', onScroll)
-    return () => lenis.off('scroll', onScroll)
+    ScrollTrigger.addEventListener('refresh', onRefresh)
+    return () => {
+      lenis.off('scroll', onScroll)
+      ScrollTrigger.removeEventListener('refresh', onRefresh)
+    }
   }, [lenis])
 
   // (Re)build the 3D universe for the active theme — full re-skin on
@@ -150,11 +168,13 @@ export default function SpaceApp() {
         {/* Scrollable content above the canvas */}
         <div className="relative z-10">
           <SpaceNav />
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/projects" element={<ProjectsPage />} />
-            <Route path="/crew" element={<CrewPage />} />
-          </Routes>
+          <Suspense fallback={null}>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/projects" element={<ProjectsPage />} />
+              <Route path="/crew" element={<CrewPage />} />
+            </Routes>
+          </Suspense>
           <SpaceFooter />
         </div>
       </div>

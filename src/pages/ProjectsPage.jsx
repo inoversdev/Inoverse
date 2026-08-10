@@ -8,13 +8,19 @@ import MissionCTA from '../components/MissionCTA'
 
 gsap.registerPlugin(ScrollTrigger)
 
+const PAGE_SIZE = 9
+
 // ─── /projects — the full mission manifest ───
 // All projects, industry filter chips (the taxonomy moved here from the
 // home showcase), the 3-part filter animation (sliding chip indicator +
-// FLIP height morph + card shrink-out), and a closing Book a Call band.
+// FLIP height morph + card shrink-out), pagination (9/page, Mat's call
+// 2026-08-10 — plain pagination over infinite scroll or grouping), and a
+// closing Book a Call band.
 export default function ProjectsPage() {
   const rootRef = useRef(null)
+  const gridRef = useRef(null)
   const [activeFilter, setActiveFilter] = useState('All')
+  const [page, setPage] = useState(1)
   const [isTransitioning, setIsTransitioning] = useState(false)
 
   const filtered = useMemo(
@@ -23,6 +29,12 @@ export default function ProjectsPage() {
         ? PROJECTS
         : PROJECTS.filter((p) => p.industry === activeFilter),
     [activeFilter]
+  )
+
+  const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const paginated = useMemo(
+    () => filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+    [filtered, page]
   )
 
   // ── Smooth height morph on filter change (FLIP-style) ──
@@ -55,7 +67,7 @@ export default function ProjectsPage() {
       setWrapperHeight(newHeight)
       prevHeightRef.current = newHeight
     })
-  }, [activeFilter])
+  }, [activeFilter, page])
 
   // Resize: the wrapper's height is pinned to a measured pixel value
   // (see above), so a viewport-width change that reflows the grid to a
@@ -76,40 +88,32 @@ export default function ProjectsPage() {
     return () => window.removeEventListener('resize', remeasure)
   }, [])
 
-  // Entrance reveal — scale-in with blur: each card grows 0.9→1 and
-  // sharpens (blur 8px→0) as it scrolls from the viewport bottom edge
-  // to 55% height, scrubbed to scroll (reverses buttery-smooth).
-  // Re-runs on filter changes: ctx.revert() kills the old per-card
-  // triggers (no leak), fresh ones are created for the remounted grid.
+  // Entrance reveal — simple one-shot fade-up (Mat's call 2026-08-10:
+  // the scrubbed scale+blur was too heavy to render — filter: blur on
+  // every card (up to 60 here) recomposites constantly while scrolling).
+  // Now: transform + opacity only, fires once per card, no scrub, no
+  // filter. Re-runs on filter changes: ctx.revert() kills the old
+  // per-card triggers (no leak), fresh ones are created for the new grid.
   // The height morph re-measures after settling (750ms ≈ 0.7s morph).
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
       gsap.utils.toArray('.mission-card').forEach((card) => {
-        gsap.fromTo(
-          card,
-          { scale: 0.9, opacity: 0, filter: 'blur(8px)' },
-          {
-            scale: 1,
-            opacity: 1,
-            filter: 'blur(0px)',
-            ease: 'none',
-            scrollTrigger: {
-              trigger: card,
-              start: 'top bottom',
-              end: 'top 55%',
-              scrub: 0.5,
-            },
-          }
-        )
+        gsap.from(card, {
+          y: 20,
+          opacity: 0,
+          duration: 0.75,
+          ease: 'expo.out',
+          scrollTrigger: { trigger: card, start: 'top 92%', once: true },
+        })
       })
     }, rootRef)
-    const t = setTimeout(() => ScrollTrigger.refresh(), 750)
+    const t = setTimeout(() => ScrollTrigger.refresh(), 850)
     return () => {
       clearTimeout(t)
       ctx.revert()
     }
-  }, [activeFilter])
+  }, [activeFilter, page])
 
   // (Filter-change replay is handled by the reveal effect above — it
   // re-runs on activeFilter, so the previous mount-time fromTo replay
@@ -122,16 +126,38 @@ export default function ProjectsPage() {
     setIsTransitioning(true)
     gsap.to('.mission-card', {
       opacity: 0,
-      y: -28,
-      scale: 0.82,
-      rotateZ: -2,
-      duration: 0.38,
-      stagger: 0.025,
-      ease: 'power2.in',
+      y: -16,
+      scale: 0.95,
+      duration: 0.45,
+      stagger: 0.03,
+      ease: 'sine.in',
       overwrite: 'auto',
       onComplete: () => {
         setActiveFilter(cat)
+        setPage(1)
         setIsTransitioning(false)
+      },
+    })
+  }
+
+  // Page clicks: same shrink-out, then swap page and scroll the grid back
+  // into view (a jump straight to page 3's cards with no scroll cue reads
+  // as broken, especially coming from a Book a Call click further down).
+  const handlePageChange = (next) => {
+    if (next === page || next < 1 || next > pageCount || isTransitioning) return
+    setIsTransitioning(true)
+    gsap.to('.mission-card', {
+      opacity: 0,
+      y: -16,
+      scale: 0.95,
+      duration: 0.45,
+      stagger: 0.025,
+      ease: 'sine.in',
+      overwrite: 'auto',
+      onComplete: () => {
+        setPage(next)
+        setIsTransitioning(false)
+        gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       },
     })
   }
@@ -166,7 +192,7 @@ export default function ProjectsPage() {
         lede={PROJECTS_PAGE.lede}
       />
 
-      <section className="relative mx-auto max-w-7xl px-6 pb-16 lg:px-10">
+      <section ref={gridRef} className="relative mx-auto max-w-7xl px-6 pb-16 lg:px-10">
         {/* ── Mission counter — same row as the filter buttons (Mat's
                preference). Chips + pill share one wrap row; the pill
                ml-auto's right and drops to its own line only when the
@@ -212,14 +238,14 @@ export default function ProjectsPage() {
           style={{
             height: wrapperHeight,
             overflow: 'hidden',
-            transition: useHeightTransition ? 'height 0.7s cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
+            transition: useHeightTransition ? 'height 0.75s cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
           }}
         >
           <div ref={contentInnerRef}>
-            {filtered.length ? (
-              <div key={activeFilter}>
+            {paginated.length ? (
+              <div key={`${activeFilter}-${page}`}>
                 <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                  {filtered.map((p) => (
+                  {paginated.map((p) => (
                     <MissionCard key={p.id} project={p} />
                   ))}
                 </div>
@@ -231,6 +257,47 @@ export default function ProjectsPage() {
             )}
           </div>
         </div>
+
+        {/* ── Pagination — 9 missions/page (Mat's call 2026-08-10: plain
+               pagination over infinite scroll). Shares the shrink-out
+               transition with the filter chips for consistency. ── */}
+        {pageCount > 1 && (
+          <nav className="mt-10 flex items-center justify-center gap-2" aria-label="Projects pagination">
+            <button
+              type="button"
+              onClick={() => handlePageChange(page - 1)}
+              disabled={page === 1}
+              className="v2-btn v2-btn-ghost v2-btn-sm disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Prev
+            </button>
+            <div className="flex items-center gap-1.5">
+              {Array.from({ length: pageCount }, (_, i) => i + 1).map((n) => (
+                <button
+                  key={n}
+                  type="button"
+                  onClick={() => handlePageChange(n)}
+                  aria-current={n === page ? 'page' : undefined}
+                  className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-medium transition-all duration-300 ease-out ${
+                    n === page
+                      ? 'scale-105 bg-ember-500 text-white'
+                      : 'text-star-400 hover:bg-white/40 dark:hover:bg-white/5'
+                  }`}
+                >
+                  {n}
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={() => handlePageChange(page + 1)}
+              disabled={page === pageCount}
+              className="v2-btn v2-btn-ghost v2-btn-sm disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Next
+            </button>
+          </nav>
+        )}
       </section>
 
       <MissionCTA
