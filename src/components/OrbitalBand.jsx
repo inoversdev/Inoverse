@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { BRAND, CREW_PAGE, ORG_CHART } from '../lib/content'
@@ -84,6 +84,9 @@ const LEAD_ANGLES = [0, 180]
 
 export default function OrbitalBand() {
   const rootRef = useRef(null)
+  const orbitRef = useRef(null)
+  const sceneRef = useRef(null)
+  const [grabbing, setGrabbing] = useState(false)
 
   useEffect(() => {
     // Reduced motion: bail before creating anything. No triggers, no
@@ -134,12 +137,136 @@ export default function OrbitalBand() {
     return () => ctx.revert()
   }, [])
 
+  // ─── Drag-to-rotate — the Day 2 interactive orbit behaviour ───
+  // Grab the system and spin it: horizontal drags turn it around Y,
+  // vertical drags re-tilt the disc (clamped so it never goes edge-on).
+  // On release the spin carries on with momentum, then a slow idle drift
+  // keeps the system alive. Medallions + core billboard every frame so
+  // they keep facing the camera while the scene rotates. Disabled for
+  // reduced motion.
+  useEffect(() => {
+    const el = orbitRef.current
+    const scene = sceneRef.current
+    if (!el || !scene) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    const DEG_PER_PX = 0.28
+    const X_MIN = 15
+    const X_MAX = 85
+    const clampX = (v) => Math.min(X_MAX, Math.max(X_MIN, v))
+
+    // Billboard targets: the medallion wrappers and the core. Their
+    // data-base holds the transform WITHOUT the camera-facing rotateX
+    // (captured at render), so the loop can append the live counter.
+    const billboards = Array.from(el.querySelectorAll('.v2-orbit-billboard'))
+
+    let dragging = false
+    let lastX = 0
+    let lastY = 0
+    let lastT = 0
+    let velX = 0
+    let velY = 0
+    let rotX = TILT
+    let rotY = 0
+    let raf = 0
+    let prevT = performance.now()
+
+    const apply = () => {
+      gsap.set(scene, { rotationX: rotX, rotationY: rotY })
+      billboards.forEach((b) => {
+        // Skip any billboard GSAP is still animating (reveal in progress)
+        if (gsap.getTweensOf(b).length === 0) {
+          b.style.transform = `${b.dataset.base} rotateX(${-rotX}deg) rotateY(${-rotY}deg)`
+        }
+      })
+    }
+
+    // Per-frame: momentum decay → idle drift. Skipped while the reveal
+    // tween owns the scene transform (getTweensOf > 0).
+    const loop = (now) => {
+      const dt = Math.min((now - prevT) / 1000, 0.05)
+      prevT = now
+      if (!dragging && gsap.getTweensOf(scene).length === 0) {
+        if (Math.abs(velY) > 0.5 || Math.abs(velX) > 0.5) {
+          rotX = clampX(rotX + velX * dt)
+          rotY += velY * dt
+          const decay = Math.exp(-2.2 * dt)
+          velX *= decay
+          velY *= decay
+        } else {
+          velX = 0
+          velY = 0
+          rotY += 3 * dt // idle drift — slow turn showing the 3D
+        }
+        apply()
+      }
+      raf = requestAnimationFrame(loop)
+    }
+    raf = requestAnimationFrame(loop)
+
+    const onDown = (e) => {
+      dragging = true
+      lastX = e.clientX
+      lastY = e.clientY
+      lastT = performance.now()
+      velX = 0
+      velY = 0
+      // If grabbed mid-reveal, lock the scene to its final state
+      gsap.killTweensOf(scene)
+      gsap.set(scene, { opacity: 1, scale: 1 })
+      el.setPointerCapture?.(e.pointerId)
+      setGrabbing(true)
+    }
+
+    const onMove = (e) => {
+      if (!dragging) return
+      const now = performance.now()
+      const dt = Math.max((now - lastT) / 1000, 0.001)
+      const dx = e.clientX - lastX
+      const dy = e.clientY - lastY
+      lastX = e.clientX
+      lastY = e.clientY
+      lastT = now
+      rotY += dx * DEG_PER_PX
+      rotX = clampX(rotX - dy * DEG_PER_PX)
+      velY = (dx * DEG_PER_PX) / dt
+      velX = (-dy * DEG_PER_PX) / dt
+      apply()
+    }
+
+    const onUp = (e) => {
+      if (!dragging) return
+      dragging = false
+      try {
+        el.releasePointerCapture?.(e.pointerId)
+      } catch {
+        /* pointer capture may already be gone */
+      }
+      setGrabbing(false)
+    }
+
+    el.addEventListener('pointerdown', onDown)
+    el.addEventListener('pointermove', onMove)
+    el.addEventListener('pointerup', onUp)
+    el.addEventListener('pointercancel', onUp)
+    return () => {
+      cancelAnimationFrame(raf)
+      el.removeEventListener('pointerdown', onDown)
+      el.removeEventListener('pointermove', onMove)
+      el.removeEventListener('pointerup', onUp)
+      el.removeEventListener('pointercancel', onUp)
+    }
+  }, [])
+
   return (
     <section ref={rootRef} className="relative mx-auto max-w-7xl px-6 pb-10 lg:px-10">
       <div className="flex flex-col items-center">
         <div
-          className="v2-orbit relative mx-auto aspect-square w-full max-w-[560px]"
-          style={{ perspective: '1100px' }}
+          ref={orbitRef}
+          className={`v2-orbit relative mx-auto aspect-square w-full max-w-[560px] select-none ${
+            grabbing ? 'cursor-grabbing' : 'cursor-grab'
+          }`}
+          style={{ perspective: '1100px', touchAction: 'pan-y' }}
         >
           {/* Ambient ember atmosphere — clipped so it can't overflow on
               mobile (wrapper keeps preserve-3d siblings intact). */}
@@ -156,6 +283,7 @@ export default function OrbitalBand() {
           <div className="animate-scene-bob absolute inset-0" style={{ transformStyle: 'preserve-3d' }}>
             {/* The tilted disc */}
             <div
+              ref={sceneRef}
               className="v2-orbit-scene absolute inset-0 will-change-transform"
               style={{ transform: `rotateX(${TILT}deg)`, transformStyle: 'preserve-3d' }}
             >
@@ -175,7 +303,8 @@ export default function OrbitalBand() {
                 {ORG_CHART.rings[1].roles.map((r, i) => (
                   <div
                     key={r.id}
-                    className="absolute left-1/2 top-1/2"
+                    className="v2-orbit-billboard absolute left-1/2 top-1/2"
+                    data-base={`rotate(${TEAM_ANGLES[i]}deg) translateX(var(--orbit-main)) rotate(${-TEAM_ANGLES[i]}deg)`}
                     style={{
                       transform: `rotate(${TEAM_ANGLES[i]}deg) translateX(var(--orbit-main)) rotate(${-TEAM_ANGLES[i]}deg) rotateX(-${TILT}deg)`,
                       transformStyle: 'preserve-3d',
@@ -217,7 +346,8 @@ export default function OrbitalBand() {
                 {ORG_CHART.rings[0].roles.map((r, i) => (
                   <div
                     key={r.id}
-                    className="absolute left-1/2 top-1/2"
+                    className="v2-orbit-billboard absolute left-1/2 top-1/2"
+                    data-base={`rotate(${LEAD_ANGLES[i]}deg) translateX(var(--orbit-inner)) rotate(${-LEAD_ANGLES[i]}deg)`}
                     style={{
                       transform: `rotate(${LEAD_ANGLES[i]}deg) translateX(var(--orbit-inner)) rotate(${-LEAD_ANGLES[i]}deg) rotateX(-${TILT}deg)`,
                       transformStyle: 'preserve-3d',
@@ -265,7 +395,7 @@ export default function OrbitalBand() {
               className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
               style={{ transformStyle: 'preserve-3d' }}
             >
-              <div className="v2-orbit-core" style={{ transform: `translateZ(54px) rotateX(-${TILT}deg)` }}>
+              <div className="v2-orbit-core v2-orbit-billboard" data-base="translateZ(54px)" style={{ transform: `translateZ(54px) rotateX(-${TILT}deg)` }}>
                 <div className="animate-float-node relative">
                   <span
                     className="pointer-events-none absolute -inset-6 -z-10 rounded-full"
