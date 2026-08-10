@@ -4,13 +4,52 @@ import { applyBorderGlow, clearBorderGlow } from '../lib/borderGlow'
 
 // Try to resolve a clean 256px favicon from the project's live domain —
 // the pixel size so it stays sharp even when scaled through the card.
-// Falls back to nothing when the project has no url (concept / pre-launch).
 function favicon(url) {
   try {
     return `https://www.google.com/s2/favicons?domain=${new URL(url).hostname}&sz=256`
   } catch {
     return null
   }
+}
+
+// Dummy-monogram palette — one tint per id so concept projects still
+// have a visual anchor on the card (Mat's call). Rotates through six
+// muted tones that fit the ember/star palette.
+const DUMMY_TINTS = [
+  { bg: '#2a1a14', fg: '#f5a17a' },
+  { bg: '#1a2a24', fg: '#7ac5a1' },
+  { bg: '#1a1f2a', fg: '#7aa1f5' },
+  { bg: '#2a1a2a', fg: '#c57af5' },
+  { bg: '#1a2a2a', fg: '#7af5d4' },
+  { bg: '#2a241a', fg: '#f5d47a' },
+]
+
+function DummyLogo({ id, name }) {
+  const initial = name.trim()[0].toUpperCase()
+  // Deterministic tint from the id string so it survives sort/filter
+  const hash = [...id].reduce((s, c) => s + c.charCodeAt(0), 0)
+  const t = DUMMY_TINTS[hash % DUMMY_TINTS.length]
+  return (
+    <svg
+      viewBox="0 0 100 100"
+      className="mission-card-logo pointer-events-none absolute right-0 top-1/2 h-4/5 max-h-40 -translate-y-1/2 opacity-[0.18] transition-opacity duration-500 group-hover:opacity-[0.30]"
+      aria-hidden="true"
+    >
+      <circle cx="50" cy="50" r="50" fill={t.bg} />
+      <text
+        x="50" y="53"
+        textAnchor="middle"
+        dominantBaseline="middle"
+        fill={t.fg}
+        fontFamily="system-ui, sans-serif"
+        fontWeight="700"
+        fontSize="46"
+        letterSpacing="-0.02em"
+      >
+        {initial}
+      </text>
+    </svg>
+  )
 }
 
 export default function MissionCard({ project }) {
@@ -35,10 +74,9 @@ export default function MissionCard({ project }) {
         hasLink ? 'cursor-pointer' : 'cursor-default'
       }`}
     >
-      {/* Faded live logo — pinned right, fading left via CSS mask.
-          Low opacity so it reads as atmosphere, not content. Hover lifts
-          it slightly so the card focus stays on the text. */}
-      {logo && (
+      {/* Logo zone — live favicon for shipped projects, stylised monogram
+          for the rest. Both fade right-to-left via the same CSS mask. */}
+      {logo ? (
         <img
           src={logo}
           alt=""
@@ -46,6 +84,8 @@ export default function MissionCard({ project }) {
           onError={(e) => { e.currentTarget.style.display = 'none' }}
           className="mission-card-logo pointer-events-none absolute right-0 top-1/2 h-4/5 max-h-40 -translate-y-1/2 object-contain opacity-[0.18] transition-opacity duration-500 group-hover:opacity-[0.30]"
         />
+      ) : (
+        <DummyLogo id={p.id} name={p.name} />
       )}
 
       <div className="relative mb-4 flex items-center justify-between gap-3">
