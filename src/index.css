@@ -700,6 +700,14 @@ body {
   );
 }
 
+/* Live-company logo — pinned right, fading left into the card.
+   mask-image clips the right-to-left ramp so the logo bleeds into the
+   glass surface; low opacity keeps it atmospheric, never competing. */
+.mission-card-logo {
+  mask-image: linear-gradient(to left, black 35%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to left, black 35%, transparent 100%);
+}
+
 /* ─── Flight plan path (Process) ─── */
 .flight-path-line {
   background: linear-gradient(90deg, transparent, rgba(245, 48, 3, 0.6) 18%, rgba(245, 48, 3, 0.6) 82%, transparent);

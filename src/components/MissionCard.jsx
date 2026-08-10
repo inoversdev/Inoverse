@@ -3,17 +3,23 @@
 import { applyBorderGlow, clearBorderGlow } from '../lib/borderGlow'
 
 const EXTERNAL = 'https://dorydelivery.com/'
-const LINKED = [
-  { id: 'dory', url: 'https://dorydelivery.com/' },
-  { id: 'dmap', url: 'https://dmap.inovers.dev/' },
-  { id: 'whatahotel', url: 'https://www.whatahotel.com/' },
-  { id: 'agenxure', url: 'https://www.agenxure.com/' },
-]
+
+// Try to resolve a clean 256px favicon from the project's live domain —
+// the pixel size so it stays sharp even when scaled through the card.
+// Falls back to nothing when the project has no url (concept / pre-launch).
+function favicon(url) {
+  try {
+    return `https://www.google.com/s2/favicons?domain=${new URL(url).hostname}&sz=256`
+  } catch {
+    return null
+  }
+}
 
 export default function MissionCard({ project }) {
   const p = project
-  const hasLink = LINKED.some((l) => l.id === p.id)
+  const hasLink = p.url != null
   const hrefFor = p.url || EXTERNAL
+  const logo = favicon(p.url)
 
   return (
     <a
@@ -28,11 +34,24 @@ export default function MissionCard({ project }) {
         applyBorderGlow(e)
       }}
       onMouseLeave={clearBorderGlow}
-      className={`mission-card glow-ring group glass min-w-0 rounded-2xl p-6 transition-all duration-500 hover:-translate-y-1 hover:border-ember-500/40 hover:shadow-[0_0_50px_rgba(245,48,3,0.12)] ${
+      className={`mission-card glow-ring group glass relative min-w-0 overflow-hidden rounded-2xl p-6 transition-all duration-500 hover:-translate-y-1 hover:border-ember-500/40 hover:shadow-[0_0_50px_rgba(245,48,3,0.12)] ${
         hasLink ? 'cursor-pointer' : 'cursor-default'
       }`}
     >
-      <div className="mb-4 flex items-center justify-between gap-3">
+      {/* Faded live logo — pinned right, fading left via CSS mask.
+          Low opacity so it reads as atmosphere, not content. Hover lifts
+          it slightly so the card focus stays on the text. */}
+      {logo && (
+        <img
+          src={logo}
+          alt=""
+          loading="lazy"
+          onError={(e) => { e.currentTarget.style.display = 'none' }}
+          className="mission-card-logo pointer-events-none absolute right-0 top-1/2 h-4/5 max-h-40 -translate-y-1/2 object-contain opacity-[0.08] transition-opacity duration-500 group-hover:opacity-[0.14]"
+        />
+      )}
+
+      <div className="relative mb-4 flex items-center justify-between gap-3">
         <span className="inline-flex items-center gap-2 rounded-full border border-ember-500/25 bg-ember-500/5 px-3 py-1 text-[11px] font-medium uppercase tracking-widest text-ember-600 dark:text-ember-300">
           {p.industry}
         </span>
@@ -51,11 +70,11 @@ export default function MissionCard({ project }) {
           )}
         </span>
       </div>
-      <h3 className="font-display text-xl font-semibold tracking-tight text-star-100 transition-colors group-hover:text-ember-600">
+      <h3 className="relative font-display text-xl font-semibold tracking-tight text-star-100 transition-colors group-hover:text-ember-600">
         {p.name}
       </h3>
-      <p className="mt-2.5 text-sm leading-relaxed text-star-400">{p.description}</p>
-      <div className="mt-5 flex flex-wrap gap-2">
+      <p className="relative mt-2.5 text-sm leading-relaxed text-star-400">{p.description}</p>
+      <div className="relative mt-5 flex flex-wrap gap-2">
         {p.tags.map((t) => (
           <span
             key={t}
