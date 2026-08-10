@@ -1,6 +1,8 @@
 // ─── MissionCard — shared project card for the home showcase and the
 // /projects grid. One source of truth for how a mission renders. ───
-import { applyBorderGlow, clearBorderGlow } from '../lib/borderGlow'
+// (No borderGlow here — Mat's call 2026-08-10: the mouse-follow glow
+// forced a getBoundingClientRect + gradient repaint on every mousemove.
+// Hover stays CSS-only: lift, border tint, soft shadow.)
 
 // Try to resolve a clean 256px favicon from the project's live domain —
 // the pixel size so it stays sharp even when scaled through the card.
@@ -63,14 +65,7 @@ export default function MissionCard({ project }) {
       href={hasLink ? p.url : undefined}
       target={hasLink ? '_blank' : undefined}
       rel={hasLink ? 'noreferrer' : undefined}
-      onMouseMove={(e) => {
-        const r = e.currentTarget.getBoundingClientRect()
-        e.currentTarget.style.setProperty('--mx', `${e.clientX - r.left}px`)
-        e.currentTarget.style.setProperty('--my', `${e.clientY - r.top}px`)
-        applyBorderGlow(e)
-      }}
-      onMouseLeave={clearBorderGlow}
-      className={`mission-card glow-ring group glass relative min-w-0 overflow-hidden rounded-2xl p-6 transition-all duration-500 hover:-translate-y-1 hover:border-ember-500/40 hover:shadow-[0_0_50px_rgba(245,48,3,0.12)] ${
+      className={`mission-card group glass relative min-w-0 overflow-hidden rounded-2xl p-6 transition-all duration-500 hover:-translate-y-1 hover:border-ember-500/40 hover:shadow-[0_0_50px_rgba(245,48,3,0.12)] ${
         hasLink ? 'cursor-pointer' : 'cursor-default'
       }`}
     >

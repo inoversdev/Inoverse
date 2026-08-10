@@ -63,8 +63,8 @@ export const ABOUT = {
     'Our mission is to close the gap between complex tech and real business wins. We work with companies of every size building custom software, streamlining operations, and engineering advantages that actually last.',
     'From fresh startups to established enterprises, we\u2019ve helped hundreds of teams turn technology into momentum hitting their goals, then going beyond them.',
   ],
-  cta: 'Work With Us',
-  ctaSecondary: 'Book a free call',
+  cta: 'Crews',
+  ctaSecondary: 'Work With Us',
   values: [
     {
       id: 'innovation',
@@ -131,12 +131,12 @@ export const SERVICES = [
     media: {
       grid: 'lg:grid-cols-3 lg:grid-rows-3',
       items: [
-        { shape: 'browser', src: null, span: 'lg:col-span-2 lg:row-span-2' }, // big wide hero
-        { shape: 'browser', src: null, span: '' },
-        { shape: 'browser', src: null, span: '' },
-        { shape: 'browser', src: null, span: '' },
-        { shape: 'browser', src: null, span: '' },
-        { shape: 'browser', src: null, span: '' },
+        { shape: 'browser', kind: 'hero', src: null, span: 'lg:col-span-2 lg:row-span-2' }, // big wide hero
+        { shape: 'browser', kind: 'gallery', src: null, span: '' },
+        { shape: 'browser', kind: 'form', src: null, span: '' },
+        { shape: 'browser', kind: 'list', src: null, span: '' },
+        { shape: 'browser', kind: 'cards', src: null, span: '' },
+        { shape: 'browser', kind: 'footer', src: null, span: '' },
       ],
     },
   },
@@ -157,12 +157,12 @@ export const SERVICES = [
     media: {
       grid: 'lg:grid-cols-4 lg:grid-rows-3',
       items: [
-        { shape: 'phone', src: null, span: 'lg:col-span-2 lg:row-span-2' }, // big phone hero
-        { shape: 'browser', src: null, span: '' },
-        { shape: 'phone', src: null, span: '' },
-        { shape: 'browser', src: null, span: 'lg:col-span-2' }, // wide web
-        { shape: 'phone', src: null, span: 'lg:col-span-2' }, // wide mobile
-        { shape: 'browser', src: null, span: 'lg:col-span-2' }, // wide web
+        { shape: 'phone', kind: 'app-home', src: null, span: 'lg:col-span-2 lg:row-span-2' }, // big phone hero
+        { shape: 'browser', kind: 'dashboard', src: null, span: '' },
+        { shape: 'phone', kind: 'app-list', src: null, span: '' },
+        { shape: 'browser', kind: 'code', src: null, span: 'lg:col-span-2' }, // wide web
+        { shape: 'phone', kind: 'app-chat', src: null, span: 'lg:col-span-2' }, // wide mobile
+        { shape: 'browser', kind: 'kanban', src: null, span: 'lg:col-span-2' }, // wide web
       ],
     },
   },
@@ -183,12 +183,12 @@ export const SERVICES = [
     media: {
       grid: 'lg:grid-cols-4 lg:grid-rows-3',
       items: [
-        { shape: 'browser', src: null, span: 'lg:col-span-2 lg:row-span-2' }, // big dashboard first
-        { shape: 'browser', src: null, span: '' },
-        { shape: 'browser', src: null, span: '' },
-        { shape: 'browser', src: null, span: 'lg:col-span-2' }, // wide
-        { shape: 'browser', src: null, span: 'lg:col-span-2' }, // wide
-        { shape: 'browser', src: null, span: 'lg:col-span-2' }, // wide
+        { shape: 'browser', kind: 'dashboard-big', src: null, span: 'lg:col-span-2 lg:row-span-2' }, // big dashboard first
+        { shape: 'browser', kind: 'flow', src: null, span: '' },
+        { shape: 'browser', kind: 'table', src: null, span: '' },
+        { shape: 'browser', kind: 'metrics', src: null, span: 'lg:col-span-2' }, // wide
+        { shape: 'browser', kind: 'pipeline', src: null, span: 'lg:col-span-2' }, // wide
+        { shape: 'browser', kind: 'integrations', src: null, span: 'lg:col-span-2' }, // wide
       ],
     },
   },
@@ -1149,7 +1149,7 @@ export const WHY = {
 // Content honesty (plan §6): REAL quotes from named, consenting clients
 // are still pending from the CEO/CTO. These six are DUMMY entries (Mat's
 // call, 2026-08-10) — demo:true so the page renders a visible
-// "Sample layout — awaiting client sign-off" ribbon, never passing as
+// "Sample stories — real client words coming soon" ribbon, never passing as
 // real endorsements. Swap this array for real quotes when they land.
 // `status: 'live'` + a real average/source turns the demo ribbon off.
 export const TESTIMONIALS_META = {
@@ -1242,5 +1242,5 @@ export const TESTIMONIALS_PAGE = {
   lede: 'Real words from teams who traded silence and hand-offs for a direct line to the people building their product.',
   holdNote: "We're gathering real words from the crews we've flown with — they'll appear here as they come in.",
   holdHeading: 'Transmissions incoming',
-  demoRibbon: 'Sample layout — awaiting client sign-off',
+  demoRibbon: 'A Glimpse of What’s to Come',
 }

@@ -31,7 +31,7 @@ export default class SpaceScene {
       powerPreference: 'high-performance',
     })
     this.renderer.setSize(mount.clientWidth, mount.clientHeight)
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5))
     this.renderer.outputColorSpace = THREE.SRGBColorSpace
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping
     this.renderer.toneMappingExposure = 1.2
@@ -302,9 +302,25 @@ export default class SpaceScene {
 
     // ─── Degrade off-screen ───
     this._io = new IntersectionObserver(([entry]) => {
-      this.renderer.setPixelRatio(entry.isIntersecting ? Math.min(window.devicePixelRatio, 2) : 1)
+      this.renderer.setPixelRatio(entry.isIntersecting ? Math.min(window.devicePixelRatio, 1.5) : 1)
     })
     this._io.observe(mount)
+
+    // ─── Pause entirely on a hidden tab ─── a full-screen WebGL scene
+    // rendering every frame in a background tab is pure waste — nothing
+    // is visible to lose quality on. Some browsers already throttle
+    // rAF when hidden, but not all, and not to zero; this guarantees it.
+    // On return, flush the accumulated clock delta so the camera doesn't
+    // jump-catch-up in one big step.
+    this._onVisibility = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(this.raf)
+      } else if (!this.disposed) {
+        this.clock.getDelta() // discard time spent hidden
+        this.raf = requestAnimationFrame(this._loop)
+      }
+    }
+    document.addEventListener('visibilitychange', this._onVisibility)
 
      this.clock = new THREE.Clock()
      this.progress = 0
@@ -330,9 +346,9 @@ export default class SpaceScene {
   }
 
   start() {
-    const loop = () => {
+    this._loop = () => {
       if (this.disposed) return
-      this.raf = requestAnimationFrame(loop)
+      this.raf = requestAnimationFrame(this._loop)
       const dt = Math.min(this.clock.getDelta(), 0.05)
       const t = this.clock.elapsedTime
 
@@ -571,7 +587,7 @@ export default class SpaceScene {
 
       this.renderer.render(this.scene, this.camera)
     }
-    loop()
+    if (!document.hidden) this._loop()
   }
 
   dispose() {
@@ -579,6 +595,7 @@ export default class SpaceScene {
     cancelAnimationFrame(this.raf)
     window.removeEventListener('resize', this._onResize)
     window.removeEventListener('mousemove', this._onMouse)
+    document.removeEventListener('visibilitychange', this._onVisibility)
     this._io.disconnect()
     this.scene.traverse((obj) => {
       if (obj.geometry) obj.geometry.dispose()

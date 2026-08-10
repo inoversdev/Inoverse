@@ -88,37 +88,70 @@ export default function CompareDeck() {
 
   return (
     <div ref={rootRef} className="relative mb-16">
-      <div className="grid gap-6 md:grid-cols-2">
-        <div
-          className="compare-card-us glass rounded-3xl p-8 transition-transform duration-300 [transform-style:preserve-3d] hover:[transform:rotateX(3deg)_rotateY(-3deg)] motion-reduce:hover:transform-none"
-        >
-          <h3 className="mb-6 flex items-center justify-center gap-2 text-xl font-semibold text-ember-500">
-            <Check className="h-5 w-5" /> {WHY.compare.usLabel}
-          </h3>
-          <ul className="flex flex-col gap-4">
-            {WHY.compare.rows.map((row, i) => (
-              <li key={i} className="flex items-start gap-3 text-sm text-star-300">
-                <Check className="mt-0.5 text-ember-500" />
-                {row.us}
-              </li>
-            ))}
-          </ul>
+      <div className="grid items-start gap-6 md:grid-cols-2">
+        {/* Us — the winner: ember-committed, elevated, glows. Outer div
+            owns `perspective` and nothing else; the inner card owns the
+            hover transform. Both on the same element (what this had
+            before) gives rotateX/rotateY nowhere to project onto, so the
+            "tilt" was nearly invisible — same split v4 uses
+            (.compare-card / .compare-card-inner). */}
+        <div className="compare-card-us [perspective:1400px]">
+          <div
+            className="relative rounded-3xl border border-ember-500/35 bg-gradient-to-b from-ember-500/[0.09] to-transparent p-8 shadow-[0_30px_70px_-25px_rgba(245,48,3,0.45)] transition-transform duration-500 ease-out [transform-style:preserve-3d] hover:[transform:rotateX(6deg)_rotateY(-8deg)_translateZ(20px)] motion-reduce:hover:transform-none md:scale-[1.03] md:p-9"
+          >
+            {/* ambient glow — same recipe as the orbit core, just quieter */}
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute -inset-8 -z-10 rounded-[3rem] blur-2xl"
+              style={{ background: 'radial-gradient(circle, rgba(245,48,3,0.22), transparent 70%)' }}
+            />
+            <h3 className="mb-6 flex items-center justify-center gap-2.5 text-xl font-bold text-ember-600 dark:text-ember-300">
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-ember-500 text-white shadow-[0_0_16px_rgba(245,48,3,0.5)]">
+                <Check className="h-4 w-4" />
+              </span>
+              {WHY.compare.usLabel}
+            </h3>
+            <ul className="flex flex-col gap-4">
+              {WHY.compare.rows.map((row, i) => (
+                <li
+                  key={i}
+                  className="group/row flex items-start gap-3 rounded-lg px-2 py-1 -mx-2 text-sm font-medium text-star-100 transition-all duration-200 ease-out hover:translate-x-1 hover:bg-ember-500/10"
+                >
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-ember-500/15 text-ember-500 transition-transform duration-200 ease-out group-hover/row:scale-125 dark:text-ember-300">
+                    <Check className="h-3 w-3" />
+                  </span>
+                  {row.us}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
-        <div
-          className="compare-card-them rounded-3xl border border-dashed border-star-300/25 bg-white/40 p-8 transition-transform duration-300 [transform-style:preserve-3d] hover:[transform:rotateX(3deg)_rotateY(3deg)] motion-reduce:hover:transform-none dark:bg-white/5"
-        >
-          <h3 className="mb-6 flex items-center justify-center gap-2 text-xl font-semibold text-star-500">
-            <Cross className="h-5 w-5" /> {WHY.compare.themLabel}
-          </h3>
-          <ul className="flex flex-col gap-4">
-            {WHY.compare.rows.map((row, i) => (
-              <li key={i} className="flex items-start gap-3 text-sm text-star-500">
-                <Cross className="mt-0.5 text-star-500/60" />
-                {row.them}
-              </li>
-            ))}
-          </ul>
+        {/* Them — muted, receded, flat: the visual contrast IS the argument. */}
+        <div className="compare-card-them [perspective:1400px]">
+          <div
+            className="rounded-3xl border border-star-300/15 bg-star-800/[0.015] p-8 opacity-80 grayscale-[0.3] transition-transform duration-500 ease-out [transform-style:preserve-3d] hover:[transform:rotateX(6deg)_rotateY(8deg)_translateZ(20px)] hover:opacity-90 motion-reduce:hover:transform-none dark:bg-white/[0.02] md:scale-[0.97] md:p-9"
+          >
+            <h3 className="mb-6 flex items-center justify-center gap-2.5 text-xl font-semibold text-star-500">
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-star-300/15 text-star-500">
+                <Cross className="h-4 w-4" />
+              </span>
+              {WHY.compare.themLabel}
+            </h3>
+            <ul className="flex flex-col gap-4">
+              {WHY.compare.rows.map((row, i) => (
+                <li
+                  key={i}
+                  className="group/row flex items-start gap-3 rounded-lg px-2 py-1 -mx-2 text-sm text-star-500 transition-all duration-200 ease-out hover:translate-x-1 hover:bg-star-300/10"
+                >
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-star-300/10 text-star-500/70 transition-transform duration-200 ease-out group-hover/row:scale-110">
+                    <Cross className="h-3 w-3" />
+                  </span>
+                  {row.them}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </div>

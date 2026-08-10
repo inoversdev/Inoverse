@@ -38,10 +38,257 @@ const Squiggle = ({ className = '' }) => (
   </svg>
 )
 
+// ─── Wireframe atoms — the vocabulary every "kind" below composes from.
+// Deliberately abstract (bars, dots, blocks): illustrative UI shapes, not
+// a claim that this is a real screenshot. Same honesty rule as the
+// browser/phone chrome itself, just with actual content instead of one
+// centered dot (Mat's call 2026-08-10 — "put a visualized image there"). */
+const Line = ({ w = 'w-full', h = 'h-1.5', tone = 'bg-star-100/12' }) => (
+  <span className={`block rounded-full ${w} ${h} ${tone}`} />
+)
+const Block = ({ className = '', tone = 'bg-star-100/8' }) => (
+  <span className={`block rounded-md ${tone} ${className}`} />
+)
+const Pill = ({ w = 'w-10', tone = 'bg-ember-500/20' }) => (
+  <span className={`block h-3 rounded-full ${w} ${tone}`} />
+)
+const Dot = ({ tone = 'bg-ember-500/40' }) => (
+  <span className={`block h-2 w-2 shrink-0 rounded-full ${tone}`} />
+)
+
+// ─── Kind renderers — one per media.items[].kind. Fill the content area
+// inside the browser/phone chrome with a themed wireframe: Website leans
+// on layout blocks (hero/gallery/forms), Software on app/code chrome,
+// Systems on data (charts/tables/pipelines) — the visual vocabulary
+// matches what each service actually builds. ───
+const KINDS = {
+  hero: () => (
+    <div className="flex h-full flex-col gap-2.5 p-3">
+      <div className="flex items-center gap-2">
+        <Line w="w-10" tone="bg-star-100/15" />
+        <Line w="w-8" tone="bg-star-100/10" />
+        <Line w="w-8" tone="bg-star-100/10" />
+        <Pill w="w-12" />
+      </div>
+      <Block className="min-h-0 flex-1 bg-gradient-to-br from-ember-500/15 via-star-100/8 to-transparent" />
+      <div className="space-y-1.5">
+        <Line w="w-2/3" h="h-2" tone="bg-star-100/18" />
+        <Line w="w-1/3" tone="bg-star-100/10" />
+      </div>
+      <Pill w="w-16" />
+    </div>
+  ),
+  gallery: () => (
+    <div className="grid h-full grid-cols-2 gap-1.5 p-2.5">
+      <Block tone="bg-ember-500/10" />
+      <Block tone="bg-star-100/8" />
+      <Block tone="bg-star-100/8" />
+      <Block tone="bg-ember-500/10" />
+    </div>
+  ),
+  form: () => (
+    <div className="flex h-full flex-col items-center justify-center gap-2 p-4">
+      <Line w="w-4/5" />
+      <Line w="w-4/5" />
+      <Line w="w-3/5" />
+      <Pill w="w-14" />
+    </div>
+  ),
+  list: () => (
+    <div className="flex h-full flex-col justify-center gap-3 p-3">
+      {[0, 1, 2].map((i) => (
+        <div key={i} className="flex items-center gap-2 border-b border-star-300/10 pb-2 last:border-0">
+          <Dot tone="bg-star-100/15" />
+          <div className="flex-1 space-y-1">
+            <Line w="w-3/4" />
+            <Line w="w-1/2" tone="bg-star-100/8" />
+          </div>
+        </div>
+      ))}
+    </div>
+  ),
+  cards: () => (
+    <div className="grid h-full grid-cols-2 gap-1.5 p-2.5">
+      {[0, 1].map((i) => (
+        <div key={i} className="flex flex-col justify-end gap-1.5 rounded-md bg-star-100/6 p-2">
+          <Line w="w-full" tone="bg-star-100/12" />
+          <Line w="w-2/3" tone="bg-ember-500/20" />
+        </div>
+      ))}
+    </div>
+  ),
+  footer: () => (
+    <div className="grid h-full grid-cols-3 gap-3 p-3">
+      {[0, 1, 2].map((i) => (
+        <div key={i} className="space-y-1.5">
+          <Line w="w-4/5" tone="bg-star-100/15" />
+          <Line w="w-3/5" tone="bg-star-100/8" />
+          <Line w="w-2/3" tone="bg-star-100/8" />
+        </div>
+      ))}
+    </div>
+  ),
+  'app-home': () => (
+    <div className="flex h-full flex-col gap-2 p-2.5">
+      {[0, 1, 2].map((i) => (
+        <div key={i} className="flex items-center gap-2 rounded-lg bg-star-100/6 p-2">
+          <Dot tone="bg-ember-500/30" />
+          <div className="flex-1 space-y-1">
+            <Line w="w-3/4" />
+            <Line w="w-1/2" tone="bg-star-100/8" />
+          </div>
+        </div>
+      ))}
+      <div className="mt-auto flex justify-center gap-3 pt-1">
+        {[0, 1, 2, 3].map((i) => (
+          <Dot key={i} tone={i === 0 ? 'bg-ember-500/50' : 'bg-star-100/12'} />
+        ))}
+      </div>
+    </div>
+  ),
+  'app-list': () => (
+    <div className="flex h-full flex-col justify-center gap-2.5 p-2.5">
+      {[0, 1, 2, 3].map((i) => (
+        <div key={i} className="flex items-center gap-2">
+          <Dot tone="bg-star-100/12" />
+          <Line w="w-3/4" />
+          <Dot tone="bg-ember-500/25" />
+        </div>
+      ))}
+    </div>
+  ),
+  'app-chat': () => (
+    <div className="flex h-full flex-col justify-center gap-2 p-3">
+      <Block className="h-5 w-2/3 self-start bg-star-100/8" />
+      <Block className="h-5 w-1/2 self-end bg-ember-500/20" />
+      <Block className="h-5 w-3/5 self-start bg-star-100/8" />
+    </div>
+  ),
+  dashboard: () => (
+    <div className="flex h-full gap-2 p-2.5">
+      <div className="flex w-4 flex-col items-center gap-2 pt-1">
+        {[0, 1, 2].map((i) => (
+          <Dot key={i} tone={i === 0 ? 'bg-ember-500/40' : 'bg-star-100/12'} />
+        ))}
+      </div>
+      <div className="flex flex-1 flex-col gap-2">
+        <div className="flex gap-1.5">
+          <Block className="h-6 flex-1 bg-ember-500/12" />
+          <Block className="h-6 flex-1 bg-star-100/8" />
+        </div>
+        <div className="flex flex-1 items-end gap-1">
+          {[40, 65, 30, 80, 55].map((h, i) => (
+            <span key={i} className="flex-1 rounded-t-sm bg-ember-500/25" style={{ height: `${h}%` }} />
+          ))}
+        </div>
+      </div>
+    </div>
+  ),
+  code: () => (
+    <div className="flex h-full flex-col justify-center gap-1.5 p-3 font-mono">
+      {[
+        ['w-1/4', 'bg-ember-500/25', ''],
+        ['w-2/3', 'bg-star-100/10', 'ml-3'],
+        ['w-1/2', 'bg-star-100/10', 'ml-3'],
+        ['w-1/3', 'bg-ember-500/20', 'ml-3'],
+        ['w-1/5', 'bg-star-100/10', ''],
+      ].map(([w, tone, indent], i) => (
+        <Line key={i} w={`${w} ${indent}`} h="h-1.5" tone={tone} />
+      ))}
+    </div>
+  ),
+  kanban: () => (
+    <div className="grid h-full grid-cols-3 gap-2 p-2.5">
+      {[2, 1, 3].map((n, col) => (
+        <div key={col} className="space-y-1.5">
+          <Line w="w-3/4" tone="bg-star-100/15" />
+          {Array.from({ length: n }).map((_, i) => (
+            <Block key={i} className="h-5 bg-star-100/6" />
+          ))}
+        </div>
+      ))}
+    </div>
+  ),
+  'dashboard-big': () => (
+    <div className="flex h-full flex-col gap-2.5 p-3">
+      <div className="flex gap-2">
+        {[0, 1, 2].map((i) => (
+          <div key={i} className="flex-1 space-y-1 rounded-md bg-star-100/6 p-2">
+            <Line w="w-1/2" h="h-2" tone="bg-ember-500/25" />
+            <Line w="w-3/4" tone="bg-star-100/10" />
+          </div>
+        ))}
+      </div>
+      <div className="flex flex-1 items-end gap-1.5">
+        {[35, 60, 45, 80, 50, 70, 40].map((h, i) => (
+          <span key={i} className="flex-1 rounded-t-sm bg-ember-500/25" style={{ height: `${h}%` }} />
+        ))}
+      </div>
+    </div>
+  ),
+  flow: () => (
+    <div className="flex h-full flex-col items-center justify-center gap-2 p-3">
+      {[0, 1, 2].map((i) => (
+        <div key={i} className="flex w-full items-center gap-2">
+          <Block className="h-6 w-6 shrink-0 bg-ember-500/20" />
+          <Line w="flex-1" tone="bg-star-100/10" />
+          {i < 2 && <span className="text-star-100/20">↓</span>}
+        </div>
+      ))}
+    </div>
+  ),
+  table: () => (
+    <div className="flex h-full flex-col gap-2 p-2.5">
+      <div className="flex gap-2">
+        <Line w="w-1/3" tone="bg-star-100/15" />
+        <Line w="w-1/3" tone="bg-star-100/15" />
+        <Line w="w-1/3" tone="bg-star-100/15" />
+      </div>
+      {[0, 1, 2].map((i) => (
+        <div key={i} className="flex gap-2 border-t border-star-300/10 pt-2">
+          <Line w="w-1/3" tone="bg-star-100/8" />
+          <Line w="w-1/3" tone="bg-ember-500/15" />
+          <Line w="w-1/3" tone="bg-star-100/8" />
+        </div>
+      ))}
+    </div>
+  ),
+  metrics: () => (
+    <div className="flex h-full items-center gap-3 p-3">
+      {[0, 1, 2, 3].map((i) => (
+        <div key={i} className="flex-1 space-y-1.5">
+          <Line w="w-1/2" h="h-2.5" tone="bg-ember-500/25" />
+          <Line w="w-3/4" tone="bg-star-100/10" />
+        </div>
+      ))}
+    </div>
+  ),
+  pipeline: () => (
+    <div className="flex h-full items-center gap-2 p-3">
+      {[0, 1, 2, 3].map((i) => (
+        <div key={i} className="flex flex-1 items-center gap-2">
+          <div className="flex-1 rounded-full bg-star-100/8 px-2 py-2 text-center">
+            <Line w="w-2/3 mx-auto" tone="bg-star-100/15" />
+          </div>
+          {i < 3 && <span className="shrink-0 text-star-100/20">→</span>}
+        </div>
+      ))}
+    </div>
+  ),
+  integrations: () => (
+    <div className="grid h-full grid-cols-6 items-center gap-2 p-3">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <Block key={i} className={`aspect-square ${i % 2 === 0 ? 'bg-ember-500/15' : 'bg-star-100/8'}`} />
+      ))}
+    </div>
+  ),
+}
+
 // ─── Media tile — screenshot slot ───
 // With `src` set, renders the real screenshot (swap-in ready). With
-// `src: null`, renders EMPTY browser/phone chrome — never fabricated
-// product content. The layout is identical either way.
+// `src: null`, renders browser/phone chrome filled with an abstract
+// wireframe illustration keyed by `item.kind` — never a fabricated
+// screenshot, just a themed shape (Mat's call 2026-08-10).
 const MediaTile = ({ item }) => {
   if (item.src) {
     return (
@@ -51,12 +298,18 @@ const MediaTile = ({ item }) => {
     )
   }
 
+  const content = KINDS[item.kind]?.() ?? (
+    <div className="flex h-full items-center justify-center">
+      <div className="h-2 w-2 rounded-full bg-ember-500/25" />
+    </div>
+  )
+
   if (item.shape === 'phone') {
     return (
       <div className="flex h-full w-full items-center justify-center rounded-lg border border-star-300/25 bg-white/60 dark:bg-white/5">
-        <div className="h-3/5 w-2/5 overflow-hidden rounded-[0.6rem] border border-star-300/30 bg-white/80 dark:bg-space-900/70">
-          <div className="mx-auto mt-1 h-0.5 w-3/5 rounded-full bg-star-100/15" />
-          <div className="mx-auto mt-1.5 h-1 w-4/5 rounded-full bg-ember-500/15" />
+        <div className="flex h-4/5 w-3/5 flex-col overflow-hidden rounded-[0.9rem] border border-star-300/30 bg-white/80 dark:bg-space-900/70">
+          <div className="mx-auto mt-1.5 h-0.5 w-1/3 rounded-full bg-star-100/15" />
+          <div className="min-h-0 flex-1">{content}</div>
         </div>
       </div>
     )
@@ -70,9 +323,7 @@ const MediaTile = ({ item }) => {
         <span className="h-1.5 w-1.5 rounded-full bg-ember-400/20" />
         <span className="ml-2 h-1 w-16 rounded-full bg-star-100/10" />
       </div>
-      <div className="flex flex-1 items-center justify-center">
-        <div className="h-2 w-2 rounded-full bg-ember-500/25" />
-      </div>
+      <div className="min-h-0 flex-1">{content}</div>
     </div>
   )
 }
