@@ -57,6 +57,25 @@ export default function ProjectsPage() {
     })
   }, [activeFilter])
 
+  // Resize: the wrapper's height is pinned to a measured pixel value
+  // (see above), so a viewport-width change that reflows the grid to a
+  // different column count — e.g. lg:grid-cols-3 → sm:grid-cols-2 on
+  // resize, more rows, more height — leaves the wrapper's `overflow:
+  // hidden` clipping the new rows until the next filter click. Snap it
+  // to the new measured height immediately, no transition.
+  useEffect(() => {
+    const remeasure = () => {
+      const inner = contentInnerRef.current
+      if (!inner) return
+      const newHeight = inner.scrollHeight
+      setUseHeightTransition(false)
+      setWrapperHeight(newHeight)
+      prevHeightRef.current = newHeight
+    }
+    window.addEventListener('resize', remeasure)
+    return () => window.removeEventListener('resize', remeasure)
+  }, [])
+
   // Entrance reveal for the whole grid, once.
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -153,6 +172,16 @@ export default function ProjectsPage() {
       />
 
       <section className="relative mx-auto max-w-7xl px-6 pb-16 lg:px-10">
+        {/* ── Mission counter — its own row so it never wraps into the
+               chip flow (was ml-auto inside the wrap → lone pill on line
+               2 with a ragged gap at 1440). Always visible now. ── */}
+        <div className="mb-4 flex justify-end">
+          <span className="inline-flex items-center rounded-full border border-star-300/25 bg-white/40 px-4 py-1.5 text-xs font-medium text-star-400 backdrop-blur-sm dark:bg-white/5">
+            {filtered.length} of {PROJECTS.length} missions
+            {activeFilter !== 'All' ? ` · ${activeFilter}` : ''}
+          </span>
+        </div>
+
         {/* ── Industry filter — business-owner friendly categories ── */}
         <div
           className="relative mb-10 flex flex-wrap gap-2.5"
@@ -183,10 +212,6 @@ export default function ProjectsPage() {
               {cat}
             </button>
           ))}
-          <span className="ml-auto hidden items-center rounded-full border border-star-300/25 bg-white/40 px-4 py-1.5 text-xs font-medium text-star-400 backdrop-blur-sm sm:inline-flex dark:bg-white/5">
-            {filtered.length} of {PROJECTS.length} missions
-            {activeFilter !== 'All' ? ` · ${activeFilter}` : ''}
-          </span>
         </div>
 
         {/* ── The grid — wrapper morphs its height between filter states
