@@ -1,6 +1,11 @@
 // ─── MissionCard — shared project card for the home showcase and the
 // /projects grid. One source of truth for how a mission renders. ───
+import { useEffect, useRef } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { applyBorderGlow, clearBorderGlow } from '../lib/borderGlow'
+
+gsap.registerPlugin(ScrollTrigger)
 
 // Try to resolve a clean 256px favicon from the project's live domain —
 // the pixel size so it stays sharp even when scaled through the card.
@@ -26,7 +31,6 @@ const DUMMY_TINTS = [
 
 function DummyLogo({ id, name }) {
   const initial = name.trim()[0].toUpperCase()
-  // Deterministic tint from the id string so it survives sort/filter
   const hash = [...id].reduce((s, c) => s + c.charCodeAt(0), 0)
   const t = DUMMY_TINTS[hash % DUMMY_TINTS.length]
   return (
@@ -56,8 +60,35 @@ export default function MissionCard({ project }) {
   const p = project
   const hasLink = p.url != null
   const logo = favicon(p.url)
+  const rootRef = useRef(null)
+
+  // Subtle scroll parallax — the card drifts slightly against the page
+  // (same feel as the site-wide [data-parallax] layer, but self-managed
+  //  so it survives React re-mounts from filter changes).
+  useEffect(() => {
+    const el = rootRef.current
+    if (!el || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        el,
+        { y: -48 },
+        {
+          y: 48,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 0.6,
+          },
+        }
+      )
+    }, el)
+    return () => ctx.revert()
+  }, [])
 
   return (
+    <div ref={rootRef}>
     <a
       key={p.id}
       href={hasLink ? p.url : undefined}
@@ -122,5 +153,6 @@ export default function MissionCard({ project }) {
         ))}
       </div>
     </a>
+    </div>
   )
 }
