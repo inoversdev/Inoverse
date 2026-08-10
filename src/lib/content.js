@@ -514,12 +514,17 @@ export const WHY = {
   compare: {
     usLabel: 'Inovers',
     themLabel: 'Typical agencies',
+    // Full v4 content — Mat's call (2026-08-10): the complete 8-item
+    // comparison, index-matched so the columns answer claim-for-claim.
     rows: [
       { us: 'You work with the people who build', them: 'Account managers between you and the work' },
+      { us: 'No account managers, no hand-offs', them: 'Hand-offs into silence' },
       { us: 'Working checkpoints, not a black box', them: 'Progress hidden until the big reveal' },
       { us: 'Focused launches in as little as 3 days', them: 'Months of process for weeks of work' },
       { us: 'Design and engineering move together', them: 'Design and engineering in separate silos' },
       { us: 'Clear scope before code begins', them: 'Scope creep without a shared plan' },
+      { us: 'Cross-border collaboration built in', them: 'Layers of people you never meet' },
+      { us: 'Visible progress at every step', them: 'Theatre over forward motion' },
     ],
   },
   standards: {
