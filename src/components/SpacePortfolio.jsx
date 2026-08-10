@@ -16,26 +16,24 @@ export default function SpacePortfolio() {
   // grid (all 20 + industry filters) lives on /projects.
   const featured = PROJECTS.filter((p) => p.featured)
 
-  // Mission card reveal on scroll.
+  // Mission card reveal on scroll — v4's case-card choreography: cards
+  // slide in alternating sides (even ←, odd →), reversing on scroll back.
   useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
-      gsap.fromTo(
-        '.mission-card',
-        { opacity: 0, y: 26, scale: 0.98 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.55,
-          stagger: 0.05,
+      gsap.utils.toArray('.mission-card').forEach((card, i) => {
+        gsap.from(card, {
+          x: i % 2 ? 80 : -80,
+          opacity: 0,
+          duration: 0.9,
           ease: 'power3.out',
           scrollTrigger: {
-            trigger: rootRef.current,
-            start: 'top 82%',
-            once: true,
+            trigger: card,
+            start: 'top 92%',
+            toggleActions: 'play none none reverse',
           },
-        }
-      )
+        })
+      })
     }, rootRef)
     return () => ctx.revert()
   }, [])

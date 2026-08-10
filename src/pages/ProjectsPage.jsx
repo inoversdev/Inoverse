@@ -76,49 +76,44 @@ export default function ProjectsPage() {
     return () => window.removeEventListener('resize', remeasure)
   }, [])
 
-  // Entrance reveal for the whole grid, once.
+  // Entrance reveal — v4's case-card choreography: cards slide in
+  // alternating sides (even ←, odd →), reversing when scrolled back.
   useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
-      gsap.fromTo(
-        '.mission-card',
-        { opacity: 0, y: 26, scale: 0.98 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.55,
-          stagger: 0.05,
+      gsap.utils.toArray('.mission-card').forEach((card, i) => {
+        gsap.from(card, {
+          x: i % 2 ? 80 : -80,
+          opacity: 0,
+          duration: 0.9,
           ease: 'power3.out',
           scrollTrigger: {
-            trigger: rootRef.current,
-            start: 'top 85%',
-            once: true,
+            trigger: card,
+            start: 'top 92%',
+            toggleActions: 'play none none reverse',
           },
-        }
-      )
+        })
+      })
     }, rootRef)
     return () => ctx.revert()
   }, [])
 
-  // Replay the stagger whenever the filter changes (keyed remount of the
-  // grid is handled by React — we just re-run the entrance tween). Uses
-  // useLayoutEffect so the "from" state is set before the browser paints.
+  // Replay the alternating slide whenever the filter changes (keyed
+  // remount of the grid is handled by React — we just re-run the
+  // entrance tween). Uses useLayoutEffect so the "from" state is set
+  // before the browser paints.
   useLayoutEffect(() => {
     if (!contentInnerRef.current) return
-    gsap.fromTo(
-      '.mission-card',
-      { opacity: 0, y: 32, scale: 0.85, rotateZ: 2 },
-      {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        rotateZ: 0,
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    gsap.utils.toArray('.mission-card').forEach((card, i) => {
+      gsap.from(card, {
+        x: i % 2 ? 60 : -60,
+        opacity: 0,
         duration: 0.6,
-        stagger: 0.05,
-        ease: 'back.out(1.4)',
+        ease: 'power3.out',
         overwrite: 'auto',
-      }
-    )
+      })
+    })
   }, [activeFilter])
 
   // Filter clicks shrink the OUTGOING cards first, then swap.

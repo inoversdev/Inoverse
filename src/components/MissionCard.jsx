@@ -62,6 +62,7 @@ export default function MissionCard({ project }) {
   const hasLink = p.url != null
   const logo = favicon(p.url)
   const rootRef = useRef(null)
+  const cardRef = useRef(null)
 
   // Subtle scroll parallax — the card drifts slightly against the page
   // (same feel as the site-wide [data-parallax] layer, but self-managed
@@ -88,9 +89,43 @@ export default function MissionCard({ project }) {
     return () => ctx.revert()
   }, [])
 
+  // v4-style 3D cursor tilt — rotateX/rotateY follow the pointer (÷15
+  // like v4's tilt cards) with a 50px z-lift, eased back on leave.
+  // Hover-capable pointers only; the touch devices get the static card.
+  useEffect(() => {
+    const card = cardRef.current
+    if (!card) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
+    const onMove = (e) => {
+      const r = card.getBoundingClientRect()
+      const x = e.clientX - r.left
+      const y = e.clientY - r.top
+      const cx = r.width / 2
+      const cy = r.height / 2
+      gsap.to(card, {
+        rotationX: (y - cy) / 15,
+        rotationY: (cx - x) / 15,
+        z: 50,
+        duration: 0.5,
+        ease: 'power3.out',
+      })
+    }
+    const onLeave = () => {
+      gsap.to(card, { rotationX: 0, rotationY: 0, z: 0, duration: 0.5, ease: 'power3.out' })
+    }
+    card.addEventListener('mousemove', onMove)
+    card.addEventListener('mouseleave', onLeave)
+    return () => {
+      card.removeEventListener('mousemove', onMove)
+      card.removeEventListener('mouseleave', onLeave)
+    }
+  }, [])
+
   return (
-    <div ref={rootRef}>
+    <div ref={rootRef} style={{ perspective: '1000px' }}>
     <a
+      ref={cardRef}
       key={p.id}
       href={hasLink ? p.url : undefined}
       target={hasLink ? '_blank' : undefined}
@@ -102,9 +137,10 @@ export default function MissionCard({ project }) {
         applyBorderGlow(e)
       }}
       onMouseLeave={clearBorderGlow}
-      className={`mission-card glow-ring group glass relative min-w-0 overflow-hidden rounded-2xl p-6 transition-all duration-500 hover:-translate-y-1 hover:border-ember-500/40 hover:shadow-[0_0_50px_rgba(245,48,3,0.12)] ${
+      className={`mission-card glow-ring group glass relative min-w-0 overflow-hidden rounded-2xl p-6 hover:border-ember-500/40 hover:shadow-[0_0_50px_rgba(245,48,3,0.12)] ${
         hasLink ? 'cursor-pointer' : 'cursor-default'
       }`}
+      style={{ transformStyle: 'preserve-3d' }}
     >
       {/* Logo zone — live favicon for shipped projects, stylised monogram
           for the rest. Both fade right-to-left via the same CSS mask. */}
