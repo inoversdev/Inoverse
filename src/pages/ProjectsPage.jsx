@@ -172,19 +172,12 @@ export default function ProjectsPage() {
       />
 
       <section className="relative mx-auto max-w-7xl px-6 pb-16 lg:px-10">
-        {/* ── Mission counter — its own row so it never wraps into the
-               chip flow (was ml-auto inside the wrap → lone pill on line
-               2 with a ragged gap at 1440). Always visible now. ── */}
-        <div className="mb-4 flex justify-end">
-          <span className="inline-flex items-center rounded-full border border-star-300/25 bg-white/40 px-4 py-1.5 text-xs font-medium text-star-400 backdrop-blur-sm dark:bg-white/5">
-            {filtered.length} of {PROJECTS.length} missions
-            {activeFilter !== 'All' ? ` · ${activeFilter}` : ''}
-          </span>
-        </div>
-
-        {/* ── Industry filter — business-owner friendly categories ── */}
+        {/* ── Mission counter — same row as the filter buttons (Mat's
+               preference). Chips + pill share one wrap row; the pill
+               ml-auto's right and drops to its own line only when the
+               chips genuinely fill the width (tablet). ── */}
         <div
-          className="relative mb-10 flex flex-wrap gap-2.5"
+          className="relative mb-10 flex flex-wrap items-center gap-2"
           role="group"
           aria-label="Filter projects by industry"
         >
@@ -212,6 +205,10 @@ export default function ProjectsPage() {
               {cat}
             </button>
           ))}
+          <span className="ml-auto inline-flex items-center rounded-full border border-star-300/25 bg-white/40 px-3.5 py-1.5 text-xs font-medium text-star-400 backdrop-blur-sm dark:bg-white/5">
+            {filtered.length} of {PROJECTS.length} missions
+            {activeFilter !== 'All' ? ` · ${activeFilter}` : ''}
+          </span>
         </div>
 
         {/* ── The grid — wrapper morphs its height between filter states

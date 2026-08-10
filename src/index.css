@@ -424,21 +424,44 @@ body {
    left-edge), HOPS with a little overshoot as it arrives, HOVERS while
    beaming, then banks away and DIVES into the right portal (center 96%)
    (12s per pass). All positions are % of the strip (the wrapper is
-   strip-sized), so the run is viewport-independent and portal-aligned. */
+   strip-sized), so the run is viewport-independent and portal-aligned.
+   TRANSLATE ONLY on this element — the track spans the full strip, so a
+   rotate() here tilts the whole flight line diagonally across the strip
+   (and skews the saucer's height at the portals). The banking rotation
+   lives on the inner .ufo-tilt wrapper (saucer-sized, rotates around
+   the saucer's own center). */
 .ufo-track {
   animation: ufo-transit 12s linear infinite;
 }
 @keyframes ufo-transit {
-  0%   { transform: translateX(calc(4% - 37px)) translateY(10px) rotate(-8deg); opacity: 0; }
+  0%   { transform: translateX(calc(4% - 44px)) translateY(10px); opacity: 0; }
   5%   { opacity: 1; }
-  36%  { transform: translateX(calc(50% - 114px)) translateY(6px) rotate(-2deg); }
-  41%  { transform: translateX(calc(50% - 36px)) translateY(-6px) rotate(4deg); }
-  45%  { transform: translateX(calc(50% - 44px)) translateY(0px) rotate(0deg); }
-  59%  { transform: translateX(calc(50% - 44px)) translateY(0px) rotate(0deg); }
-  65%  { transform: translateX(calc(50% - 30px)) translateY(-8px) rotate(-6deg); }
-  72%  { transform: translateX(calc(50% + 36px)) translateY(10px) rotate(4deg); }
-  93%  { transform: translateX(calc(96% - 37px)) translateY(8px) rotate(7deg); opacity: 1; }
-  100% { transform: translateX(calc(96% - 37px)) translateY(10px) rotate(8deg); opacity: 0; }
+  36%  { transform: translateX(calc(50% - 114px)) translateY(6px); }
+  41%  { transform: translateX(calc(50% - 36px)) translateY(-6px); }
+  45%  { transform: translateX(calc(50% - 44px)) translateY(0px); }
+  59%  { transform: translateX(calc(50% - 44px)) translateY(0px); }
+  65%  { transform: translateX(calc(50% - 30px)) translateY(-8px); }
+  72%  { transform: translateX(calc(50% + 36px)) translateY(10px); }
+  93%  { transform: translateX(calc(96% - 44px)) translateY(8px); opacity: 1; }
+  100% { transform: translateX(calc(96% - 44px)) translateY(10px); opacity: 0; }
+}
+/* banking rotation — saucer-sized wrapper (inline-block so it shrink-
+   wraps the saucer: a block-level child would span the full strip and
+   rotate around the strip center again). The tilt pivots around the
+   saucer's own center. Same 12s cycle. */
+.ufo-tilt {
+  display: inline-block;
+  animation: ufo-tilt 12s linear infinite;
+}
+@keyframes ufo-tilt {
+  0%   { transform: rotate(-8deg); }
+  36%  { transform: rotate(-2deg); }
+  41%  { transform: rotate(4deg); }
+  45%, 59% { transform: rotate(0deg); }
+  65%  { transform: rotate(-6deg); }
+  72%  { transform: rotate(4deg); }
+  93%  { transform: rotate(7deg); }
+  100% { transform: rotate(8deg); }
 }
 
 /* ─── Delivery portals — the saucer enters/exits through these. They
@@ -589,7 +612,7 @@ body {
   border: 1px solid rgba(17, 17, 17, 0.12);
   background: rgba(255, 255, 255, 0.55);
   color: var(--color-star-400);
-  padding: 0.45rem 1.05rem;
+  padding: 0.45rem 0.85rem;
   font-size: 0.8125rem;
   font-weight: 500;
   white-space: nowrap;

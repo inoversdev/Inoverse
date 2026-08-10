@@ -73,11 +73,15 @@ export default function SpacePortfolio() {
             not across its own width. Flight line is responsive: mobile
             shrinks the saucer (scale .7) and flies at 34% so the
             entry/exit dips never clip the horizon; desktop flies at
-            46%. */}
+            46%. The .ufo-tilt wrapper carries the banking rotation
+            around the saucer's own center (rotate on the full-width
+            track would tilt the whole flight line diagonally). */}
         <div className="ufo-track absolute top-[34%] left-0 w-full sm:top-[46%]">
-          <div className="max-sm:scale-[0.7]">
-            <div className="ufo-bob">
-              <Ufo2D variant="transit" size={88} />
+          <div className="ufo-tilt">
+            <div className="max-sm:scale-[0.7]">
+              <div className="ufo-bob">
+                <Ufo2D variant="transit" size={88} />
+              </div>
             </div>
           </div>
         </div>
@@ -86,13 +90,16 @@ export default function SpacePortfolio() {
             then dives into the right portal. Each portal only APPEARS
             while the saucer is passing through it (fades in/out on the
             12s cycle), never static. Centers sit at 4% / 96% of the
-            strip — the exact spots the saucer's run starts and ends. */}
-        <div className="ufo-portal ufo-portal-left absolute left-[calc(4%-32px)] top-[calc(55%-32px)] h-16 w-16 sm:left-[calc(4%-48px)] sm:top-[calc(55%-48px)] sm:h-24 sm:w-24">
+            strip — the exact spots the saucer's run starts and ends.
+            Vertical: desktop portals sit at 55% (the 46% flight line +
+            half the saucer body lands there); mobile portals sit at 45%
+            (the 34% flight line scaled by 0.7). */}
+        <div className="ufo-portal ufo-portal-left absolute left-[calc(4%-32px)] top-[calc(45%-32px)] h-16 w-16 sm:left-[calc(4%-48px)] sm:top-[calc(55%-48px)] sm:h-24 sm:w-24">
           <span className="ufo-portal-core" />
           <span className="ufo-portal-ring" />
           <span className="ufo-portal-ring ufo-portal-ring-2" />
         </div>
-        <div className="ufo-portal ufo-portal-right absolute right-[calc(4%-32px)] top-[calc(55%-32px)] h-16 w-16 sm:right-[calc(4%-48px)] sm:top-[calc(55%-48px)] sm:h-24 sm:w-24">
+        <div className="ufo-portal ufo-portal-right absolute right-[calc(4%-32px)] top-[calc(45%-32px)] h-16 w-16 sm:right-[calc(4%-48px)] sm:top-[calc(55%-48px)] sm:h-24 sm:w-24">
           <span className="ufo-portal-core" />
           <span className="ufo-portal-ring" />
           <span className="ufo-portal-ring ufo-portal-ring-2" />
