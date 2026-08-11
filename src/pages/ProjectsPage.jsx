@@ -3,6 +3,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { INDUSTRIES, PROJECTS, PROJECTS_PAGE } from '../lib/content'
 import MissionCard from '../components/MissionCard'
+import ProjectModal from '../components/ProjectModal'
 import PageHero from '../components/PageHero'
 import MissionCTA from '../components/MissionCTA'
 
@@ -22,6 +23,7 @@ export default function ProjectsPage() {
   const [activeFilter, setActiveFilter] = useState('All')
   const [page, setPage] = useState(1)
   const [isTransitioning, setIsTransitioning] = useState(false)
+  const [activeProject, setActiveProject] = useState(null)
 
   const filtered = useMemo(
     () =>
@@ -229,7 +231,7 @@ export default function ProjectsPage() {
               <div key={`${activeFilter}-${page}`}>
                 <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                   {paginated.map((p) => (
-                    <MissionCard key={p.id} project={p} />
+                    <MissionCard key={p.id} project={p} onOpen={setActiveProject} />
                   ))}
                 </div>
               </div>
@@ -289,6 +291,11 @@ export default function ProjectsPage() {
         sub={PROJECTS_PAGE.cta.sub}
         secondary={PROJECTS_PAGE.cta.secondary}
       />
+
+      {/* Project details modal — the animated how-it-works view */}
+      {activeProject && (
+        <ProjectModal project={activeProject} onClose={() => setActiveProject(null)} />
+      )}
     </div>
   )
 }

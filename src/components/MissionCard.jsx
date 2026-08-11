@@ -54,18 +54,27 @@ function DummyLogo({ id, name }) {
   )
 }
 
-export default function MissionCard({ project }) {
+export default function MissionCard({ project, onOpen }) {
   const p = project
   const logo = favicon(p.url)
 
-  // NOT clickable (Mat's call 2026-08-11): the cards used to link out
-  // to the project's URL (confirmation/disclosure pages the clients
-  // shouldn't be bounced to). Now pure display — the marquee + grids
-  // are showcases, not portals.
+  // Clickable again (Mat's call 2026-08-11): the card opens the
+  // full-view ProjectModal — NO external redirects anymore. The old
+  // links bounced clients to confirmation/disclosure pages; the modal
+  // shows the animated how-it-works demo instead. Keyboard accessible
+  // (button semantics + Enter/Space).
   return (
-    <div
+    <button
       key={p.id}
-      className="mission-card group glass relative flex h-full min-h-[15.25rem] min-w-0 flex-col overflow-hidden rounded-2xl p-6 transition-all duration-500 hover:-translate-y-1 hover:border-ember-500/40 hover:shadow-[0_0_50px_rgba(245,48,3,0.12)]"
+      type="button"
+      onClick={() => onOpen?.(p)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onOpen?.(p)
+        }
+      }}
+      className="mission-card group glass relative flex h-full min-h-[15.25rem] min-w-0 cursor-pointer flex-col overflow-hidden rounded-2xl p-6 text-left transition-all duration-500 hover:-translate-y-1 hover:border-ember-500/40 hover:shadow-[0_0_50px_rgba(245,48,3,0.12)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ember-400"
     >
       {/* Logo zone — live favicon for shipped projects, stylised monogram
           for the rest. Both fade right-to-left via the same CSS mask. */}
@@ -103,7 +112,7 @@ export default function MissionCard({ project }) {
           shares the same container size with aligned footers, no matter
           how long the description is (Mat's call 2026-08-11: "consistent
           size containers in Our Work"). */}
-      <div className="relative mt-auto flex flex-wrap gap-2 pt-5">
+      <div className="relative mt-5 flex flex-wrap gap-2">
         {p.tags.map((t) => (
           <span
             key={t}
@@ -112,7 +121,10 @@ export default function MissionCard({ project }) {
             {t}
           </span>
         ))}
+        <span className="ml-auto inline-flex items-center gap-1 text-[11px] font-semibold text-ember-600 transition-transform duration-300 group-hover:translate-x-0.5 dark:text-ember-300">
+          View details →
+        </span>
       </div>
-    </div>
+    </button>
   )
 }

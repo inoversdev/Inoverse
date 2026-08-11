@@ -488,6 +488,87 @@ body {
   }
 }
 
+/* ─── Project modal + animated demos (ProjectModal / projectDemos) ───
+   Mat's call 2026-08-11: clicking a mission re-opens details — but as
+   a full-view modal (services-bento styling) with an AGGRESSIVE
+   animated demo of how the product works. The Dory Delivery demo runs
+   a low-fidelity → high-fidelity cycle: a wireframe map shows the
+   route first, then the full-color map with a rider racing along the
+   path (offset-path) and statuses ticking to Delivered. Other
+   projects get a system-flow demo. All reduced-motion safe. */
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(24px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+.project-modal-panel {
+  animation: modal-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes demo-lowfi {
+  0%, 30% { opacity: 1; }
+  38%, 100% { opacity: 0; }
+}
+.demo-lowfi { animation: demo-lowfi 7s ease-in-out infinite; }
+@keyframes demo-hifi {
+  0%, 30% { opacity: 0; }
+  38%, 100% { opacity: 1; }
+}
+.demo-hifi { animation: demo-hifi 7s ease-in-out infinite; }
+@keyframes demo-ride {
+  from { offset-distance: 0%; }
+  to { offset-distance: 100%; }
+}
+.demo-rider {
+  offset-path: path('M 18 84 C 18 84, 30 26, 96 26 S 220 26, 240 60 S 252 118, 282 118');
+  animation: demo-ride 2.6s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+}
+@keyframes demo-ride-fast {
+  from { offset-distance: 0%; }
+  to { offset-distance: 100%; }
+}
+.demo-rider-fast {
+  offset-path: path('M 18 84 C 18 84, 30 26, 96 26 S 220 26, 240 60 S 252 118, 282 118');
+  animation: demo-ride-fast 1.8s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+}
+@keyframes demo-status {
+  0%, 12% { opacity: 0; transform: translateY(6px); }
+  18%, 30% { opacity: 1; transform: none; }
+  36%, 100% { opacity: 0; transform: translateY(-4px); }
+}
+.demo-status { animation: demo-status 7s ease-in-out infinite; }
+@keyframes demo-bar {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.demo-bar {
+  transform-origin: left;
+  animation: demo-bar 2.6s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+}
+@keyframes demo-pin {
+  0%, 62% { transform: scale(1); }
+  70% { transform: scale(1.5); }
+  78%, 100% { transform: scale(1); }
+}
+.demo-pin { animation: demo-pin 7s ease-in-out infinite; }
+@keyframes demo-node {
+  0%, 10% { opacity: 0.25; transform: scale(0.85); }
+  22%, 40% { opacity: 1; transform: scale(1); }
+  50%, 100% { opacity: 0.25; transform: scale(0.85); }
+}
+.demo-node { animation: demo-node 6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .project-modal-panel,
+  .demo-lowfi,
+  .demo-hifi,
+  .demo-rider,
+  .demo-rider-fast,
+  .demo-status,
+  .demo-bar,
+  .demo-pin,
+  .demo-node {
+    animation: none;
+  }
+}
+
 /* ─── Buttons ───
    Classic rounded pills. Ember solid + hairline ghost, set in the body
    sans. No decoration beyond the shape and the color: the familiar,
