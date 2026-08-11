@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useLenis } from 'lenis/react'
-import { BRAND, NAV_LINKS } from '../lib/content'
+import { BRAND, FOOTER_LINKS, NAV_LINKS } from '../lib/content'
 import { useTheme } from '../theme'
 
 // ─── Top navigation — typed NAV_LINKS renderer ───
@@ -66,16 +67,45 @@ export default function SpaceNav() {
 
   // ── Mobile drawer ──
   // Lenis owns the scroll; CSS overflow can't hold it, so stop/start it.
+  // The drawer is PORTALED to document.body (Mat's bug 2026-08-11):
+  // it used to live inside the header, whose `translate-y-0/-full`
+  // (CSS `translate`) makes the header the containing block for fixed
+  // descendants — so the "full-screen" drawer actually measured only
+  // the header's ~72px box, the backdrop covered just the top strip,
+  // and the menu text spilled out below it like clutter. Portaling it
+  // to body gives fixed inset-0 the viewport it deserves.
+  //
+  // Motion (2026-08-11, Mat: "the animations are missing"): the drawer
+  // now animates in/out — backdrop fade, panel rise, staggered link
+  // cascade (CSS keyframes in index.css). Closing plays the exit first
+  // (closing state + timeout) before unmounting. Reduced motion: instant.
+  const [closing, setClosing] = useState(false)
+
   const closeDrawer = () => {
-    setOpen(false)
+    if (closing) return
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     lenis?.start()
-    burgerRef.current?.focus()
+    if (reduce) {
+      setOpen(false)
+      burgerRef.current?.focus()
+      return
+    }
+    setClosing(true)
+    window.setTimeout(() => {
+      setOpen(false)
+      setClosing(false)
+      burgerRef.current?.focus()
+    }, 260) // matches .drawer-panel-out / .drawer-backdrop-out
   }
   const toggleDrawer = () => {
-    const next = !open
-    setOpen(next)
-    if (next) lenis?.stop()
-    else lenis?.start()
+    if (open) {
+      closeDrawer()
+      return
+    }
+    setClosing(false)
+    setOpen(true)
+    setHidden(false) // the close button must stay reachable while open
+    lenis?.stop()
   }
 
   // Escape closes the drawer.
@@ -129,13 +159,14 @@ export default function SpaceNav() {
     )
   }
 
-  const renderDrawerLink = (l) => {
+  const renderDrawerLink = (l, i) => {
     const cls =
-      'block py-3 text-2xl font-medium tracking-tight transition-colors hover:text-ember-500'
+      'drawer-link block py-3 text-2xl font-medium tracking-tight transition-colors hover:text-ember-500'
+    const style = { animationDelay: `${90 + i * 45}ms` }
     if (l.kind === 'route') {
       const active = location.pathname === l.to
       return (
-        <Link key={l.to} to={l.to} className={`${cls} ${active ? 'text-ember-500' : 'text-star-200'}`}>
+        <Link key={l.to} to={l.to} style={style} className={`${cls} ${active ? 'text-ember-500' : 'text-star-200'}`}>
           {l.label}
         </Link>
       )
@@ -144,6 +175,7 @@ export default function SpaceNav() {
       <a
         key={l.target}
         href={`#${l.target}`}
+        style={style}
         onClick={(e) => {
           handleNav(e, l.target)
           closeDrawer()
@@ -245,37 +277,79 @@ export default function SpaceNav() {
         </div>
       </div>
 
-      {/* Mobile drawer — full-screen glass panel. Header stays above it
-          (z-50 > z-40) so the hamburger turns into a close button. */}
-      {open && (
-        <div id="mobile-menu" className="fixed inset-0 z-40 lg:hidden" aria-modal="true" role="dialog">
-          <div className="absolute inset-0 bg-space-950/70 backdrop-blur-sm" onClick={closeDrawer} />
-          <nav className="glass v2-header-glass absolute inset-0 flex flex-col justify-between px-8 pt-28 pb-12">
-            <div className="flex flex-col">
-              {NAV_LINKS.map((l) => renderDrawerLink(l))}
-            </div>
-            <div className="flex flex-col gap-6">
-              <a
-                href={BRAND.calendly}
-                target="_blank"
-                rel="noreferrer"
-                onClick={closeDrawer}
-                className="v2-btn v2-btn-primary v2-btn-lg w-full"
-              >
-                Book a Call
-              </a>
-              <button
-                onClick={() => {
-                  toggleTheme()
-                }}
-                className="flex items-center justify-center gap-2 text-sm text-star-400 transition-colors hover:text-ember-500"
-              >
-                {isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-              </button>
-            </div>
-          </nav>
-        </div>
-      )}
+      {/* Mobile drawer — full-screen glass panel, PORTALED to body (see
+          the toggle comment above — the header's translate breaks fixed
+          positioning). Header stays above it (z-50 > z-40) so the
+          hamburger turns into a close button. Full FOOTER_LINKS set
+          (About + Process + All work were missing — Mat's call
+          2026-08-11); links scroll if the screen is short, actions stay
+          pinned at the bottom. Animated in/out (index.css keyframes). */}
+      {open &&
+        createPortal(
+          <div
+            id="mobile-menu"
+            className="fixed inset-0 z-40 lg:hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menu"
+          >
+            <div
+              className={`absolute inset-0 bg-space-950/70 backdrop-blur-sm ${
+                closing ? 'drawer-backdrop-out' : 'drawer-backdrop-in'
+              }`}
+              onClick={closeDrawer}
+            />
+            <nav
+              className={`glass v2-header-glass absolute inset-0 flex flex-col px-8 pt-20 pb-10 ${
+                closing ? 'drawer-panel-out' : 'drawer-panel-in'
+              }`}
+            >
+              {/* Native sheet grammar (Mat's call 2026-08-11 — "no X or
+                  close button when it's extended, align with the system"):
+                  a grabber handle at top-center + an explicit close button
+                  at top-right, INSIDE the panel — so there is always a
+                  visible close affordance, even if the header bar tucked. */}
+              <div className="relative mb-8 shrink-0">
+                <span className="mx-auto block h-1.5 w-12 rounded-full bg-star-300/40" aria-hidden="true" />
+                <button
+                  type="button"
+                  onClick={closeDrawer}
+                  aria-label="Close menu"
+                  className="absolute -top-2 right-0 flex h-10 w-10 items-center justify-center rounded-full border border-star-300/30 text-star-400 transition-colors hover:border-ember-500/60 hover:text-ember-500 active:scale-90"
+                >
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto">
+                <div className="flex flex-col">
+                  {FOOTER_LINKS.map((l, i) => renderDrawerLink(l, i))}
+                </div>
+              </div>
+              <div className="mt-6 flex flex-col gap-6">
+                <a
+                  href={BRAND.calendly}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={closeDrawer}
+                  className="v2-btn v2-btn-primary v2-btn-lg w-full"
+                >
+                  Book a Call
+                </a>
+                <button
+                  onClick={() => {
+                    toggleTheme()
+                  }}
+                  className="flex items-center justify-center gap-2 py-3 text-sm text-star-400 transition-colors hover:text-ember-500"
+                >
+                  {isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+                </button>
+              </div>
+            </nav>
+          </div>,
+          document.body
+        )}
     </header>
   )
 }
