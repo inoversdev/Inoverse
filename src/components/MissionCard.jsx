@@ -56,18 +56,16 @@ function DummyLogo({ id, name }) {
 
 export default function MissionCard({ project }) {
   const p = project
-  const hasLink = p.url != null
   const logo = favicon(p.url)
 
+  // NOT clickable (Mat's call 2026-08-11): the cards used to link out
+  // to the project's URL (confirmation/disclosure pages the clients
+  // shouldn't be bounced to). Now pure display — the marquee + grids
+  // are showcases, not portals.
   return (
-    <a
+    <div
       key={p.id}
-      href={hasLink ? p.url : undefined}
-      target={hasLink ? '_blank' : undefined}
-      rel={hasLink ? 'noreferrer' : undefined}
-      className={`mission-card group glass relative min-w-0 overflow-hidden rounded-2xl p-6 transition-all duration-500 hover:-translate-y-1 hover:border-ember-500/40 hover:shadow-[0_0_50px_rgba(245,48,3,0.12)] ${
-        hasLink ? 'cursor-pointer' : 'cursor-default'
-      }`}
+      className="mission-card group glass relative flex h-full min-h-[15.25rem] min-w-0 flex-col overflow-hidden rounded-2xl p-6 transition-all duration-500 hover:-translate-y-1 hover:border-ember-500/40 hover:shadow-[0_0_50px_rgba(245,48,3,0.12)]"
     >
       {/* Logo zone — live favicon for shipped projects, stylised monogram
           for the rest. Both fade right-to-left via the same CSS mask. */}
@@ -94,20 +92,18 @@ export default function MissionCard({ project }) {
               concept
             </span>
           )}
-          {hasLink ? (
-            <span className="text-star-600 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-ember-500">
-              ↗
-            </span>
-          ) : (
-            <span className="text-star-500">◆</span>
-          )}
+          <span className="text-star-500">◆</span>
         </span>
       </div>
       <h3 className="relative font-display text-xl font-semibold tracking-tight text-star-100 transition-colors group-hover:text-ember-600">
         {p.name}
       </h3>
       <p className="relative mt-2.5 text-sm leading-relaxed text-star-400">{p.description}</p>
-      <div className="relative mt-5 flex flex-wrap gap-2">
+      {/* Tags pinned to the bottom (mt-auto) — every card in a row/col
+          shares the same container size with aligned footers, no matter
+          how long the description is (Mat's call 2026-08-11: "consistent
+          size containers in Our Work"). */}
+      <div className="relative mt-auto flex flex-wrap gap-2 pt-5">
         {p.tags.map((t) => (
           <span
             key={t}
@@ -117,6 +113,6 @@ export default function MissionCard({ project }) {
           </span>
         ))}
       </div>
-    </a>
+    </div>
   )
 }
