@@ -39,28 +39,29 @@ const Squiggle = ({ className = '' }) => (
 )
 
 // ─── Wireframe atoms — the vocabulary every "kind" below composes from.
-// HIGH-FIDELITY pass (Mat's call 2026-08-11): the tiles now read as
-// polished product screens — real charts (SVG), KPI numbers, tables,
-// chat bubbles, kanban boards — instead of abstract bars. Still
-// illustrations, not fabricated screenshots (same honesty rule):
-// labels are generic UI copy, never a claim about a real product. */
+// HIGH-FIDELITY pass 2 (Mat's call 2026-08-11: "like a real actual
+// system!") — tiles now carry real product chrome: nav bars with menu
+// labels, sidebars, search fields, notifications, KPI cards with icons
+// + deltas, dual-series charts with gridlines, tables with avatars and
+// pagination, chat with typing indicators and read receipts. Still
+// illustrations (generic UI copy, no fabricated screenshots). */
 const Line = ({ w = 'w-full', h = 'h-1.5', tone = 'bg-star-100/12' }) => (
   <span className={`block rounded-full ${w} ${h} ${tone}`} />
 )
 const Block = ({ className = '', tone = 'bg-star-100/8', children }) => (
   <span className={`block rounded-md ${tone} ${className}`}>{children}</span>
 )
-const Pill = ({ w = 'w-10', tone = 'bg-ember-500/20' }) => (
-  <span className={`block h-3 rounded-full ${w} ${tone}`} />
+const Pill = ({ w = 'w-10', tone = 'bg-ember-500/20', children }) => (
+  <span className={`flex h-3 items-center rounded-full ${w} ${tone}`}>{children}</span>
 )
 const Dot = ({ tone = 'bg-ember-500/40' }) => (
   <span className={`block h-2 w-2 shrink-0 rounded-full ${tone}`} />
 )
-const Avatar = ({ tone = 'bg-ember-500/25', size = 'h-6 w-6' }) => (
-  <span className={`block shrink-0 rounded-full ${size} ${tone}`} />
+const Avatar = ({ tone = 'bg-ember-500/25', size = 'h-6 w-6', children }) => (
+  <span className={`flex shrink-0 items-center justify-center rounded-full ${size} ${tone}`}>{children}</span>
 )
 const MiniLabel = ({ children, className = '' }) => (
-  <span className={`block truncate text-[9px] font-medium leading-tight tracking-wide ${className}`}>
+  <span className={`block truncate text-[9px] font-semibold leading-tight tracking-wide ${className}`}>
     {children}
   </span>
 )
@@ -75,11 +76,11 @@ const Chip = ({ children, tone = 'bg-ember-500/20 text-ember-600 dark:text-ember
   </span>
 )
 
-// Tiny SVG bar chart — data-driven, ember bars, subtle grid
+// Tiny SVG bar chart — data-driven, ember bars, subtle grid, last-bar highlight
 const MiniBars = ({ values = [40, 65, 30, 80, 55, 70, 45], className = '' }) => (
   <svg viewBox="0 0 100 40" preserveAspectRatio="none" className={`h-full w-full ${className}`} aria-hidden="true">
     {[10, 20, 30].map((y) => (
-      <line key={y} x1="0" y1={y} x2="100" y2={y} stroke="currentColor" strokeOpacity="0.08" strokeWidth="0.5" />
+      <line key={y} x1="0" y1={y} x2="100" y2={y} stroke="currentColor" strokeOpacity="0.07" strokeWidth="0.5" />
     ))}
     {values.map((v, i) => (
       <rect
@@ -95,7 +96,7 @@ const MiniBars = ({ values = [40, 65, 30, 80, 55, 70, 45], className = '' }) => 
   </svg>
 )
 
-// Tiny SVG area/line chart — smooth revenue-style curve
+// Dual-series area chart — the "real system" revenue curve
 const MiniArea = ({ className = '' }) => (
   <svg viewBox="0 0 120 44" preserveAspectRatio="none" className={`h-full w-full ${className}`} aria-hidden="true">
     <defs>
@@ -104,118 +105,202 @@ const MiniArea = ({ className = '' }) => (
         <stop offset="100%" stopColor="rgba(245,48,3,0)" />
       </linearGradient>
     </defs>
+    {[10, 20, 30].map((y) => (
+      <line key={y} x1="0" y1={y} x2="120" y2={y} stroke="currentColor" strokeOpacity="0.06" strokeWidth="0.5" />
+    ))}
+    {/* secondary series (soft) */}
+    <path d="M0 32 C 15 28, 30 30, 45 24 S 75 22, 90 18 S 110 16, 120 14" fill="none" stroke="rgba(148,163,184,0.5)" strokeWidth="1.2" strokeDasharray="3 2" strokeLinecap="round" />
     <path d="M0 36 C 15 30, 25 34, 38 26 S 60 18, 72 22 S 100 8, 120 6 L120 44 L0 44 Z" fill="url(#mini-area-fill)" />
-    <path d="M0 36 C 15 30, 25 34, 38 26 S 60 18, 72 22 S 100 8, 120 6" fill="none" stroke="rgba(245,48,3,0.8)" strokeWidth="1.6" strokeLinecap="round" />
+    <path d="M0 36 C 15 30, 25 34, 38 26 S 60 18, 72 22 S 100 8, 120 6" fill="none" stroke="rgba(245,48,3,0.85)" strokeWidth="1.6" strokeLinecap="round" />
     <circle cx="120" cy="6" r="2.2" fill="rgba(245,48,3,0.9)" />
   </svg>
 )
 
-// ─── Kind renderers — one per media.items[].kind. High-fidelity
-// product-screen mockups: Website leans on marketing layouts,
-// Software on app/code chrome, Systems on data (charts/tables/
-// pipelines) — the visual vocabulary matches what each service
-// actually builds. ───
+// Tiny donut — completion-style ring
+const MiniDonut = ({ pct = 68, className = '' }) => (
+  <svg viewBox="0 0 24 24" className={`h-5 w-5 ${className}`} aria-hidden="true">
+    <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeOpacity="0.12" strokeWidth="3.5" />
+    <circle
+      cx="12" cy="12" r="9" fill="none"
+      stroke="rgba(245,48,3,0.85)" strokeWidth="3.5" strokeLinecap="round"
+      strokeDasharray={`${(pct / 100) * 56.5} 56.5`} transform="rotate(-90 12 12)"
+    />
+  </svg>
+)
+
+// ─── Kind renderers — one per media.items[].kind. Second high-fidelity
+// pass: real product chrome — navs, sidebars, KPIs, charts, tables,
+// chat, kanban. Website → marketing layouts, Software → app/code
+// chrome, Systems → data. ───
 const KINDS = {
   hero: () => (
-    <div className="flex h-full flex-col gap-2 p-3">
-      {/* nav */}
-      <div className="flex items-center justify-between">
+    <div className="flex h-full flex-col gap-1.5 p-3">
+      {/* nav with real menu labels */}
+      <div className="flex items-center justify-between border-b border-star-300/10 pb-1.5">
         <div className="flex items-center gap-1.5">
           <span className="h-2.5 w-2.5 rounded-full bg-ember-500/70" />
-          <Line w="w-8" h="h-1.5" tone="bg-star-100/20" />
+          <MiniLabel className="text-star-300">Brand</MiniLabel>
         </div>
         <div className="flex items-center gap-1.5">
-          <Line w="w-6" h="h-1" tone="bg-star-100/15" />
-          <Pill w="w-8" />
+          <MiniSub className="text-star-500">Features</MiniSub>
+          <MiniSub className="text-star-500">Pricing</MiniSub>
+          <Pill w="w-8" tone="bg-ember-500/70" />
         </div>
       </div>
-      {/* hero */}
+      {/* hero copy */}
       <div className="mt-1 space-y-1">
-        <MiniLabel className="text-ember-500/80">YOUR BRAND HERE</MiniLabel>
-        <Line w="w-4/5" h="h-2.5" tone="bg-star-100/40" />
-        <Line w="w-3/5" h="h-2.5" tone="bg-star-100/40" />
+        <MiniLabel className="text-ember-500/80">GROW YOUR BUSINESS</MiniLabel>
+        <Line w="w-4/5" h="h-2.5" tone="bg-star-100/45" />
+        <Line w="w-3/5" h="h-2.5" tone="bg-star-100/45" />
         <Line w="w-2/3" tone="bg-star-100/15" />
         <Line w="w-1/2" tone="bg-star-100/15" />
       </div>
       <div className="flex items-center gap-1.5">
-        <Pill w="w-12" />
+        <Pill w="w-12" tone="bg-ember-500/80" />
         <Pill w="w-10" tone="bg-star-100/10" />
       </div>
-      {/* hero image */}
-      <Block className="min-h-0 flex-1 bg-gradient-to-br from-ember-500/25 via-star-100/10 to-transparent" />
-      <div className="flex items-center gap-2">
-        <Avatar />
-        <div className="flex-1 space-y-1">
-          <Line w="w-3/4" h="h-1.5" tone="bg-star-100/20" />
-          <Line w="w-1/2" tone="bg-star-100/10" />
+      {/* hero visual with floating stat card */}
+      <div className="relative min-h-0 flex-1">
+        <Block className="h-full w-full bg-gradient-to-br from-ember-500/25 via-star-100/10 to-transparent" />
+        <div className="absolute right-1.5 top-1.5 rounded-md bg-white/80 px-1.5 py-1 shadow-sm dark:bg-space-900/80">
+          <MiniLabel className="text-star-200">+38%</MiniLabel>
+          <MiniSub className="text-emerald-500">this week</MiniSub>
         </div>
-        <span className="h-2 w-2 rounded-full bg-ember-500/60" />
+        <div className="absolute bottom-1.5 left-1.5 flex items-center gap-1.5 rounded-md bg-white/80 px-1.5 py-1 shadow-sm dark:bg-space-900/80">
+          <Avatar tone="bg-emerald-400/30" size="h-4 w-4" />
+          <div className="space-y-0.5">
+            <MiniLabel className="text-star-300">2,400+ signups</MiniLabel>
+            <MiniSub className="text-star-500">from your latest campaign</MiniSub>
+          </div>
+        </div>
+      </div>
+      {/* logo row */}
+      <div className="flex items-center justify-between border-t border-star-300/10 pt-1.5">
+        {['L1', 'L2', 'L3', 'L4'].map((l) => (
+          <Line key={l} w="w-7" h="h-1" tone="bg-star-100/15" />
+        ))}
       </div>
     </div>
   ),
   gallery: () => (
-    <div className="flex h-full flex-col gap-2 p-3">
+    <div className="flex h-full flex-col gap-1.5 p-3">
       <div className="grid flex-1 grid-cols-2 gap-1.5">
-        {['from-ember-500/30 to-star-100/5', 'from-star-100/25 to-star-100/5', 'from-star-100/20 to-transparent', 'from-ember-500/20 to-star-100/5'].map((g, i) => (
+        {[
+          ['from-ember-500/30 to-star-100/5', '12 likes'],
+          ['from-star-100/25 to-star-100/5', '48 likes'],
+          ['from-star-100/20 to-transparent', '7 likes'],
+          ['from-ember-500/20 to-star-100/5', '23 likes'],
+        ].map(([g, likes], i) => (
           <div key={i} className={`relative overflow-hidden rounded-md bg-gradient-to-br ${g}`}>
-            <Line w="w-1/2" h="h-1" className="absolute bottom-1 left-1" tone="bg-white/40" />
+            <span className="absolute right-1 top-1 rounded-full bg-white/70 px-1 py-px text-[6px] font-semibold text-star-800 dark:bg-space-900/70 dark:text-star-200">
+              ♥ {likes}
+            </span>
+            <div className="absolute bottom-1 left-1 right-1 flex items-center gap-1">
+              <Avatar size="h-3 w-3" tone="bg-white/50" />
+              <Line w="w-2/3" h="h-1" tone="bg-white/40" />
+            </div>
           </div>
         ))}
       </div>
       <div className="flex items-center justify-between">
-        <MiniLabel className="text-star-500">PROJECT GALLERY</MiniLabel>
-        <Chip>View all</Chip>
+        <div className="flex items-center gap-1">
+          <Dot tone="bg-ember-500/50" />
+          <Dot tone="bg-star-100/15" />
+          <Dot tone="bg-star-100/15" />
+        </div>
+        <Chip>View portfolio</Chip>
       </div>
     </div>
   ),
   form: () => (
-    <div className="flex h-full flex-col justify-center gap-2 p-4">
-      <MiniLabel className="text-star-500">TELL US ABOUT YOU</MiniLabel>
-      <div className="space-y-1">
-        <MiniSub className="text-star-500">NAME</MiniSub>
-        <Block className="h-4 bg-star-100/10" />
+    <div className="flex h-full flex-col justify-center gap-1.5 p-4">
+      <MiniLabel className="text-star-300">Get in touch</MiniLabel>
+      <MiniSub className="text-star-500">We usually reply within a day</MiniSub>
+      <div className="mt-1 space-y-1">
+        <div className="flex items-center justify-between">
+          <MiniSub className="text-star-500">FULL NAME *</MiniSub>
+          <MiniSub className="text-ember-500">required</MiniSub>
+        </div>
+        <Block className="h-4 border border-star-300/20 bg-white/60 dark:bg-space-950/60" />
       </div>
       <div className="space-y-1">
-        <MiniSub className="text-star-500">EMAIL</MiniSub>
-        <Block className="h-4 bg-star-100/10" />
+        <MiniSub className="text-star-500">EMAIL *</MiniSub>
+        <Block className="h-4 border border-star-300/20 bg-white/60 dark:bg-space-950/60" />
       </div>
       <div className="space-y-1">
-        <MiniSub className="text-star-500">MESSAGE</MiniSub>
-        <Block className="h-6 bg-star-100/10" />
+        <MiniSub className="text-star-500">BUDGET</MiniSub>
+        <div className="flex items-center justify-between rounded-md bg-star-100/10 px-1.5 py-1">
+          <MiniSub className="text-star-500">₱599 – Custom</MiniSub>
+          <span className="text-[7px] text-star-500">▾</span>
+        </div>
       </div>
-      <Pill w="w-full" className="h-4" />
-      <MiniSub className="text-center text-star-500">We reply within 24 hours</MiniSub>
+      <div className="space-y-1">
+        <MiniSub className="text-star-500">PROJECT DETAILS *</MiniSub>
+        <Block className="h-6 border border-star-300/20 bg-white/60 dark:bg-space-950/60" />
+      </div>
+      <div className="flex items-center gap-1">
+        <span className="h-2 w-2 rounded-[2px] bg-ember-500/60" />
+        <MiniSub className="text-star-500">I agree to the terms & privacy policy</MiniSub>
+      </div>
+      <Pill w="w-full" h="h-4" tone="bg-ember-500/80" />
     </div>
   ),
   list: () => (
-    <div className="flex h-full flex-col justify-center gap-2.5 p-3">
-      {[
-        ['bg-ember-500/30', 'Maria Santos', 'Order #1042', 'Paid', 'bg-emerald-400/20 text-emerald-600 dark:text-emerald-300'],
-        ['bg-star-100/20', 'Juan Dela Cruz', 'Order #1041', 'Pending', 'bg-amber-400/20 text-amber-600 dark:text-amber-300'],
-        ['bg-star-100/20', 'Ana Reyes', 'Order #1040', 'Shipped', 'bg-sky-400/20 text-sky-600 dark:text-sky-300'],
-      ].map(([tone, name, sub, status, st]) => (
-        <div key={name} className="flex items-center gap-2">
-          <Avatar tone={tone} size="h-5 w-5" />
-          <div className="min-w-0 flex-1">
-            <MiniLabel className="text-star-300">{name}</MiniLabel>
-            <MiniSub className="text-star-500">{sub}</MiniSub>
-          </div>
-          <Chip tone={st}>{status}</Chip>
+    <div className="flex h-full flex-col p-3">
+      {/* search + filter */}
+      <div className="flex items-center gap-1.5">
+        <div className="flex flex-1 items-center gap-1 rounded-md bg-star-100/10 px-1.5 py-1">
+          <span className="text-[7px] text-star-500">⌕</span>
+          <Line w="flex-1" h="h-1" tone="bg-star-100/15" />
         </div>
-      ))}
+        <Chip>Filter</Chip>
+      </div>
+      <div className="mt-1.5 flex flex-1 flex-col justify-center gap-1.5">
+        {[
+          ['bg-ember-500/30', 'Maria Santos', 'Order #1042', 'Paid', 'bg-emerald-400/20 text-emerald-600 dark:text-emerald-300', '₱2,450'],
+          ['bg-star-100/20', 'Juan Dela Cruz', 'Order #1041', 'Pending', 'bg-amber-400/20 text-amber-600 dark:text-amber-300', '₱1,200'],
+          ['bg-star-100/20', 'Ana Reyes', 'Order #1040', 'Shipped', 'bg-sky-400/20 text-sky-600 dark:text-sky-300', '₱3,800'],
+        ].map(([tone, name, sub, status, st, amt]) => (
+          <div key={name} className="flex items-center gap-1.5 rounded-md border border-star-300/10 bg-white/40 px-1.5 py-1 dark:bg-white/5">
+            <Avatar tone={tone} size="h-5 w-5" />
+            <div className="min-w-0 flex-1">
+              <MiniLabel className="text-star-300">{name}</MiniLabel>
+              <MiniSub className="text-star-500">{sub}</MiniSub>
+            </div>
+            <Chip tone={st}>{status}</Chip>
+            <MiniLabel className="text-star-400">{amt}</MiniLabel>
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center justify-between border-t border-star-300/10 pt-1">
+        <MiniSub className="text-star-500">Showing 3 of 128</MiniSub>
+        <div className="flex items-center gap-1">
+          <Dot tone="bg-star-100/20" />
+          <Dot tone="bg-ember-500/50" />
+          <Dot tone="bg-star-100/20" />
+        </div>
+      </div>
     </div>
   ),
   cards: () => (
     <div className="grid h-full grid-cols-2 gap-1.5 p-2.5">
-      {[0, 1].map((i) => (
-        <div key={i} className="flex flex-col overflow-hidden rounded-md border border-star-300/15">
-          <Block className={`min-h-0 flex-1 ${i === 0 ? 'bg-gradient-to-br from-ember-500/25 to-star-100/5' : 'bg-gradient-to-br from-star-100/20 to-star-100/5'}`} />
+      {[
+        ['from-ember-500/25 to-star-100/5', '₱599', '★ 4.9'],
+        ['from-star-100/20 to-star-100/5', '₱1,299', '★ 4.7'],
+      ].map(([g, price, rating], i) => (
+        <div key={i} className="flex flex-col overflow-hidden rounded-md border border-star-300/15 bg-white/40 dark:bg-white/5">
+          <Block className={`relative min-h-0 flex-1 bg-gradient-to-br ${g}`}>
+            <span className="absolute right-1 top-1 rounded-full bg-ember-500/80 px-1 py-px text-[6px] font-bold text-white">
+              NEW
+            </span>
+          </Block>
           <div className="space-y-1 p-1.5">
-            <Line w="w-3/4" h="h-1" tone="bg-star-100/20" />
+            <Line w="w-3/4" h="h-1" tone="bg-star-100/25" />
             <div className="flex items-center justify-between">
-              <Line w="w-6" h="h-1.5" tone="bg-ember-500/40" />
-              <span className="h-2 w-2 rounded-full bg-ember-500/50" />
+              <MiniLabel className="text-star-200">{price}</MiniLabel>
+              <MiniSub className="text-star-500">{rating}</MiniSub>
             </div>
+            <Pill w="w-full" h="h-2.5" tone="bg-star-100/10" />
           </div>
         </div>
       ))}
@@ -223,130 +308,228 @@ const KINDS = {
   ),
   footer: () => (
     <div className="flex h-full flex-col justify-between p-3">
-      <div className="flex items-center gap-1.5">
-        <span className="h-2.5 w-2.5 rounded-full bg-ember-500/70" />
-        <Line w="w-10" h="h-1.5" tone="bg-star-100/25" />
-      </div>
-      <div className="grid grid-cols-3 gap-2">
-        {['PRODUCT', 'COMPANY', 'LEGAL'].map((h) => (
-          <div key={h} className="space-y-1">
-            <MiniLabel className="text-star-500">{h}</MiniLabel>
-            <Line w="w-4/5" tone="bg-star-100/12" />
-            <Line w="w-3/5" tone="bg-star-100/12" />
-            <Line w="w-2/3" tone="bg-star-100/12" />
-          </div>
-        ))}
-      </div>
-      <div className="flex items-center justify-between border-t border-star-300/10 pt-1.5">
-        <MiniSub className="text-star-500">© 2026 Your Brand</MiniSub>
-        <div className="flex gap-1">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-ember-500/70" />
+          <MiniLabel className="text-star-300">Brand</MiniLabel>
+        </div>
+        <div className="flex items-center gap-1">
+          <Dot tone="bg-star-100/20" />
           <Dot tone="bg-star-100/20" />
           <Dot tone="bg-star-100/20" />
           <Dot tone="bg-ember-500/40" />
         </div>
       </div>
+      <div className="grid grid-cols-3 gap-2">
+        {['PRODUCT', 'COMPANY', 'SUPPORT'].map((h) => (
+          <div key={h} className="space-y-1">
+            <MiniLabel className="text-star-500">{h}</MiniLabel>
+            <Line w="w-4/5" tone="bg-star-100/12" />
+            <Line w="w-3/5" tone="bg-star-100/12" />
+            <Line w="w-2/3" tone="bg-star-100/12" />
+            <Line w="w-1/2" tone="bg-star-100/8" />
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center gap-1 rounded-full bg-star-100/10 p-1">
+        <Line w="flex-1" h="h-1" tone="bg-star-100/15" />
+        <Pill w="w-8" h="h-2.5" tone="bg-ember-500/70" />
+      </div>
+      <div className="flex items-center justify-between border-t border-star-300/10 pt-1.5">
+        <MiniSub className="text-star-500">© 2026 Brand. All rights reserved.</MiniSub>
+        <MiniSub className="text-star-500">Privacy · Terms</MiniSub>
+      </div>
     </div>
   ),
   'app-home': () => (
-    <div className="flex h-full flex-col gap-2 p-2.5">
+    <div className="flex h-full flex-col gap-1.5 p-2.5">
       <div className="flex items-center justify-between">
-        <Avatar tone="bg-ember-500/30" size="h-5 w-5" />
-        <Line w="w-12" h="h-1.5" tone="bg-star-100/25" />
-        <span className="h-3 w-3 rounded-full bg-star-100/15" />
+        <div className="flex items-center gap-1.5">
+          <Avatar tone="bg-ember-500/30" size="h-5 w-5" />
+          <div>
+            <MiniLabel className="text-star-300">Good morning</MiniLabel>
+            <MiniSub className="text-star-500">Maria 👋</MiniSub>
+          </div>
+        </div>
+        <div className="relative">
+          <span className="h-3.5 w-3.5 rounded-full bg-star-100/15" />
+          <span className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-ember-500" />
+        </div>
+      </div>
+      <div className="flex items-center gap-1 rounded-md bg-star-100/10 px-1.5 py-1">
+        <span className="text-[7px] text-star-500">⌕</span>
+        <MiniSub className="text-star-500">Search products…</MiniSub>
+      </div>
+      <div className="flex gap-1">
+        {['All', 'Hot', 'New'].map((c, i) => (
+          <Chip key={c} tone={i === 0 ? 'bg-ember-500/70 text-white' : 'bg-star-100/10 text-star-500'}>{c}</Chip>
+        ))}
       </div>
       <div className="grid grid-cols-2 gap-1.5">
-        <div className="rounded-md bg-star-100/6 p-1.5">
-          <MiniLabel className="text-star-500">SALES</MiniLabel>
-          <MiniLabel className="text-star-200">₱1.2k</MiniLabel>
-          <MiniSub className="text-emerald-500">↑ 12%</MiniSub>
-        </div>
-        <div className="rounded-md bg-ember-500/10 p-1.5">
-          <MiniLabel className="text-star-500">ORDERS</MiniLabel>
-          <MiniLabel className="text-star-200">48</MiniLabel>
-          <MiniSub className="text-ember-500">today</MiniSub>
-        </div>
+        {[
+          ['bg-gradient-to-br from-ember-500/25 to-star-100/5', '₱599', '★ 4.9'],
+          ['bg-gradient-to-br from-star-100/20 to-star-100/5', '₱1,299', '★ 4.7'],
+        ].map(([g, price, rating], i) => (
+          <div key={i} className="overflow-hidden rounded-md border border-star-300/10 bg-white/40 dark:bg-white/5">
+            <Block className={`min-h-0 flex-1 bg-gradient-to-br ${g}`} />
+            <div className="space-y-0.5 p-1">
+              <Line w="w-3/4" h="h-1" tone="bg-star-100/20" />
+              <div className="flex items-center justify-between">
+                <MiniLabel className="text-star-300">{price}</MiniLabel>
+                <MiniSub className="text-star-500">{rating}</MiniSub>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
-      <Block className="min-h-0 flex-1">
-        <MiniBars values={[30, 55, 40, 70, 60, 85]} className="p-1" />
-      </Block>
-      <div className="flex items-center justify-around border-t border-star-300/10 pt-1.5">
-        {[0, 1, 2, 3].map((i) => (
-          <Dot key={i} tone={i === 0 ? 'bg-ember-500/60' : 'bg-star-100/15'} />
+      <div className="flex items-center justify-around border-t border-star-300/10 pt-1">
+        {['Home', 'Shop', 'Cart', 'Profile'].map((l, i) => (
+          <MiniSub key={l} className={i === 0 ? 'text-ember-500' : 'text-star-500'}>{l}</MiniSub>
         ))}
       </div>
     </div>
   ),
   'app-list': () => (
-    <div className="flex h-full flex-col justify-center gap-2 p-2.5">
-      {[
-        ['bg-ember-500/30', 'Team Alpha', '9:41 AM', true],
-        ['bg-star-100/20', 'Design Sync', '8:12 AM', false],
-        ['bg-star-100/20', 'Daily Standup', 'Yesterday', true],
-        ['bg-star-100/20', 'Launch Plan', 'Mon', false],
-      ].map(([tone, name, time, unread]) => (
-        <div key={name} className="flex items-center gap-2">
-          <Avatar tone={tone} size="h-6 w-6" />
-          <div className="min-w-0 flex-1">
-            <MiniLabel className="text-star-300">{name}</MiniLabel>
-            <MiniSub className="text-star-500">{time}</MiniSub>
+    <div className="flex h-full flex-col p-2.5">
+      <div className="flex items-center justify-between pb-1">
+        <MiniLabel className="text-star-300">Messages</MiniLabel>
+        <MiniSub className="text-star-500">Mark all read</MiniSub>
+      </div>
+      <div className="flex-1 space-y-1.5">
+        {[
+          ['bg-ember-500/30', 'Team Alpha', 'The build is done 🎉', '9:41 AM', true],
+          ['bg-star-100/20', 'Design Sync', 'Can we move the demo?', '8:12 AM', false],
+          ['bg-star-100/20', 'Daily Standup', 'Blockers: none today', 'Yesterday', true],
+          ['bg-star-100/20', 'Launch Plan', 'Domain: confirmed ✅', 'Mon', false],
+        ].map(([tone, name, msg, time, unread]) => (
+          <div key={name} className="flex items-center gap-1.5">
+            <Avatar tone={tone} size="h-6 w-6" />
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center justify-between gap-1">
+                <MiniLabel className="text-star-300">{name}</MiniLabel>
+                <MiniSub className="text-star-500">{time}</MiniSub>
+              </div>
+              <MiniSub className="truncate text-star-500">{msg}</MiniSub>
+            </div>
+            {unread && <span className="flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full bg-ember-500 text-[6px] font-bold text-white">2</span>}
           </div>
-          {unread && <span className="flex h-3 w-3 items-center justify-center rounded-full bg-ember-500 text-[6px] font-bold text-white">2</span>}
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   ),
   'app-chat': () => (
-    <div className="flex h-full flex-col justify-center gap-1.5 p-3">
-      <Block className="h-5 w-2/3 self-start rounded-lg bg-star-100/10 p-1">
-        <MiniSub className="text-star-500">Hi! Is the site live yet?</MiniSub>
-      </Block>
-      <Block className="h-5 w-1/2 self-end rounded-lg bg-ember-500/25 p-1">
-        <MiniSub className="text-ember-600 dark:text-ember-300">Deploying tomorrow 🚀</MiniSub>
-      </Block>
-      <Block className="h-5 w-3/5 self-start rounded-lg bg-star-100/10 p-1">
-        <MiniSub className="text-star-500">Perfect — excited to see it!</MiniSub>
-      </Block>
-      <Block className="h-5 w-2/5 self-end rounded-lg bg-ember-500/25 p-1">
-        <MiniSub className="text-ember-600 dark:text-ember-300">You'll love it :)</MiniSub>
-      </Block>
+    <div className="flex h-full flex-col p-2.5">
+      {/* chat header */}
+      <div className="flex items-center gap-1.5 border-b border-star-300/10 pb-1.5">
+        <span className="text-[8px] text-star-500">‹</span>
+        <Avatar tone="bg-ember-500/30" size="h-5 w-5" />
+        <div className="min-w-0 flex-1">
+          <MiniLabel className="text-star-300">Inovers Crew</MiniLabel>
+          <MiniSub className="text-emerald-500">● online</MiniSub>
+        </div>
+        <span className="text-[8px] text-star-500">⋮</span>
+      </div>
+      <div className="flex items-center justify-center py-1">
+        <Chip tone="bg-star-100/10 text-star-500">Today</Chip>
+      </div>
+      <div className="flex-1 space-y-1.5">
+        <div className="flex items-end gap-1">
+          <Avatar tone="bg-ember-500/30" size="h-4 w-4" />
+          <Block className="max-w-[70%] self-start rounded-lg rounded-bl-sm bg-star-100/10 p-1">
+            <MiniSub className="text-star-400">Hi! Is the site live yet?</MiniSub>
+            <MiniSub className="text-right text-star-500">9:40 AM</MiniSub>
+          </Block>
+        </div>
+        <div className="flex items-end justify-end gap-1">
+          <Block className="max-w-[70%] self-end rounded-lg rounded-br-sm bg-ember-500/25 p-1">
+            <MiniSub className="text-ember-600 dark:text-ember-300">Deploying tomorrow 🚀</MiniSub>
+            <MiniSub className="text-right text-ember-600/60 dark:text-ember-300/60">9:41 AM ✓✓</MiniSub>
+          </Block>
+        </div>
+        <div className="flex items-end gap-1">
+          <Avatar tone="bg-star-100/20" size="h-4 w-4" />
+          <Block className="max-w-[70%] self-start rounded-lg rounded-bl-sm bg-star-100/10 p-1">
+            <MiniSub className="text-star-400">Perfect — can't wait!</MiniSub>
+            <MiniSub className="text-right text-star-500">9:42 AM</MiniSub>
+          </Block>
+        </div>
+        <div className="flex items-end justify-end gap-1">
+          <Block className="self-end rounded-lg rounded-br-sm bg-ember-500/25 p-1.5">
+            <span className="flex gap-0.5">
+              <span className="h-1 w-1 animate-pulse rounded-full bg-ember-500" />
+              <span className="h-1 w-1 animate-pulse rounded-full bg-ember-500" />
+              <span className="h-1 w-1 animate-pulse rounded-full bg-ember-500" />
+            </span>
+          </Block>
+        </div>
+      </div>
       <div className="mt-1 flex items-center gap-1.5 rounded-full bg-star-100/10 px-2 py-1">
+        <span className="text-[8px] text-star-500">＋</span>
         <Line w="flex-1" h="h-1" tone="bg-star-100/15" />
-        <span className="h-3 w-3 shrink-0 rounded-full bg-ember-500/60" />
+        <span className="text-[8px] text-star-500">🎤</span>
+        <span className="flex h-4 w-4 items-center justify-center rounded-full bg-ember-500 text-[7px] text-white">➤</span>
       </div>
     </div>
   ),
   dashboard: () => (
-    <div className="flex h-full gap-1.5 p-2">
-      {/* sidebar */}
-      <div className="flex w-7 flex-col items-center gap-1.5 rounded-md bg-star-100/6 py-1.5">
-        <span className="h-2 w-2 rounded-full bg-ember-500/70" />
-        {[0, 1, 2].map((i) => (
-          <Dot key={i} tone={i === 0 ? 'bg-ember-500/50' : 'bg-star-100/15'} />
+    <div className="flex h-full gap-1 p-2">
+      {/* sidebar with real menu */}
+      <div className="flex w-9 flex-col rounded-md bg-star-100/6 p-1">
+        <span className="mx-auto mb-1 h-2 w-2 rounded-full bg-ember-500/70" />
+        {['D', 'O', 'C', 'S', 'R'].map((l, i) => (
+          <span key={l} className={`mx-auto mb-0.5 flex h-4 w-full items-center justify-center rounded ${i === 0 ? 'bg-ember-500/20' : ''}`}>
+            <MiniLabel className={i === 0 ? 'text-ember-500' : 'text-star-500'}>{l}</MiniLabel>
+          </span>
         ))}
+        <span className="mt-auto mx-auto h-4 w-4 rounded-full bg-star-100/20" />
       </div>
-      <div className="flex flex-1 flex-col gap-1.5">
-        {/* KPI row */}
-        <div className="grid grid-cols-2 gap-1.5">
-          <div className="rounded-md bg-star-100/6 p-1">
-            <MiniSub className="text-star-500">REVENUE</MiniSub>
-            <MiniLabel className="text-star-200">$12.4k</MiniLabel>
-          </div>
-          <div className="rounded-md bg-star-100/6 p-1">
-            <MiniSub className="text-star-500">USERS</MiniSub>
-            <MiniLabel className="text-star-200">8,204</MiniLabel>
+      <div className="flex flex-1 flex-col gap-1">
+        {/* topbar */}
+        <div className="flex items-center justify-between">
+          <MiniLabel className="text-star-300">Dashboard</MiniLabel>
+          <div className="flex items-center gap-1">
+            <span className="h-3 w-3 rounded-full bg-star-100/15" />
+            <span className="relative h-3 w-3 rounded-full bg-star-100/15">
+              <span className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-ember-500" />
+            </span>
           </div>
         </div>
-        {/* chart */}
+        {/* KPI row with icons + deltas */}
+        <div className="grid grid-cols-3 gap-1">
+          {[
+            ['REV', '$12.4k', '↑ 8.2%', 'bg-ember-500/15'],
+            ['USR', '8,204', '↑ 3.1%', 'bg-emerald-400/15'],
+            ['ORD', '1,128', '↓ 1.4%', 'bg-amber-400/15'],
+          ].map(([icon, v, d, tone]) => (
+            <div key={v} className="rounded-md bg-star-100/6 p-1">
+              <span className={`mb-0.5 flex h-3 w-3 items-center justify-center rounded ${tone}`}>
+                <MiniLabel className="text-[6px] text-star-500">{icon}</MiniLabel>
+              </span>
+              <MiniLabel className="text-star-200">{v}</MiniLabel>
+              <MiniSub className={d.startsWith('↑') ? 'text-emerald-500' : 'text-rose-400'}>{d}</MiniSub>
+            </div>
+          ))}
+        </div>
+        {/* chart with legend */}
         <Block className="min-h-0 flex-1">
           <MiniBars values={[35, 60, 42, 75, 50, 88]} className="p-1" />
         </Block>
-        {/* table */}
+        <div className="flex items-center gap-1.5 px-0.5">
+          <Dot tone="bg-ember-500/60" />
+          <MiniSub className="text-star-500">Revenue</MiniSub>
+          <Dot tone="bg-star-100/30" />
+          <MiniSub className="text-star-500">Expenses</MiniSub>
+        </div>
+        {/* recent orders table */}
         <div className="space-y-1 rounded-md bg-star-100/6 p-1.5">
-          {[0, 1].map((i) => (
-            <div key={i} className="flex items-center gap-1">
-              <Dot tone={i === 0 ? 'bg-emerald-400/60' : 'bg-amber-400/60'} />
-              <Line w="w-1/3" h="h-1" tone="bg-star-100/15" />
-              <Line w="w-1/4" h="h-1" tone="bg-ember-500/25" />
+          {[
+            ['JR', 'Juan Ramos', 'Paid', 'bg-emerald-400/20 text-emerald-600 dark:text-emerald-300'],
+            ['MC', 'Mia Cruz', 'Pending', 'bg-amber-400/20 text-amber-600 dark:text-amber-300'],
+          ].map(([ini, name, status, st]) => (
+            <div key={name} className="flex items-center gap-1">
+              <Avatar tone="bg-ember-500/20" size="h-3.5 w-3.5"><MiniLabel className="text-[5px] text-ember-600 dark:text-ember-300">{ini}</MiniLabel></Avatar>
+              <Line w="flex-1" h="h-1" tone="bg-star-100/12" />
+              <Chip tone={st}>{status}</Chip>
             </div>
           ))}
         </div>
@@ -354,24 +537,28 @@ const KINDS = {
     </div>
   ),
   code: () => (
-    <div className="flex h-full flex-col p-2.5 font-mono">
-      <div className="flex items-center gap-1 pb-1.5">
+    <div className="flex h-full flex-col p-2 font-mono">
+      <div className="flex items-center gap-1 border-b border-star-300/10 pb-1">
         <span className="h-1.5 w-1.5 rounded-full bg-ember-500/60" />
         <span className="h-1.5 w-1.5 rounded-full bg-ember-500/30" />
         <span className="h-1.5 w-1.5 rounded-full bg-star-100/20" />
-        <Line w="w-16" h="h-1" className="ml-2" tone="bg-star-100/10" />
+        <span className="ml-1 flex items-center gap-1">
+          <span className="h-1.5 w-1.5 rounded-[2px] bg-star-100/15" />
+          <MiniSub className="text-star-500">deliver.js</MiniSub>
+        </span>
       </div>
-      <div className="flex-1 space-y-1">
+      <div className="mt-1 flex-1 space-y-1">
         {[
-          ['text-ember-500/80', 'import', ' { deliver }', 'from', "'inovers'", ';'],
-          ['text-star-100/40', 'const', ' project', ' = ', 'await', ' deliver({'],
-          ['text-star-100/40', '  scope:', "'website'", ','],
-          ['text-star-100/40', '  speed:', "'3 days'", ','],
-          ['text-star-100/40', '});'],
-        ].map((parts, i) => (
-          <div key={i} className="flex items-center gap-1 whitespace-nowrap">
-            {parts.map((p, j) => (
-              <span key={j} className={`text-[8px] leading-tight ${j === 0 ? p : 'text-star-100/45'}`}>{j === 0 ? '' : p}</span>
+          ['1', 'text-star-100/25', ['text-ember-500/80', 'import', 'text-star-100/60', ' { deliver } ', 'text-ember-500/80', 'from', 'text-emerald-400/70', "'inovers'", 'text-star-100/60', ';']],
+          ['2', 'text-star-100/25', ['text-star-100/60', 'const', 'text-star-100/60', ' project ', 'text-star-100/60', '=', 'text-star-100/60', ' await ', 'text-ember-500/80', 'deliver', 'text-star-100/60', '({']],
+          ['3', 'text-star-100/25', ['text-star-100/60', '  scope', 'text-star-100/60', ':', 'text-emerald-400/70', "'website'", 'text-star-100/60', ',']],
+          ['4', 'text-star-100/25', ['text-star-100/60', '  speed', 'text-star-100/60', ':', 'text-emerald-400/70', "'3 days'", 'text-star-100/60', ',']],
+          ['5', 'text-star-100/25', ['text-star-100/60', '});', 'text-star-100/45', ' // ship it']],
+        ].map(([num, numTone, tokens]) => (
+          <div key={num} className="flex items-center gap-1.5 whitespace-nowrap">
+            <span className={`w-2 text-right text-[7px] leading-tight ${numTone}`}>{num}</span>
+            {tokens.map((t, j) => (
+              <span key={j} className={`text-[8px] leading-tight ${t.includes('text-') ? t : 'text-star-100/60'}`}>{t.includes('text-') ? '' : t}</span>
             ))}
           </div>
         ))}
@@ -382,40 +569,69 @@ const KINDS = {
   kanban: () => (
     <div className="grid h-full grid-cols-3 gap-1.5 p-2">
       {[
-        ['TODO', 'bg-star-100/15', [
-          ['w-4/5', 'bg-ember-500/25'],
-          ['w-3/5', 'bg-star-100/20'],
+        ['TODO', 'bg-star-100/15', '3', [
+          ['w-4/5', 'bg-ember-500/25', 'High'],
+          ['w-3/5', 'bg-star-100/20', 'Low'],
         ]],
-        ['DOING', 'bg-amber-400/50', [
-          ['w-3/4', 'bg-ember-500/30'],
-          ['w-full', 'bg-star-100/20'],
-          ['w-2/3', 'bg-star-100/20'],
+        ['DOING', 'bg-amber-400/50', '2', [
+          ['w-3/4', 'bg-ember-500/30', 'High'],
+          ['w-full', 'bg-star-100/20', 'Med'],
         ]],
-        ['DONE', 'bg-emerald-400/50', [
-          ['w-4/5', 'bg-star-100/20'],
-          ['w-1/2', 'bg-star-100/20'],
+        ['DONE', 'bg-emerald-400/50', '5', [
+          ['w-4/5', 'bg-star-100/20', 'Low'],
+          ['w-1/2', 'bg-star-100/20', 'Low'],
         ]],
-      ].map(([title, headTone, cards]) => (
+      ].map(([title, headTone, count, cards]) => (
         <div key={title} className="flex flex-col gap-1.5 rounded-md bg-star-100/5 p-1.5">
           <div className="flex items-center justify-between">
-            <MiniLabel className="text-star-500">{title}</MiniLabel>
-            <Dot tone={headTone} />
+            <div className="flex items-center gap-1">
+              <Dot tone={headTone} />
+              <MiniLabel className="text-star-500">{title}</MiniLabel>
+            </div>
+            <span className="rounded-full bg-star-100/10 px-1 text-[7px] text-star-500">{count}</span>
           </div>
-          {cards.map(([w, tone], i) => (
-            <div key={i} className="space-y-1 rounded bg-white/40 p-1 dark:bg-white/5">
+          {cards.map(([w, tone, prio], i) => (
+            <div key={i} className="space-y-1 rounded-md bg-white/40 p-1 shadow-sm dark:bg-white/5">
+              <div className="flex items-center justify-between">
+                <span className="flex gap-px">
+                  <Dot tone="bg-star-100/25" />
+                  <Dot tone="bg-star-100/25" />
+                  <Dot tone="bg-star-100/25" />
+                </span>
+                <Chip tone={prio === 'High' ? 'bg-ember-500/20 text-ember-600 dark:text-ember-300' : 'bg-star-100/10 text-star-500'}>{prio}</Chip>
+              </div>
               <Line w={w} h="h-1" tone={tone} />
               <Line w="w-1/2" h="h-1" tone="bg-star-100/10" />
             </div>
           ))}
+          <span className="flex items-center justify-center gap-0.5 rounded-md border border-dashed border-star-300/20 py-0.5 text-[7px] text-star-500">
+            ＋ Add card
+          </span>
         </div>
       ))}
     </div>
   ),
   'dashboard-big': () => (
     <div className="flex h-full flex-col gap-1.5 p-2.5">
+      <div className="flex items-center justify-between">
+        <div>
+          <MiniLabel className="text-star-300">Analytics</MiniLabel>
+          <MiniSub className="text-star-500">Last 30 days</MiniSub>
+        </div>
+        <div className="flex items-center gap-1">
+          <Chip tone="bg-star-100/10 text-star-500">1D</Chip>
+          <Chip tone="bg-ember-500/20 text-ember-600 dark:text-ember-300">30D</Chip>
+          <Chip tone="bg-star-100/10 text-star-500">1Y</Chip>
+        </div>
+      </div>
       <div className="grid grid-cols-3 gap-1.5">
-        {[['$48.2k', '↑ 8.2%'], ['1,284', '↑ 3.1%'], ['96.4%', '↑ 0.8%']].map(([v, d]) => (
+        {[
+          ['Revenue', '$48.2k', '↑ 8.2%', 'bg-ember-500/15'],
+          ['Users', '1,284', '↑ 3.1%', 'bg-emerald-400/15'],
+          ['Health', '96.4%', '↑ 0.8%', 'bg-sky-400/15'],
+        ].map(([label, v, d, tone]) => (
           <div key={v} className="rounded-md bg-star-100/6 p-1.5">
+            <MiniSub className="text-star-500">{label}</MiniSub>
             <MiniLabel className="text-star-200">{v}</MiniLabel>
             <MiniSub className="text-emerald-500">{d}</MiniSub>
           </div>
@@ -425,61 +641,94 @@ const KINDS = {
         <MiniArea className="p-1" />
       </Block>
       <div className="flex items-center justify-between rounded-md bg-star-100/6 px-1.5 py-1">
-        <MiniLabel className="text-star-500">GROWTH</MiniLabel>
-        <Chip>Quarterly</Chip>
+        <div className="flex items-center gap-1.5">
+          <Dot tone="bg-ember-500/60" />
+          <MiniSub className="text-star-500">This period</MiniSub>
+          <Dot tone="bg-star-100/30" />
+          <MiniSub className="text-star-500">Last period</MiniSub>
+        </div>
+        <MiniDonut pct={68} />
       </div>
     </div>
   ),
   flow: () => (
-    <div className="flex h-full flex-col items-center justify-center gap-1.5 p-3">
+    <div className="flex h-full flex-col items-center justify-center gap-1 p-3">
       {[
-        ['bg-ember-500/30', 'Discover', true],
-        ['bg-star-100/10', 'Build', false],
-        ['bg-star-100/10', 'Launch', false],
-      ].map(([tone, label, active], i) => (
+        ['bg-ember-500/30', 'Discover', true, '1 day'],
+        ['bg-star-100/10', 'Scaffold', false, '1–5 days'],
+        ['bg-star-100/10', 'Review', false, '1 day'],
+        ['bg-star-100/10', 'Ship', false, 'live'],
+      ].map(([tone, label, active, meta], i) => (
         <div key={label} className="flex w-full items-center gap-1.5">
           <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md ${tone}`}>
             <span className={`h-1.5 w-1.5 rounded-full ${active ? 'bg-ember-500' : 'bg-star-100/40'}`} />
           </span>
-          <Line w="flex-1" h="h-1.5" tone={active ? 'bg-ember-500/40' : 'bg-star-100/15'} />
-          {i < 2 && <span className="shrink-0 text-[8px] text-star-100/30">→</span>}
+          <div className="min-w-0 flex-1">
+            <MiniLabel className={active ? 'text-ember-600 dark:text-ember-300' : 'text-star-400'}>{label}</MiniLabel>
+          </div>
+          <MiniSub className="text-star-500">{meta}</MiniSub>
+          {i < 3 && <span className="shrink-0 text-[8px] text-star-100/30">↓</span>}
         </div>
       ))}
+      <div className="mt-1 flex w-full items-center gap-1.5 rounded-md bg-ember-500/10 px-1.5 py-1">
+        <MiniLabel className="text-ember-600 dark:text-ember-300">Done in 3 days</MiniLabel>
+        <MiniSub className="ml-auto text-star-500">avg. turnaround</MiniSub>
+      </div>
     </div>
   ),
   table: () => (
     <div className="flex h-full flex-col gap-1 p-2.5">
+      <div className="flex items-center justify-between">
+        <MiniLabel className="text-star-300">Clients</MiniLabel>
+        <Chip>＋ New</Chip>
+      </div>
       <div className="flex items-center gap-1 rounded-md bg-star-100/8 px-1.5 py-1">
         <MiniLabel className="w-1/3 text-star-500">CLIENT</MiniLabel>
-        <MiniLabel className="w-1/3 text-star-500">STATUS</MiniLabel>
-        <MiniLabel className="w-1/3 text-right text-star-500">AMOUNT</MiniLabel>
+        <MiniLabel className="w-1/4 text-star-500">STATUS</MiniLabel>
+        <MiniLabel className="w-1/4 text-star-500">DATE</MiniLabel>
+        <MiniLabel className="w-1/6 text-right text-star-500">AMOUNT</MiniLabel>
       </div>
       {[
-        ['Dory Delivery', 'Active', '₱12,400', 'bg-emerald-400/20 text-emerald-600 dark:text-emerald-300'],
-        ['WhatAHotel', 'In review', '₱8,900', 'bg-amber-400/20 text-amber-600 dark:text-amber-300'],
-        ['Kanto Bites', 'Active', '₱5,200', 'bg-emerald-400/20 text-emerald-600 dark:text-emerald-300'],
-      ].map(([name, status, amt, tone]) => (
+        ['DR', 'Dory Delivery', 'Active', 'Aug 11', '₱12,400', 'bg-emerald-400/20 text-emerald-600 dark:text-emerald-300'],
+        ['WH', 'WhatAHotel', 'In review', 'Aug 09', '₱8,900', 'bg-amber-400/20 text-amber-600 dark:text-amber-300'],
+        ['KB', 'Kanto Bites', 'Active', 'Aug 07', '₱5,200', 'bg-emerald-400/20 text-emerald-600 dark:text-emerald-300'],
+      ].map(([ini, name, status, date, amt, tone]) => (
         <div key={name} className="flex items-center gap-1 border-t border-star-300/10 px-1.5 pt-1">
-          <MiniLabel className="w-1/3 text-star-300">{name}</MiniLabel>
-          <div className="w-1/3"><Chip tone={tone}>{status}</Chip></div>
-          <MiniLabel className="w-1/3 text-right text-star-400">{amt}</MiniLabel>
+          <div className="flex w-1/3 items-center gap-1">
+            <Avatar tone="bg-ember-500/20" size="h-3.5 w-3.5"><MiniLabel className="text-[5px] text-ember-600 dark:text-ember-300">{ini}</MiniLabel></Avatar>
+            <MiniLabel className="text-star-300">{name}</MiniLabel>
+          </div>
+          <div className="w-1/4"><Chip tone={tone}>{status}</Chip></div>
+          <MiniSub className="w-1/4 text-star-500">{date}</MiniSub>
+          <MiniLabel className="w-1/6 text-right text-star-400">{amt}</MiniLabel>
         </div>
       ))}
+      <div className="mt-auto flex items-center justify-between border-t border-star-300/10 pt-1">
+        <MiniSub className="text-star-500">Page 1 of 9</MiniSub>
+        <div className="flex items-center gap-1">
+          <Dot tone="bg-star-100/20" />
+          <Dot tone="bg-ember-500/50" />
+          <Dot tone="bg-star-100/20" />
+          <Dot tone="bg-star-100/20" />
+        </div>
+      </div>
     </div>
   ),
   metrics: () => (
-    <div className="flex h-full items-center gap-2 p-3">
+    <div className="flex h-full items-center gap-1.5 p-2.5">
       {[
-        ['Views', '84.2k', '↑ 12%', 'text-ember-500/70'],
-        ['Leads', '1,024', '↑ 4%', 'text-ember-500/50'],
-        ['Rate', '68%', '↑ 2%', 'text-ember-500/30'],
-        ['Goal', '92%', '↓ 1%', 'text-star-100/25'],
-      ].map(([label, v, d, tone]) => (
-        <div key={label} className="flex-1 space-y-1 rounded-md bg-star-100/6 p-1.5">
+        ['Views', '84.2k', '↑ 12%', 'bg-ember-500/70', '40, 62, 50, 78, 66, 90'],
+        ['Leads', '1,024', '↑ 4%', 'bg-ember-500/50', '30, 45, 40, 55, 62, 70'],
+        ['Rate', '68%', '↑ 2%', 'bg-ember-500/35', '50, 48, 62, 58, 70, 68'],
+        ['Goal', '92%', '↓ 1%', 'bg-star-100/25', '80, 76, 84, 78, 82, 70'],
+      ].map(([label, v, d, tone, bars]) => (
+        <div key={label} className="flex flex-1 flex-col rounded-md bg-star-100/6 p-1.5">
           <MiniSub className="text-star-500">{label}</MiniSub>
           <MiniLabel className="text-star-200">{v}</MiniLabel>
-          <div className={`h-1 w-full rounded-full ${tone}`} />
-          <MiniSub className="text-emerald-500">{d}</MiniSub>
+          <MiniSub className={d.startsWith('↑') ? 'text-emerald-500' : 'text-rose-400'}>{d}</MiniSub>
+          <div className="mt-1 h-4">
+            <MiniBars values={bars.split(',').map(Number)} className="opacity-70" />
+          </div>
         </div>
       ))}
     </div>
@@ -487,43 +736,50 @@ const KINDS = {
   pipeline: () => (
     <div className="flex h-full items-center gap-1 p-3">
       {[
-        ['bg-star-100/8', 'Source'],
-        ['bg-ember-500/20', 'Process'],
-        ['bg-star-100/8', 'Enrich'],
-        ['bg-star-100/8', 'Store'],
-        ['bg-star-100/8', 'Serve'],
-      ].map(([tone, label], i) => (
-        <div key={label} className="flex flex-1 items-center gap-1">
-          <div className={`flex-1 rounded-md px-1 py-2 text-center ${tone}`}>
+        ['bg-star-100/8', 'Source', '12k'],
+        ['bg-ember-500/20', 'Process', '9.4k'],
+        ['bg-star-100/8', 'Enrich', '8.1k'],
+        ['bg-star-100/8', 'Store', '7.9k'],
+        ['bg-star-100/8', 'Serve', '6.8k'],
+      ].map(([tone, label, count], i) => (
+        <div key={label} className="flex flex-1 flex-col items-center gap-1">
+          <div className={`w-full rounded-md px-1 py-1.5 text-center ${tone}`}>
             <MiniLabel className={i === 1 ? 'text-ember-600 dark:text-ember-300' : 'text-star-500'}>{label}</MiniLabel>
+            <MiniSub className="text-star-500">{count}</MiniSub>
           </div>
-          {i < 4 && <span className="shrink-0 text-[8px] text-star-100/30">→</span>}
+          {i < 4 && <span className="text-[8px] text-star-100/30">→</span>}
+          <div className={`h-1 w-full rounded-full ${i === 4 ? 'bg-emerald-400/40' : 'bg-star-100/15'}`} />
         </div>
       ))}
     </div>
   ),
   integrations: () => (
-    <div className="grid h-full grid-cols-6 items-center gap-1.5 p-3">
-      {[
-        'bg-ember-500/25',
-        'bg-sky-400/20',
-        'bg-emerald-400/20',
-        'bg-violet-400/20',
-        'bg-amber-400/20',
-        'bg-star-100/15',
-      ].map((tone, i) => (
-        <div key={i} className={`flex aspect-square items-center justify-center rounded-lg ${tone}`}>
-          <span className={`h-3 w-3 rounded-sm ${i % 2 ? 'bg-star-100/40' : 'bg-ember-500/50'}`} />
-        </div>
-      ))}
-      <div className="col-span-6 space-y-1">
+    <div className="flex h-full flex-col justify-center gap-1.5 p-3">
+      <div className="grid grid-cols-6 gap-1.5">
+        {[
+          ['bg-ember-500/25', 'A'],
+          ['bg-sky-400/20', 'B'],
+          ['bg-emerald-400/20', 'C'],
+          ['bg-violet-400/20', 'D'],
+          ['bg-amber-400/20', 'E'],
+          ['bg-star-100/15', 'F'],
+        ].map(([tone, letter], i) => (
+          <div key={i} className={`flex aspect-square items-center justify-center rounded-lg ${tone}`}>
+            <MiniLabel className="text-[8px] text-star-400">{letter}</MiniLabel>
+          </div>
+        ))}
+      </div>
+      <div className="space-y-1">
         <Line w="w-2/3" h="h-1.5" tone="bg-star-100/15" />
         <MiniSub className="text-star-500">Connect your stack — 40+ integrations</MiniSub>
+      </div>
+      <div className="flex items-center gap-1.5">
+        <Pill w="w-16" h="h-3" tone="bg-ember-500/70" />
+        <Pill w="w-10" h="h-3" tone="bg-star-100/10" />
       </div>
     </div>
   ),
 }
-
 // ─── Media tile — screenshot slot ───
 // With `src` set, renders the real screenshot (swap-in ready). With
 // `src: null`, renders browser/phone chrome filled with an abstract
