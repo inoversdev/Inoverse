@@ -1,10 +1,12 @@
 import { BRAND, PRICING } from '../lib/content'
 import SplitHeading from './SplitHeading'
 
-// Crown mark for the Premium badge
+// Crown mark for the Premium badge — Ionicons-style: bold, chunky
+// points that stay readable at badge size (the previous path's thin
+// tips rendered muddy at 14px — Mat's call 2026-08-11).
 const Crown = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5" aria-hidden="true">
-    <path d="M2.5 8l4 3.5L12 4l5.5 7.5 4-3.5-2 9h-15l-2-9z" />
+  <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4" aria-hidden="true">
+    <path d="M8 16L3 8l4 1 5-6 5 6 4-1-5 8H8z" />
   </svg>
 )
 
