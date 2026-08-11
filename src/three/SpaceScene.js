@@ -338,6 +338,7 @@ export default class SpaceScene {
   // Called by ScrollTrigger on each scroll update (0..1)
   setProgress(p) {
     this.progress = p
+    this.lastScrollAt = performance.now() // adaptive rate: user is scrolling
   }
 
   // Called by hero ScrollTrigger (0 = hero top, 1 = hero scrolled out)
@@ -346,9 +347,25 @@ export default class SpaceScene {
   }
 
   start() {
+    this.lastScrollAt = 0 // adaptive frame rate: last scroll-update stamp
+    this.frameSkip = false // toggles when idle (see _loop)
     this._loop = () => {
       if (this.disposed) return
       this.raf = requestAnimationFrame(this._loop)
+
+      // ─── Adaptive frame rate (Mat's call 2026-08-11 — "I feel
+      // heaviness"). Full 60fps while the user is actively scrolling
+      // (setProgress stamps lastScrollAt); once they stop for 150ms, run
+      // every OTHER frame — the star twinkle, UFO bob and nebula breath
+      // are all time-based, so halving the rate is invisible to the eye,
+      // but the GPU does half the work (battery, fans, and — crucially —
+      // no frame-stealing from scroll/reveal animations on integrated
+      // GPUs). Scrolling again instantly restores full rate.
+      if (performance.now() - this.lastScrollAt > 150) {
+        this.frameSkip = !this.frameSkip
+        if (this.frameSkip) return
+      }
+
       const dt = Math.min(this.clock.getDelta(), 0.05)
       const t = this.clock.elapsedTime
 

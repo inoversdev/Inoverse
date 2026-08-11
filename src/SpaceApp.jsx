@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useRef } from 'react'
+import { Suspense, lazy, useEffect, useRef, useState } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -29,6 +29,7 @@ gsap.registerPlugin(ScrollTrigger)
 export default function SpaceApp() {
   const canvasRef = useRef(null)
   const sceneRef = useRef(null)
+  const [sceneReady, setSceneReady] = useState(false)
   const lenis = useLenis()
   const { theme } = useTheme()
   const location = useLocation()
@@ -68,32 +69,57 @@ export default function SpaceApp() {
   // pages must not remount the scene or replay the entrance warp.
   // The entrance warp plays only on first load; theme toggles rebuild
   // quietly.
+  //
+  // First load is DEFERRED 120ms (Mat's call 2026-08-11 — "I feel
+  // heaviness"): constructing the WebGL scene is the single heaviest
+  // startup task (compile shaders, build 2200 stars, textures), and
+  // nothing in the hero needs it before the text paints. The browser
+  // parses/renders the content first, then the universe boots behind it
+  // (the mount shows the page's own bg for those 120ms). Theme rebuilds
+  // (skipEntrance) boot immediately so the toggle stays snappy.
   useEffect(() => {
     if (!canvasRef.current) return
     const skipEntrance = prevTheme.current !== theme
     prevTheme.current = theme
-    const scene = new SpaceScene(canvasRef.current, theme, skipEntrance)
-    sceneRef.current = scene
+    let cancelled = false
+    let bootTimer = 0
+    let scene = null
+    let st = null
+    let refreshT = 0
 
-    // Drive the camera flight from overall page scroll (0..1). Bound to
-    // document.body, so it stays valid on every route — each page has a
-    // different height, and the route-change effect refreshes it.
-    const st = ScrollTrigger.create({
-      trigger: document.body,
-      start: 'top top',
-      end: 'bottom bottom',
-      scrub: 0.6,
-      onUpdate: (self) => scene.setProgress(self.progress),
-    })
+    const boot = () => {
+      if (cancelled || !canvasRef.current) return
+      scene = new SpaceScene(canvasRef.current, theme, skipEntrance)
+      sceneRef.current = scene
+      setSceneReady(true)
 
-    // Refresh after fonts/images settle
-    const t = setTimeout(() => ScrollTrigger.refresh(), 600)
+      // Drive the camera flight from overall page scroll (0..1). Bound to
+      // document.body, so it stays valid on every route — each page has a
+      // different height, and the route-change effect refreshes it.
+      st = ScrollTrigger.create({
+        trigger: document.body,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: 0.6,
+        onUpdate: (self) => scene.setProgress(self.progress),
+      })
+
+      // Refresh after fonts/images settle
+      refreshT = setTimeout(() => ScrollTrigger.refresh(), 600)
+    }
+
+    if (skipEntrance) boot()
+    else bootTimer = window.setTimeout(boot, 120)
 
     return () => {
-      st.kill()
-      clearTimeout(t)
-      scene.dispose()
-      sceneRef.current = null
+      cancelled = true
+      clearTimeout(bootTimer)
+      clearTimeout(refreshT)
+      if (st) st.kill()
+      if (scene) {
+        scene.dispose()
+        sceneRef.current = null
+      }
     }
   }, [theme])
 
@@ -103,7 +129,7 @@ export default function SpaceApp() {
   // sub-pages: if there's no #top element, there's simply no trigger.
   useEffect(() => {
     if (location.pathname !== '/') return
-    if (!sceneRef.current) return
+    if (!sceneReady || !sceneRef.current) return
     if (!document.querySelector('#top')) return
 
     const heroSt = ScrollTrigger.create({
@@ -115,7 +141,7 @@ export default function SpaceApp() {
     })
 
     return () => heroSt.kill()
-  }, [theme, location.pathname])
+  }, [theme, location.pathname, sceneReady])
 
   // Route change: snap to the top immediately (no animated glide), then
   // let GSAP re-measure — page heights differ wildly between home and a
