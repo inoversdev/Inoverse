@@ -79,7 +79,9 @@ export default function SpaceFooter() {
           <span>{BRAND.phone}</span>
         </div>
 
-        <p className="text-center text-xs text-star-600">{FOOTER.copyright}</p>
+        <p className="text-center text-xs text-star-600">
+          © {new Date().getFullYear()} Inovers. All rights reserved.
+        </p>
       </div>
     </footer>
   )
