@@ -90,7 +90,8 @@ const MiniBars = ({ values = [40, 65, 30, 80, 55, 70, 45], className = '' }) => 
         width={100 / values.length - 6}
         height={v * 0.36}
         rx="1.5"
-        className={i === values.length - 1 ? 'fill-ember-500/80 loop-pulse' : 'fill-ember-500/30'}
+        className={`chart-bar ${i === values.length - 1 ? 'fill-ember-500/80' : 'fill-ember-500/30'}`}
+        style={{ animationDelay: `${i * 0.14}s` }}
       />
     ))}
   </svg>
@@ -111,7 +112,7 @@ const MiniArea = ({ className = '' }) => (
     {/* secondary series (soft) */}
     <path d="M0 32 C 15 28, 30 30, 45 24 S 75 22, 90 18 S 110 16, 120 14" fill="none" stroke="rgba(148,163,184,0.5)" strokeWidth="1.2" strokeDasharray="3 2" strokeLinecap="round" />
     <path d="M0 36 C 15 30, 25 34, 38 26 S 60 18, 72 22 S 100 8, 120 6 L120 44 L0 44 Z" fill="url(#mini-area-fill)" />
-    <path d="M0 36 C 15 30, 25 34, 38 26 S 60 18, 72 22 S 100 8, 120 6" fill="none" stroke="rgba(245,48,3,0.85)" strokeWidth="1.6" strokeLinecap="round" />
+    <path d="M0 36 C 15 30, 25 34, 38 26 S 60 18, 72 22 S 100 8, 120 6" fill="none" stroke="rgba(245,48,3,0.85)" strokeWidth="1.6" strokeLinecap="round" className="chart-line" />
     <circle cx="120" cy="6" r="2.2" fill="rgba(245,48,3,0.9)" className="loop-pulse" />
   </svg>
 )
@@ -123,7 +124,7 @@ const MiniDonut = ({ pct = 68, className = '' }) => (
     <circle
       cx="12" cy="12" r="9" fill="none"
       stroke="rgba(245,48,3,0.85)" strokeWidth="3.5" strokeLinecap="round"
-      strokeDasharray={`${(pct / 100) * 56.5} 56.5`} transform="rotate(-90 12 12)"
+      strokeDasharray={`${(pct / 100) * 56.5} 56.5`} transform="rotate(-90 12 12)" className="chart-donut"
     />
   </svg>
 )
@@ -435,30 +436,30 @@ const KINDS = {
       <div className="flex-1 space-y-1.5">
         <div className="flex items-end gap-1">
           <Avatar tone="bg-ember-500/30" size="h-4 w-4" />
-          <Block className="max-w-[70%] self-start rounded-lg rounded-bl-sm bg-star-100/10 p-1">
+          <Block className="chat-bubble max-w-[70%] self-start rounded-lg rounded-bl-sm bg-star-100/10 p-1">
             <MiniSub className="text-star-400">Hi! Is the site live yet?</MiniSub>
             <MiniSub className="text-right text-star-500">9:40 AM</MiniSub>
           </Block>
         </div>
         <div className="flex items-end justify-end gap-1">
-          <Block className="max-w-[70%] self-end rounded-lg rounded-br-sm bg-ember-500/25 p-1">
+          <Block className="chat-bubble max-w-[70%] self-end rounded-lg rounded-br-sm bg-ember-500/25 p-1" style={{ animationDelay: '1.75s' }}>
             <MiniSub className="text-ember-600 dark:text-ember-300">Deploying tomorrow 🚀</MiniSub>
             <MiniSub className="text-right text-ember-600/60 dark:text-ember-300/60">9:41 AM ✓✓</MiniSub>
           </Block>
         </div>
         <div className="flex items-end gap-1">
           <Avatar tone="bg-star-100/20" size="h-4 w-4" />
-          <Block className="max-w-[70%] self-start rounded-lg rounded-bl-sm bg-star-100/10 p-1">
+          <Block className="chat-bubble max-w-[70%] self-start rounded-lg rounded-bl-sm bg-star-100/10 p-1" style={{ animationDelay: '3.5s' }}>
             <MiniSub className="text-star-400">Perfect — can't wait!</MiniSub>
             <MiniSub className="text-right text-star-500">9:42 AM</MiniSub>
           </Block>
         </div>
         <div className="flex items-end justify-end gap-1">
-          <Block className="self-end rounded-lg rounded-br-sm bg-ember-500/25 p-1.5">
+          <Block className="chat-bubble self-end rounded-lg rounded-br-sm bg-ember-500/25 p-1.5" style={{ animationDelay: '5.25s' }}>
             <span className="flex gap-0.5">
-              <span className="loop-pulse h-1 w-1 rounded-full bg-ember-500" />
-              <span className="loop-pulse h-1 w-1 rounded-full bg-ember-500" style={{ animationDelay: '0.2s' }} />
-              <span className="loop-pulse h-1 w-1 rounded-full bg-ember-500" style={{ animationDelay: '0.4s' }} />
+              <span className="typing-dot h-1 w-1 rounded-full bg-ember-500" />
+              <span className="typing-dot h-1 w-1 rounded-full bg-ember-500" style={{ animationDelay: '0.18s' }} />
+              <span className="typing-dot h-1 w-1 rounded-full bg-ember-500" style={{ animationDelay: '0.36s' }} />
             </span>
           </Block>
         </div>
@@ -581,7 +582,7 @@ const KINDS = {
           ['w-4/5', 'bg-star-100/20', 'Low'],
           ['w-1/2', 'bg-star-100/20', 'Low'],
         ]],
-      ].map(([title, headTone, count, cards]) => (
+      ].map(([title, headTone, count, cards], col) => (
         <div key={title} className="flex flex-col gap-1.5 rounded-md bg-star-100/5 p-1.5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1">
@@ -591,7 +592,7 @@ const KINDS = {
             <span className="loop-pulse rounded-full bg-star-100/10 px-1 text-[7px] text-star-500">{count}</span>
           </div>
           {cards.map(([w, tone, prio], i) => (
-            <div key={i} className="space-y-1 rounded-md bg-white/40 p-1 shadow-sm dark:bg-white/5">
+            <div key={i} className="kanban-pop space-y-1 rounded-md bg-white/40 p-1 shadow-sm dark:bg-white/5" style={{ animationDelay: `${col * 1.9 + i * 0.7}s` }}>
               <div className="flex items-center justify-between">
                 <span className="flex gap-px">
                   <Dot tone="bg-star-100/25" />
@@ -660,7 +661,7 @@ const KINDS = {
         ['bg-star-100/10', 'Ship', false, 'live'],
       ].map(([tone, label, active, meta], i) => (
         <div key={label} className="flex w-full items-center gap-1.5">
-          <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md ${tone}`}>
+          <span className={`stage-flash flex h-5 w-5 shrink-0 items-center justify-center rounded-md ${tone}`} style={{ animationDelay: `${i * 1.1}s` }}>
             <span className={`h-1.5 w-1.5 rounded-full ${active ? 'bg-ember-500' : 'bg-star-100/40'}`} />
           </span>
           <div className="min-w-0 flex-1">
@@ -743,12 +744,12 @@ const KINDS = {
         ['bg-star-100/8', 'Serve', '6.8k'],
       ].map(([tone, label, count], i) => (
         <div key={label} className="flex flex-1 flex-col items-center gap-1">
-          <div className={`w-full rounded-md px-1 py-1.5 text-center ${tone}`}>
+          <div className={`stage-flash w-full rounded-md px-1 py-1.5 text-center ${tone}`} style={{ animationDelay: `${i * 0.9}s` }}>
             <MiniLabel className={i === 1 ? 'text-ember-600 dark:text-ember-300' : 'text-star-500'}>{label}</MiniLabel>
             <MiniSub className="text-star-500">{count}</MiniSub>
           </div>
           {i < 4 && <span className="loop-pulse text-[8px] text-star-100/30" style={{ animationDelay: `${i * 0.3}s` }}>→</span>}
-          <div className={`h-1 w-full rounded-full ${i === 4 ? 'bg-emerald-400/40' : 'bg-star-100/15'}`} />
+          <div className={`bar-fill h-1 w-full rounded-full ${i === 4 ? 'bg-emerald-400/40' : 'bg-star-100/15'}`} style={{ animationDelay: `${i * 0.45}s` }} />
         </div>
       ))}
     </div>
