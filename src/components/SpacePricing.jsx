@@ -9,12 +9,13 @@ const Crown = () => (
 )
 
 // ─── Pricing — two tiers (Mat's call 2026-08-11). Cards use the SAME
-// design as the Why Inovers compare deck (Mat's call): featured = ember
-// gradient-tint surface, secondary = neutral glass, identical 3D tilt
-// interaction (rotateX 6 / rotateY ±8 / translateZ 20) and the same
-// scale relationship (1.03 / 0.97). Badges stay as clean pills —
-// Most popular (solid ember) vs Premium (ember→gold, crown).
-// Copy lives in content.js PRICING. ───
+// design as the Why Inovers compare deck: the PREMIUM (Customize) card
+// is the standout — ember gradient-tint surface, glow, taller scale,
+// primary CTA (Mat's call: "apply the standout to Customize since it
+// is Premium"); the Starter sits neutral beside it. Identical 3D tilt
+// interaction (rotateX 6 / rotateY ±8 / translateZ 20). Badges stay
+// clean pills — Most popular (solid ember) vs Premium (ember→gold,
+// crown). Copy lives in content.js PRICING. ───
 export default function SpacePricing() {
   return (
     <section id="pricing" className="relative mx-auto max-w-6xl px-6 py-20 lg:px-10">
@@ -33,12 +34,15 @@ export default function SpacePricing() {
 
       <div className="mx-auto grid max-w-4xl items-stretch gap-8 sm:grid-cols-2">
         {PRICING.plans.map((plan, i) => {
-          const featured = i === 0
+          // The PREMIUM (Customize) card is the standout — tint, glow,
+          // taller scale (Mat's call 2026-08-11: "instead of most
+          // popular, apply it to Customize since it is Premium").
+          const standout = i === 1
           return (
             <div
               key={plan.id}
               className={`v2-pricing-card relative flex flex-col rounded-3xl p-8 transition-transform duration-500 ease-out [transform-style:preserve-3d] hover:[transform:rotateX(6deg)_rotateY(-8deg)_translateZ(20px)] motion-reduce:hover:transform-none sm:p-9 ${
-                featured
+                standout
                   ? 'border border-ember-500/35 bg-gradient-to-b from-ember-500/[0.09] to-transparent shadow-[0_30px_70px_-25px_rgba(245,48,3,0.45)] md:scale-[1.03]'
                   : 'border border-star-300/15 bg-star-800/[0.015] dark:bg-white/[0.02] md:scale-[0.97]'
               }`}
@@ -46,12 +50,12 @@ export default function SpacePricing() {
               {plan.badge && (
                 <span
                   className={`absolute -top-3.5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest text-white shadow-[0_8px_24px_rgba(245,48,3,0.4)] ${
-                    featured
+                    i === 0
                       ? 'bg-ember-500'
                       : 'bg-gradient-to-r from-ember-600 via-ember-500 to-amber-400'
                   }`}
                 >
-                  {!featured && <Crown />} {plan.badge}
+                  {i === 1 && <Crown />} {plan.badge}
                 </span>
               )}
 
@@ -93,7 +97,7 @@ export default function SpacePricing() {
                   href={BRAND.calendly}
                   target="_blank"
                   rel="noreferrer"
-                  className={`${featured ? 'v2-btn v2-btn-primary' : 'v2-btn v2-btn-ghost'} group/btn w-full`}
+                  className={`${standout ? 'v2-btn v2-btn-primary' : 'v2-btn v2-btn-ghost'} group/btn w-full`}
                 >
                   {plan.cta}
                   <span
