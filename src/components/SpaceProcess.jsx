@@ -21,10 +21,20 @@ gsap.registerPlugin(ScrollTrigger)
 // the four node anchors exactly, so the numbered circles sit ON the curve:
 //   N1 (40,150) upper-left · N2 (260,280) mid-right
 //   N3 (40,430) lower-left · N4 (150,600) bottom-center
-// The N3→N4 leg hugs the left rail (x ≤ 32) until it is BELOW the step-4
-// text block (y ≈ 555), then dives right into the bottom-center node —
-// the curve never slices through the "Launch & Grow" copy.
-const MOBILE_PATH_D = 'M 40 40 C 40 100, 40 100, 40 150 C 40 200, 260 210, 260 280 C 260 350, 40 360, 40 430 C 32 470, 32 495, 32 555 C 32 585, 90 595, 150 600'
+// The N3→N4 leg hugs the left rail until it is BELOW the step-4 text
+// block, then dives right into the bottom-center node — the curve never
+// slices through the "Launch & Grow" copy.
+//
+// Built as a Catmull-Rom spline through the anchors (+ a start point and
+// one free shaping point before N4) rather than hand-picked independent
+// Bezier segments — every node is now C1-continuous (no tangent kink),
+// so the S reads as one continuous flowing ribbon instead of segments
+// glued end to end. Tension dropped 9 → 6.5 (2026-08-11, Mat's call:
+// "make the curves smoother") — longer control arms = rounder, more
+// flowing arcs. Regenerate with:
+//   node -e "const pts=[[40,40],[40,150],[260,280],[40,430],[34,552],[150,600]];const T=6.5;const p=[pts[0],...pts,pts.at(-1)];let d=`M ${pts[0][0]} ${pts[0][1]}`;for(let i=1;i<p.length-2;i++){const[p0,p1,p2,p3]=[p[i-1],p[i],p[i+1],p[i+2]];d+=` C ${(p1[0]+(p2[0]-p0[0])/T).toFixed(1)} ${(p1[1]+(p2[1]-p0[1])/T).toFixed(1)}, ${(p2[0]-(p3[0]-p1[0])/T).toFixed(1)} ${(p2[1]-(p3[1]-p1[1])/T).toFixed(1)}, ${p2[0]} ${p2[1]}`}console.log(d)"
+const MOBILE_PATH_D =
+  'M 40 40 C 40.0 56.9, 6.2 113.1, 40 150 C 73.8 186.9, 260.0 236.9, 260 280 C 260.0 323.1, 74.8 388.2, 40 430 C 5.2 471.8, 17.1 525.8, 34 552 C 50.9 578.2, 132.2 592.6, 150 600'
 const MOBILE_VIEW_W = 300
 const MOBILE_VIEW_H = 700
 
@@ -144,9 +154,19 @@ export default function SpaceProcess() {
         const total = path.getTotalLength()
 
         // Drive the saucer along the curve. Position comes from
-        // getPointAtLength in viewBox units scaled to the rendered frame;
-        // the saucer also rotates to the path tangent so the comet wake
-        // trails the motion (readable at small sizes, per the plan).
+        // getPointAtLength in viewBox units scaled to the rendered frame.
+        //
+        // Rotation is NOT the raw path tangent — the serpentine's overall
+        // travel is mostly vertical, so following the tangent literally
+        // would spin the saucer up to ~90° through the steep stretches
+        // (the disc silhouette turning edge-on, which reads as broken,
+        // not "flying"). Instead the saucer keeps its proper flying
+        // stance (disc level, dome up) and only banks gently left/right
+        // off that stance based on which way the curve is sweeping —
+        // the same small-tilt language the desktop route uses
+        // (-12°→8°), clamped here to ±MAX_BANK so it never tips past a
+        // believable bank angle.
+        const MAX_BANK = 22
         const placeUfo = (progress) => {
           const clamped = Math.min(1, Math.max(0, progress))
           const pt = path.getPointAtLength(clamped * total)
@@ -156,8 +176,14 @@ export default function SpaceProcess() {
           const x = pt.x * sx
           const y = pt.y * sy
           const pt2 = path.getPointAtLength(Math.min(1, clamped + 0.01) * total)
-          const angle = (Math.atan2(pt2.y - pt.y, pt2.x - pt.x) * 180) / Math.PI
-          ufo.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${angle}deg)`
+          const dx = pt2.x - pt.x
+          const dy = pt2.y - pt.y
+          // Angle of travel measured FROM "straight down" (the route's
+          // dominant direction) rather than from "straight right" — 0°
+          // here means "descending levelly", not "pointing down".
+          const angleFromDown = (Math.atan2(dx, dy) * 180) / Math.PI
+          const bank = Math.max(-MAX_BANK, Math.min(MAX_BANK, angleFromDown))
+          ufo.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${bank}deg)`
         }
 
         gsap.to({}, {
@@ -252,15 +278,47 @@ export default function SpaceProcess() {
                 <stop offset="45%" stopColor="rgba(245,48,3,0.7)" />
                 <stop offset="100%" stopColor="rgba(245,48,3,0.15)" />
               </linearGradient>
+              <filter id="fp-mobile-blur" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="3.2" />
+              </filter>
             </defs>
+
+            {/* Depth pass — a soft blurred duplicate sitting slightly
+                below-right of the real line, the classic elevated-tube
+                shading trick: it reads as the route casting a shadow /
+                glow rather than sitting flat on the card. */}
+            <path
+              d={MOBILE_PATH_D}
+              fill="none"
+              stroke="rgba(180,40,10,0.4)"
+              strokeWidth="7"
+              strokeLinecap="round"
+              filter="url(#fp-mobile-blur)"
+              transform="translate(1.5, 3)"
+            />
+
+            {/* the route itself — flowing dashes on top of the shadow pass */}
             <path
               ref={mobilePathRef}
               d={MOBILE_PATH_D}
               fill="none"
               stroke="url(#fp-mobile-grad)"
-              strokeWidth="3"
+              strokeWidth="4"
               strokeLinecap="round"
               className="flight-path-dashes"
+            />
+
+            {/* Highlight pass — a thin bright stroke offset toward the
+                light (up-left), giving the ribbon a rounded, lit-from-
+                above edge instead of a flat 2D line. */}
+            <path
+              d={MOBILE_PATH_D}
+              fill="none"
+              stroke="rgba(255,255,255,0.55)"
+              strokeWidth="1.1"
+              strokeLinecap="round"
+              transform="translate(-1, -1.2)"
+              opacity="0.7"
             />
           </svg>
 
