@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { ABOUT, STATS, WHY } from '../lib/content'
+import { ABOUT, WHY } from '../lib/content'
 import { applyCardReveal } from '../lib/cardReveal'
 import SplitHeading from './SplitHeading'
 import CompareDeck from './CompareDeck'
@@ -72,29 +72,17 @@ function StandardsGrid() {
   )
 }
 
-function ProofStrip() {
-  return (
-    <div className="glass grid grid-cols-2 gap-8 rounded-3xl px-8 py-10 sm:grid-cols-4">
-      {STATS.map((s) => (
-        <div key={s.label} className="text-center">
-          <div className="font-display text-3xl font-bold text-star-100 sm:text-4xl">
-            {s.value}
-            {s.suffix}
-          </div>
-          <div className="mt-1 text-xs text-star-400">{s.label}</div>
-        </div>
-      ))}
-    </div>
-  )
-}
-
 // ─── Why Inovers — home section, sits right after Process ───
 // Was a standalone /why-inovers route (Phase 2); merged onto the home
 // scroll per Mat's call (2026-08-10) — one page, discoverable by
 // scrolling like every other section, no separate route to keep in sync.
+//
+// Note: the old ProofStrip (STATS band) was REMOVED 2026-08-11 (Mat's
+// call) — the same stats already close the Services section; repeating
+// them here read as filler. The section now ends on the standards grid.
 export default function WhyInoversSection() {
   return (
-    <section id="why-inovers" className="relative mx-auto max-w-7xl px-6 py-24 lg:px-10">
+    <section id="why-inovers" className="relative mx-auto max-w-7xl overflow-x-clip px-6 py-24 lg:px-10">
       <div className="mb-14 max-w-xl">
         <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-ember-500">{WHY.eyebrow}</p>
         <SplitHeading
@@ -107,7 +95,6 @@ export default function WhyInoversSection() {
       </div>
       <CompareDeck />
       <StandardsGrid />
-      <ProofStrip />
     </section>
   )
 }

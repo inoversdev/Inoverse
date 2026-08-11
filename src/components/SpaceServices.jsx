@@ -336,7 +336,7 @@ const MediaTile = ({ item }) => {
 const MediaBlock = ({ media }) => (
   <div className={`grid h-full grid-cols-1 gap-3 min-h-[22rem] sm:min-h-[28rem] ${media.grid}`}>
     {media.items.map((item, i) => (
-      <div key={i} className={`min-h-[10rem] lg:min-h-0 ${item.span || ''}`}>
+      <div key={i} className={`bento-tile relative min-h-[10rem] lg:min-h-0 ${item.span || ''}`}>
         <MediaTile item={item} />
       </div>
     ))}
@@ -387,29 +387,91 @@ export default function SpaceServices() {
   const rootRef = useRef(null)
 
   useEffect(() => {
+    const tickers = [] // gsap.ticker callbacks — removed on teardown
     const ctx = gsap.context(() => {
       // Card entrance — v4 "What we make" choreography: alternating
       // slide + slight rotation, reversible per card; icon spin-pops.
       applyCardReveal(rootRef, '.v2-service-card', { x: 90, rotation: 4, icon: 'span.inline-flex' })
-
-      // Media blocks — gentler rise.
+      // Media blocks — per-tile bento entrance: each tile cascades up
+      // (big rise + un-scale + alternating tilt) in DOM order when its
+      // block enters the viewport. Mat's call 2026-08-11 — entrance
+      // animation PER bento, and the amplitudes got turned UP after he
+      // called the first pass "barely noticeable". Transform + opacity
+      // only (Mat's perf rule — no filters).
       gsap.utils.toArray('.v2-service-media').forEach((block) => {
+        const tiles = block.querySelectorAll('.bento-tile')
+        if (!tiles.length) return
         gsap.fromTo(
-          block,
-          { opacity: 0, y: 40 },
+          tiles,
+          { opacity: 0, y: 90, scale: 0.88, rotation: (i) => (i % 2 ? 3 : -3) },
           {
             opacity: 1,
             y: 0,
-            duration: 0.9,
-            ease: 'power3.out',
+            scale: 1,
+            rotation: 0,
+            duration: 1.0,
+            ease: 'back.out(1.5)',
+            stagger: 0.1,
             scrollTrigger: {
               trigger: block,
-              start: 'top 92%',
+              start: 'top 85%',
               once: true,
             },
           }
         )
       })
+
+      // Bento interactivity — simple 3D tilt toward the cursor + a glow
+      // that follows it (desktop pointers only; touch has no hover).
+      // SMOOTH-FOLLOW lerp (Mat's call 2026-08-11): the tile chases the
+      // cursor's target rotation with a frame-rate-corrected lag instead
+      // of tweening to it on every move — the ease lives in BOTH
+      // directions (in = glides after the cursor, out = glides back),
+      // which is what kills the twitchy snap. Scale pops via short
+      // enter/leave tweens (kept off the tick so it never fights the
+      // entrance's scale tween). Glow vars are set per move.
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches
+      if (fine && !reduce) {
+        gsap.utils.toArray('.bento-tile').forEach((tile) => {
+          // current values (eased) vs target values (from the pointer)
+          const st = { rx: 0, ry: 0, lift: 0, tx: 0, ty: 0, tl: 0 }
+          tile.addEventListener('pointerenter', () => {
+            gsap.to(tile, { scale: 1.04, duration: 0.4, ease: 'power2.out' })
+          })
+          tile.addEventListener('pointermove', (e) => {
+            const r = tile.getBoundingClientRect()
+            const px = (e.clientX - r.left) / r.width - 0.5
+            const py = (e.clientY - r.top) / r.height - 0.5
+            tile.style.setProperty('--mx', `${e.clientX - r.left}px`)
+            tile.style.setProperty('--my', `${e.clientY - r.top}px`)
+            st.tx = px * 22
+            st.ty = -py * 16
+            st.tl = 1
+          })
+          tile.addEventListener('pointerleave', () => {
+            st.tx = 0
+            st.ty = 0
+            st.tl = 0
+            gsap.to(tile, { scale: 1, duration: 0.6, ease: 'power2.out' })
+          })
+          // Per-frame follow: current eases toward target. deltaRatio()
+          // normalizes the lag to frame rate so 30fps and 120fps feel
+          // the same. y only writes while a lift is active — otherwise
+          // the tick would stomp the entrance's rise tween.
+          const tick = () => {
+            const k = 1 - Math.pow(0.9, gsap.ticker.deltaRatio())
+            st.rx += (st.tx - st.rx) * k
+            st.ry += (st.ty - st.ry) * k
+            st.lift += (st.tl - st.lift) * k
+            const vars = { rotateX: st.rx, rotateY: st.ry, transformPerspective: 800 }
+            if (st.lift > 0.01 || st.tl > 0.01) vars.y = -12 * st.lift
+            gsap.set(tile, vars)
+          }
+          gsap.ticker.add(tick)
+          tickers.push(tick)
+        })
+      }
 
       // Stat cards — ScrollStack recipe: scale down + drift up as they
       // scroll past center, so the band peels away rather than sitting
@@ -428,8 +490,40 @@ export default function SpaceServices() {
           },
         })
       })
+
+      // Stat numbers — count-up when the band enters: 0 → target with a
+      // per-card cascade delay, power2 ease. Mat's call 2026-08-11
+      // ("text animations like they're being count"). Reduced motion
+      // skips the tween — the static value is already in the markup.
+      // (`reduce` comes from the tilt block above.)
+      if (!reduce) {
+        gsap.utils.toArray('.v2-stat-num').forEach((numEl, i) => {
+          const target = parseFloat(numEl.textContent)
+          ScrollTrigger.create({
+            trigger: numEl.closest('.v2-stat-card'),
+            start: 'top 88%',
+            once: true,
+            onEnter: () => {
+              const obj = { v: 0 }
+              numEl.textContent = '0' // avoid the "shows target, then jumps to 0" flash
+              gsap.to(obj, {
+                v: target,
+                duration: 1.6,
+                ease: 'power2.out',
+                delay: i * 0.12, // cascade across the band
+                onUpdate: () => {
+                  numEl.textContent = Math.round(obj.v)
+                },
+              })
+            },
+          })
+        })
+      }
     }, rootRef)
-    return () => ctx.revert()
+    return () => {
+      tickers.forEach((t) => gsap.ticker.remove(t))
+      ctx.revert()
+    }
   }, [])
 
   return (
@@ -489,7 +583,7 @@ export default function SpaceServices() {
         {STATS.map((s) => (
           <div key={s.label} className="v2-stat-card glass rounded-2xl p-6 text-center">
             <p className="font-display text-3xl font-bold tracking-[-0.03em] text-star-100">
-              <span className="ember-text">{s.value}</span>
+              <span className="v2-stat-num ember-text">{s.value}</span>
               <span className="text-ember-400">{s.suffix}</span>
             </p>
             <p className="mt-2 text-xs uppercase tracking-widest text-star-500">{s.label}</p>

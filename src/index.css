@@ -140,6 +140,81 @@ body {
   border-bottom-color: rgba(255, 255, 255, 0.06);
 }
 
+/* ─── Bento tiles — cursor-following glow (SpaceServices) ───
+   A soft ember light that follows the pointer over each bento tile.
+   --mx/--my are set by the tile's pointermove handler (SpaceServices.jsx);
+   with no vars set, the glow sits center. Opacity fades in on hover
+   only, so touch devices never see it. Pure background + hairline ring —
+   no filter, no paint cost beyond the overlay itself (Mat's perf rule).
+   Sizes/intensity bumped 2026-08-11 after "barely noticeable". */
+.bento-tile::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 0.75rem;
+  background: radial-gradient(
+    340px circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in srgb, var(--color-ember-500) 30%, transparent),
+    transparent 70%
+  );
+  border: 1px solid transparent;
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+  pointer-events: none;
+  z-index: 1;
+}
+.bento-tile:hover::after {
+  opacity: 1;
+  border-color: color-mix(in srgb, var(--color-ember-500) 25%, transparent);
+}
+.dark .bento-tile::after {
+  background: radial-gradient(
+    340px circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in srgb, var(--color-ember-400) 24%, transparent),
+    transparent 70%
+  );
+}
+
+/* ─── Mobile drawer motion (SpaceNav) ───
+   Entrance: backdrop fades in, panel rises + un-scales, links cascade
+   in one by one (90ms + 45ms stagger, set inline per link). Exit: panel
+   sinks + backdrop fades (260ms), then React unmounts. Reduced motion
+   kills everything (JS also closes instantly). */
+@keyframes drawer-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes drawer-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+@keyframes drawer-panel-in {
+  from { opacity: 0; transform: translateY(28px) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes drawer-panel-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateY(20px) scale(0.985); }
+}
+@keyframes drawer-link-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+.drawer-backdrop-in { animation: drawer-fade-in 0.3s ease-out both; }
+.drawer-backdrop-out { animation: drawer-fade-out 0.24s ease-in both; }
+.drawer-panel-in { animation: drawer-panel-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.drawer-panel-out { animation: drawer-panel-out 0.28s ease-in both; }
+.drawer-link { animation: drawer-link-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both; }
+@media (prefers-reduced-motion: reduce) {
+  .drawer-backdrop-in,
+  .drawer-backdrop-out,
+  .drawer-panel-in,
+  .drawer-panel-out,
+  .drawer-link {
+    animation: none;
+  }
+}
+
 /* ─── Buttons ───
    Classic rounded pills. Ember solid + hairline ghost, set in the body
    sans. No decoration beyond the shape and the color: the familiar,
@@ -684,9 +759,9 @@ body {
   pointer-events: none;
   z-index: 0;
   transition:
-    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-    width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-    height 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
     opacity 0.2s ease-out;
 }
 

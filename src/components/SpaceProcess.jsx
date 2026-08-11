@@ -40,7 +40,25 @@ export default function SpaceProcess() {
   useEffect(() => {
     const ctx = gsap.context(() => {
       // Node reveal — simple fade-up stagger (decluttered vs the old
-      // alternating fly-in). Covers both layouts.
+      // alternating fly-in). Covers both layouts. Each node also counts
+      // its step number up (00 → 04) as it appears — Mat's call
+      // 2026-08-11 ("number animation" in How we work, same as the
+      // stats band).
+      const countUpNum = (el) => {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+        const target = parseInt(el.textContent, 10) || 0
+        const obj = { v: 0 }
+        el.textContent = '00' // swap before the fade reveals it
+        gsap.to(obj, {
+          v: target,
+          duration: 1.4,
+          ease: 'power2.out',
+          onUpdate: () => {
+            el.textContent = String(Math.round(obj.v)).padStart(2, '0')
+          },
+        })
+      }
+
       gsap.utils.toArray('.v2-process-item, .v2-process-item-m').forEach((item, i) => {
         gsap.fromTo(
           item,
@@ -51,6 +69,10 @@ export default function SpaceProcess() {
             duration: 0.7,
             delay: i * 0.1,
             ease: 'power3.out',
+            onStart: () => {
+              const num = item.querySelector('.v2-process-num')
+              if (num) countUpNum(num)
+            },
             scrollTrigger: { trigger: item, start: 'top 90%', once: true },
           }
         )
@@ -195,7 +217,7 @@ export default function SpaceProcess() {
           <div className="relative grid grid-cols-4 gap-6">
             {PROCESS.map((p) => (
               <div key={p.step} className="v2-process-item flex flex-col items-center gap-4 text-center">
-                <span className="flight-node-num z-10 flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full border border-ember-500/50 bg-space-900 text-sm font-semibold text-ember-600 dark:text-ember-300">
+                <span className="v2-process-num flight-node-num z-10 flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full border border-ember-500/50 bg-space-900 text-sm font-semibold text-ember-600 dark:text-ember-300">
                   {p.step}
                 </span>
                 <div>
@@ -260,7 +282,7 @@ export default function SpaceProcess() {
             return (
               <div key={p.step} className="v2-process-item-m pointer-events-none absolute inset-0 z-10">
                 <span
-                  className={`flight-node-num absolute z-10 flex h-[52px] w-[52px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-ember-500/50 bg-space-900 text-sm font-semibold text-ember-600 dark:text-ember-300 ${pos.circle}`}
+                  className={`v2-process-num flight-node-num absolute z-10 flex h-[52px] w-[52px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-ember-500/50 bg-space-900 text-sm font-semibold text-ember-600 dark:text-ember-300 ${pos.circle}`}
                 >
                   {p.step}
                 </span>
