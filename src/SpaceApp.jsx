@@ -65,6 +65,39 @@ export default function SpaceApp() {
     }
   }, [lenis])
 
+  // Lenis root mode measures its scroll limit ONCE and only re-measures
+  // on window resize / ScrollTrigger refresh. The page GROWS after that
+  // (fonts swapping in, lazy content, future assets), leaving the limit
+  // stale — which CLAMPS scrolling mid-page and caps every scrub
+  // animation whose range extends past the stale limit. Observed by Mat
+  // 2026-08-11: the Flight Plan saucer stuck at the Build node — the
+  // page only scrolled to 75% (7349/9799). Fix: a ResizeObserver on the
+  // app root re-syncs the Lenis limit whenever the page height changes
+  // (rAF-batched). NOTE: only lenis.resize() here — ScrollTrigger.refresh()
+  // inside this loop fought Lenis's virtual scroll and snapped the page
+  // to the top. Triggers get their own refresh on fonts-ready below.
+  useEffect(() => {
+    if (!lenis) return
+    let raf = 0
+    const sync = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => lenis.resize())
+    }
+    const ro = new ResizeObserver(sync)
+    const root = document.getElementById('root')
+    if (root) ro.observe(root)
+    // One full re-measure once fonts settle — the biggest late growth
+    // source, and the safest moment for a ScrollTrigger.refresh too.
+    document.fonts?.ready?.then(() => {
+      lenis.resize()
+      ScrollTrigger.refresh()
+    }).catch(() => {})
+    return () => {
+      cancelAnimationFrame(raf)
+      ro.disconnect()
+    }
+  }, [lenis])
+
   // (Re)build the 3D universe for the active theme — full re-skin on
   // toggle. Keyed on theme ONLY, never on route: navigating between
   // pages must not remount the scene or replay the entrance warp.
