@@ -1113,6 +1113,47 @@ export const FOOTER = {
   copyright: '© 2024 Inovers. All rights reserved.',
 }
 
+// ─── Pricing — two tiers (Mat's call 2026-08-11): ₱599 "as low as"
+// starter + Customize for tailored quotes. Feature lists are EDITABLE
+// placeholders — confirm the exact inclusions with the CTO before
+// launch (don't invent promises the team can't keep).
+export const PRICING = {
+  eyebrow: 'Pricing',
+  heading: 'Simple pricing,',
+  headingAccent: 'built for your goals',
+  sub: 'Start with the essentials or get a fully tailored plan — no hidden fees, no surprises.',
+  plans: [
+    {
+      id: 'starter',
+      name: 'Starter',
+      tagline: 'as low as',
+      price: '599',
+      currency: '₱',
+      cadence: '/mo',
+      features: [
+        'Landing page or simple website',
+        'Mobile-ready, responsive design',
+        'Fast delivery turnaround',
+        'Deployed & live',
+      ],
+      cta: 'Book a call',
+    },
+    {
+      id: 'custom',
+      name: 'Customize',
+      tagline: 'Tailored to you',
+      price: null,
+      features: [
+        'Custom scope & features',
+        'Complex systems & integrations',
+        'Dedicated squad, end-to-end delivery',
+        'Support beyond launch',
+      ],
+      cta: 'Let’s talk',
+    },
+  ],
+}
+
 // ─── Why Inovers — comparison deck + standards (home section) ───
 // Compare rows are index-matched: row N of "us" answers row N of "them",
 // so the two columns line up claim-for-claim on desktop.

@@ -527,7 +527,7 @@ export default function SpaceServices() {
   }, [])
 
   return (
-    <section id="services" ref={rootRef} className="relative mx-auto max-w-7xl px-6 py-28 lg:px-10">
+    <section id="services" ref={rootRef} className="relative mx-auto max-w-7xl px-6 py-24 lg:px-10">
       {/* ── Header — kicker with squiggle flourishes, headline, subtitle,
              centered (copy from the mockup, ember accents) ── */}
       <div className="mx-auto mb-16 max-w-3xl text-center">

@@ -4,11 +4,12 @@ import { useLenis } from 'lenis/react'
 import SpaceHero from '../components/SpaceHero'
 import AuroraBand from '../components/AuroraBand'
 import SpaceServices from '../components/SpaceServices'
-import SpaceAbout from '../components/SpaceAbout'
+import SpacePricing from '../components/SpacePricing'
 import SpacePortfolio from '../components/SpacePortfolio'
 import SpaceProcess from '../components/SpaceProcess'
 import WhyInoversSection from '../components/WhyInoversSection'
 import TestimonialsSection from '../components/TestimonialsSection'
+import SpaceAbout from '../components/SpaceAbout'
 import SpaceContact from '../components/SpaceContact'
 
 // ─── / — the full single-page section stack ───
@@ -62,11 +63,15 @@ export default function HomePage() {
       <SpaceHero />
       <AuroraBand />
       <SpaceServices />
-      <SpaceAbout />
+      <SpacePricing />
       <SpacePortfolio />
       <SpaceProcess />
       <WhyInoversSection />
       <TestimonialsSection />
+      {/* The crew sits right before Contact — who you're talking to,
+          then the contact itself (Mat's call 2026-08-11: moved from
+          after Services). */}
+      <SpaceAbout />
       <SpaceContact />
     </main>
   )

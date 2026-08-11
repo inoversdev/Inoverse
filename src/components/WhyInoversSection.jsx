@@ -82,7 +82,7 @@ function StandardsGrid() {
 // them here read as filler. The section now ends on the standards grid.
 export default function WhyInoversSection() {
   return (
-    <section id="why-inovers" className="relative mx-auto max-w-7xl overflow-x-clip px-6 py-24 lg:px-10">
+    <section id="why-inovers" className="relative mx-auto max-w-7xl overflow-x-clip px-6 py-20 lg:px-10">
       <div className="mb-14 max-w-xl">
         <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-ember-500">{WHY.eyebrow}</p>
         <SplitHeading

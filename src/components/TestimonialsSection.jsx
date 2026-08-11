@@ -108,7 +108,7 @@ export default function TestimonialsSection() {
   const reduce = useReducedMotion()
 
   return (
-    <section id="testimonials" className="relative mx-auto max-w-7xl px-6 py-24 lg:px-10">
+    <section id="testimonials" className="relative mx-auto max-w-7xl px-6 py-20 lg:px-10">
       <div className="mb-14 max-w-xl">
         <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-ember-500">{TESTIMONIALS_PAGE.eyebrow}</p>
         <SplitHeading

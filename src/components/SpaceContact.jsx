@@ -34,7 +34,7 @@ export default function SpaceContact() {
   const vibsLive = Boolean(CONTACT.vibs.url)
 
   return (
-    <section id="contact" ref={rootRef} className="relative mx-auto max-w-7xl px-6 py-28 lg:px-10">
+    <section id="contact" ref={rootRef} className="relative mx-auto max-w-7xl px-6 py-24 lg:px-10">
       <div className="glass relative overflow-hidden rounded-3xl p-8 sm:p-14">
         <div
           data-parallax="0.12"
