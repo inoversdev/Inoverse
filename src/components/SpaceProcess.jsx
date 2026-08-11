@@ -25,19 +25,16 @@ gsap.registerPlugin(ScrollTrigger)
 // block, then dives right into the bottom-center node — the curve never
 // slices through the "Launch & Grow" copy.
 //
-// HAND-TUNED S-curve (Mat's call 2026-08-11 — Catmull-Rom through the
-// zigzag polyline still read as bent wire). Design grammar of a classic
-// elegant S:
-//  - VERTICAL tangents at N1/N2/N3 — the S passes each node flowing
-//    straight down (the inflection signature), no diagonal slams.
-//  - Each bulge is TWO joined Beziers (control tangents matched at the
-//    joins) so the arcs are round domes, not tall parabolas.
-//  - The left rail rides x=30 and the final dive starts below the
-//    step-4 text (y > 550), hugging the frame edge like before.
-// Node anchors unchanged — the numbered circles still sit exactly on
-// the path at (40,150), (260,280), (40,430), (150,600).
+// LITERAL-S path (Mat's call 2026-08-11 — "the fly path is literally
+// letter S"): every segment is a CURVE — the old straight rails (top
+// vertical drop, bottom left rail) made it read as a rounded Z. Now:
+// soft top entry -> right dome -> left dome -> bottom-left bulge ->
+// gentle dive into N4. Vertical tangents kept at the N2/N3 inflections
+// (the cursive-S signature), all four numbered nodes still sit exactly
+// on the path, and the bottom bulge still hugs x<=32 until below the
+// step-4 text (y > 548) before diving.
 const MOBILE_PATH_D =
-  'M 40 40 C 40 95, 40 95, 40 150 C 40 205, 105 212, 170 228 C 215 240, 260 252, 260 280 C 260 310, 225 345, 170 370 C 120 395, 70 415, 40 430 C 33 455, 30 490, 30 525 C 30 550, 45 575, 75 590 C 105 598, 130 600, 150 600'
+  'M 40 40 C 48 85, 52 115, 40 150 C 40 190, 110 205, 180 235 C 230 258, 260 262, 260 280 C 260 300, 200 330, 140 365 C 90 395, 55 410, 40 430 C 30 460, 28 505, 30 548 C 32 575, 95 595, 150 600'
 const MOBILE_VIEW_W = 300
 const MOBILE_VIEW_H = 700
 
