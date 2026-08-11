@@ -45,17 +45,17 @@ const Squiggle = ({ className = '' }) => (
 // + deltas, dual-series charts with gridlines, tables with avatars and
 // pagination, chat with typing indicators and read receipts. Still
 // illustrations (generic UI copy, no fabricated screenshots). */
-const Line = ({ w = 'w-full', h = 'h-1.5', tone = 'bg-star-100/12' }) => (
-  <span className={`block rounded-full ${w} ${h} ${tone}`} />
+const Line = ({ w = 'w-full', h = 'h-1.5', tone = 'bg-star-100/12', className = '', style }) => (
+  <span className={`block rounded-full ${w} ${h} ${tone} ${className}`} style={style} />
 )
 const Block = ({ className = '', tone = 'bg-star-100/8', children }) => (
   <span className={`block rounded-md ${tone} ${className}`}>{children}</span>
 )
-const Pill = ({ w = 'w-10', tone = 'bg-ember-500/20', children }) => (
-  <span className={`flex h-3 items-center rounded-full ${w} ${tone}`}>{children}</span>
+const Pill = ({ w = 'w-10', tone = 'bg-ember-500/20', className = '', children }) => (
+  <span className={`flex h-3 items-center rounded-full ${w} ${tone} ${className}`}>{children}</span>
 )
-const Dot = ({ tone = 'bg-ember-500/40' }) => (
-  <span className={`block h-2 w-2 shrink-0 rounded-full ${tone}`} />
+const Dot = ({ tone = 'bg-ember-500/40', className = '', style }) => (
+  <span className={`block h-2 w-2 shrink-0 rounded-full ${tone} ${className}`} style={style} />
 )
 const Avatar = ({ tone = 'bg-ember-500/25', size = 'h-6 w-6', children }) => (
   <span className={`flex shrink-0 items-center justify-center rounded-full ${size} ${tone}`}>{children}</span>
@@ -90,7 +90,7 @@ const MiniBars = ({ values = [40, 65, 30, 80, 55, 70, 45], className = '' }) => 
         width={100 / values.length - 6}
         height={v * 0.36}
         rx="1.5"
-        className={i === values.length - 1 ? 'fill-ember-500/80' : 'fill-ember-500/30'}
+        className={i === values.length - 1 ? 'fill-ember-500/80 loop-pulse' : 'fill-ember-500/30'}
       />
     ))}
   </svg>
@@ -112,7 +112,7 @@ const MiniArea = ({ className = '' }) => (
     <path d="M0 32 C 15 28, 30 30, 45 24 S 75 22, 90 18 S 110 16, 120 14" fill="none" stroke="rgba(148,163,184,0.5)" strokeWidth="1.2" strokeDasharray="3 2" strokeLinecap="round" />
     <path d="M0 36 C 15 30, 25 34, 38 26 S 60 18, 72 22 S 100 8, 120 6 L120 44 L0 44 Z" fill="url(#mini-area-fill)" />
     <path d="M0 36 C 15 30, 25 34, 38 26 S 60 18, 72 22 S 100 8, 120 6" fill="none" stroke="rgba(245,48,3,0.85)" strokeWidth="1.6" strokeLinecap="round" />
-    <circle cx="120" cy="6" r="2.2" fill="rgba(245,48,3,0.9)" />
+    <circle cx="120" cy="6" r="2.2" fill="rgba(245,48,3,0.9)" className="loop-pulse" />
   </svg>
 )
 
@@ -162,11 +162,11 @@ const KINDS = {
       {/* hero visual with floating stat card */}
       <div className="relative min-h-0 flex-1">
         <Block className="h-full w-full bg-gradient-to-br from-ember-500/25 via-star-100/10 to-transparent" />
-        <div className="absolute right-1.5 top-1.5 rounded-md bg-white/80 px-1.5 py-1 shadow-sm dark:bg-space-900/80">
+        <div className="loop-bob absolute right-1.5 top-1.5 rounded-md bg-white/80 px-1.5 py-1 shadow-sm dark:bg-space-900/80">
           <MiniLabel className="text-star-200">+38%</MiniLabel>
           <MiniSub className="text-emerald-500">this week</MiniSub>
         </div>
-        <div className="absolute bottom-1.5 left-1.5 flex items-center gap-1.5 rounded-md bg-white/80 px-1.5 py-1 shadow-sm dark:bg-space-900/80">
+        <div className="loop-bob-sm absolute bottom-1.5 left-1.5 flex items-center gap-1.5 rounded-md bg-white/80 px-1.5 py-1 shadow-sm dark:bg-space-900/80" style={{ animationDelay: '1.2s' }}>
           <Avatar tone="bg-emerald-400/30" size="h-4 w-4" />
           <div className="space-y-0.5">
             <MiniLabel className="text-star-300">2,400+ signups</MiniLabel>
@@ -176,8 +176,8 @@ const KINDS = {
       </div>
       {/* logo row */}
       <div className="flex items-center justify-between border-t border-star-300/10 pt-1.5">
-        {['L1', 'L2', 'L3', 'L4'].map((l) => (
-          <Line key={l} w="w-7" h="h-1" tone="bg-star-100/15" />
+        {['L1', 'L2', 'L3', 'L4'].map((l, i) => (
+          <Line key={l} w="w-7" h="h-1" tone="bg-star-100/15" className="loop-pulse" style={{ animationDelay: `${i * 0.35}s` }} />
         ))}
       </div>
     </div>
@@ -242,7 +242,7 @@ const KINDS = {
         <span className="h-2 w-2 rounded-[2px] bg-ember-500/60" />
         <MiniSub className="text-star-500">I agree to the terms & privacy policy</MiniSub>
       </div>
-      <Pill w="w-full" h="h-4" tone="bg-ember-500/80" />
+      <Pill w="w-full" h="h-4" tone="bg-ember-500/80" className="loop-pulse" />
     </div>
   ),
   list: () => (
@@ -290,7 +290,7 @@ const KINDS = {
       ].map(([g, price, rating], i) => (
         <div key={i} className="flex flex-col overflow-hidden rounded-md border border-star-300/15 bg-white/40 dark:bg-white/5">
           <Block className={`relative min-h-0 flex-1 bg-gradient-to-br ${g}`}>
-            <span className="absolute right-1 top-1 rounded-full bg-ember-500/80 px-1 py-px text-[6px] font-bold text-white">
+            <span className="loop-pulse absolute right-1 top-1 rounded-full bg-ember-500/80 px-1 py-px text-[6px] font-bold text-white">
               NEW
             </span>
           </Block>
@@ -353,7 +353,7 @@ const KINDS = {
         </div>
         <div className="relative">
           <span className="h-3.5 w-3.5 rounded-full bg-star-100/15" />
-          <span className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-ember-500" />
+          <span className="loop-pulse absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-ember-500" />
         </div>
       </div>
       <div className="flex items-center gap-1 rounded-md bg-star-100/10 px-1.5 py-1">
@@ -456,9 +456,9 @@ const KINDS = {
         <div className="flex items-end justify-end gap-1">
           <Block className="self-end rounded-lg rounded-br-sm bg-ember-500/25 p-1.5">
             <span className="flex gap-0.5">
-              <span className="h-1 w-1 animate-pulse rounded-full bg-ember-500" />
-              <span className="h-1 w-1 animate-pulse rounded-full bg-ember-500" />
-              <span className="h-1 w-1 animate-pulse rounded-full bg-ember-500" />
+              <span className="loop-pulse h-1 w-1 rounded-full bg-ember-500" />
+              <span className="loop-pulse h-1 w-1 rounded-full bg-ember-500" style={{ animationDelay: '0.2s' }} />
+              <span className="loop-pulse h-1 w-1 rounded-full bg-ember-500" style={{ animationDelay: '0.4s' }} />
             </span>
           </Block>
         </div>
@@ -490,7 +490,7 @@ const KINDS = {
           <div className="flex items-center gap-1">
             <span className="h-3 w-3 rounded-full bg-star-100/15" />
             <span className="relative h-3 w-3 rounded-full bg-star-100/15">
-              <span className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-ember-500" />
+              <span className="loop-pulse absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-ember-500" />
             </span>
           </div>
         </div>
@@ -562,7 +562,7 @@ const KINDS = {
             ))}
           </div>
         ))}
-        <span className="block h-2 w-6 rounded-full bg-ember-500/50" />
+        <span className="loop-blink block h-3 w-1 rounded-sm bg-ember-500" />
       </div>
     </div>
   ),
@@ -588,7 +588,7 @@ const KINDS = {
               <Dot tone={headTone} />
               <MiniLabel className="text-star-500">{title}</MiniLabel>
             </div>
-            <span className="rounded-full bg-star-100/10 px-1 text-[7px] text-star-500">{count}</span>
+            <span className="loop-pulse rounded-full bg-star-100/10 px-1 text-[7px] text-star-500">{count}</span>
           </div>
           {cards.map(([w, tone, prio], i) => (
             <div key={i} className="space-y-1 rounded-md bg-white/40 p-1 shadow-sm dark:bg-white/5">
@@ -667,7 +667,7 @@ const KINDS = {
             <MiniLabel className={active ? 'text-ember-600 dark:text-ember-300' : 'text-star-400'}>{label}</MiniLabel>
           </div>
           <MiniSub className="text-star-500">{meta}</MiniSub>
-          {i < 3 && <span className="shrink-0 text-[8px] text-star-100/30">↓</span>}
+          {i < 3 && <span className="loop-pulse shrink-0 text-[8px] text-star-100/30" style={{ animationDelay: `${i * 0.3}s` }}>↓</span>}
         </div>
       ))}
       <div className="mt-1 flex w-full items-center gap-1.5 rounded-md bg-ember-500/10 px-1.5 py-1">
@@ -707,7 +707,7 @@ const KINDS = {
         <MiniSub className="text-star-500">Page 1 of 9</MiniSub>
         <div className="flex items-center gap-1">
           <Dot tone="bg-star-100/20" />
-          <Dot tone="bg-ember-500/50" />
+          <Dot tone="bg-ember-500/50" className="loop-pulse" />
           <Dot tone="bg-star-100/20" />
           <Dot tone="bg-star-100/20" />
         </div>
@@ -747,7 +747,7 @@ const KINDS = {
             <MiniLabel className={i === 1 ? 'text-ember-600 dark:text-ember-300' : 'text-star-500'}>{label}</MiniLabel>
             <MiniSub className="text-star-500">{count}</MiniSub>
           </div>
-          {i < 4 && <span className="text-[8px] text-star-100/30">→</span>}
+          {i < 4 && <span className="loop-pulse text-[8px] text-star-100/30" style={{ animationDelay: `${i * 0.3}s` }}>→</span>}
           <div className={`h-1 w-full rounded-full ${i === 4 ? 'bg-emerald-400/40' : 'bg-star-100/15'}`} />
         </div>
       ))}
@@ -774,7 +774,7 @@ const KINDS = {
         <MiniSub className="text-star-500">Connect your stack — 40+ integrations</MiniSub>
       </div>
       <div className="flex items-center gap-1.5">
-        <Pill w="w-16" h="h-3" tone="bg-ember-500/70" />
+        <Pill w="w-16" h="h-3" tone="bg-ember-500/70" className="loop-pulse" />
         <Pill w="w-10" h="h-3" tone="bg-star-100/10" />
       </div>
     </div>
