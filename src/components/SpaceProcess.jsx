@@ -25,16 +25,19 @@ gsap.registerPlugin(ScrollTrigger)
 // block, then dives right into the bottom-center node — the curve never
 // slices through the "Launch & Grow" copy.
 //
-// Built as a Catmull-Rom spline through the anchors (+ a start point and
-// one free shaping point before N4) rather than hand-picked independent
-// Bezier segments — every node is now C1-continuous (no tangent kink),
-// so the S reads as one continuous flowing ribbon instead of segments
-// glued end to end. Tension dropped 9 → 6.5 (2026-08-11, Mat's call:
-// "make the curves smoother") — longer control arms = rounder, more
-// flowing arcs. Regenerate with:
-//   node -e "const pts=[[40,40],[40,150],[260,280],[40,430],[34,552],[150,600]];const T=6.5;const p=[pts[0],...pts,pts.at(-1)];let d=`M ${pts[0][0]} ${pts[0][1]}`;for(let i=1;i<p.length-2;i++){const[p0,p1,p2,p3]=[p[i-1],p[i],p[i+1],p[i+2]];d+=` C ${(p1[0]+(p2[0]-p0[0])/T).toFixed(1)} ${(p1[1]+(p2[1]-p0[1])/T).toFixed(1)}, ${(p2[0]-(p3[0]-p1[0])/T).toFixed(1)} ${(p2[1]-(p3[1]-p1[1])/T).toFixed(1)}, ${p2[0]} ${p2[1]}`}console.log(d)"
+// HAND-TUNED S-curve (Mat's call 2026-08-11 — Catmull-Rom through the
+// zigzag polyline still read as bent wire). Design grammar of a classic
+// elegant S:
+//  - VERTICAL tangents at N1/N2/N3 — the S passes each node flowing
+//    straight down (the inflection signature), no diagonal slams.
+//  - Each bulge is TWO joined Beziers (control tangents matched at the
+//    joins) so the arcs are round domes, not tall parabolas.
+//  - The left rail rides x=30 and the final dive starts below the
+//    step-4 text (y > 550), hugging the frame edge like before.
+// Node anchors unchanged — the numbered circles still sit exactly on
+// the path at (40,150), (260,280), (40,430), (150,600).
 const MOBILE_PATH_D =
-  'M 40 40 C 40.0 56.9, 6.2 113.1, 40 150 C 73.8 186.9, 260.0 236.9, 260 280 C 260.0 323.1, 74.8 388.2, 40 430 C 5.2 471.8, 17.1 525.8, 34 552 C 50.9 578.2, 132.2 592.6, 150 600'
+  'M 40 40 C 40 95, 40 95, 40 150 C 40 205, 105 212, 170 228 C 215 240, 260 252, 260 280 C 260 310, 225 345, 170 370 C 120 395, 70 415, 40 430 C 33 455, 30 490, 30 525 C 30 550, 45 575, 75 590 C 105 598, 130 600, 150 600'
 const MOBILE_VIEW_W = 300
 const MOBILE_VIEW_H = 700
 
