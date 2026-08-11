@@ -88,27 +88,28 @@ export default function ProjectsPage() {
     return () => window.removeEventListener('resize', remeasure)
   }, [])
 
-  // Entrance reveal — simple one-shot fade-up (Mat's call 2026-08-10:
-  // the scrubbed scale+blur was too heavy to render — filter: blur on
-  // every card (up to 60 here) recomposites constantly while scrolling).
-  // Now: transform + opacity only, fires once per card, no scrub, no
-  // filter. Re-runs on filter changes: ctx.revert() kills the old
+  // Entrance reveal — fast one-shot fade-up with a light cascade wave
+  // (delay by grid position). Mat's calls: 2026-08-10 no scrubbed
+  // scale+blur (filter recompositing too heavy at 60 cards), 2026-08-11
+  // faster + lighter after the filter swap felt heavy. Transform +
+  // opacity only. Re-runs on filter changes: ctx.revert() kills the old
   // per-card triggers (no leak), fresh ones are created for the new grid.
-  // The height morph re-measures after settling (750ms ≈ 0.7s morph).
+  // The height morph re-measures after settling (450ms ≈ 0.4s morph).
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
-      gsap.utils.toArray('.mission-card').forEach((card) => {
+      gsap.utils.toArray('.mission-card').forEach((card, i) => {
         gsap.from(card, {
-          y: 20,
+          y: 14,
           opacity: 0,
-          duration: 0.75,
-          ease: 'expo.out',
+          duration: 0.4,
+          delay: Math.min(i * 0.05, 0.35),
+          ease: 'power2.out',
           scrollTrigger: { trigger: card, start: 'top 92%', once: true },
         })
       })
     }, rootRef)
-    const t = setTimeout(() => ScrollTrigger.refresh(), 850)
+    const t = setTimeout(() => ScrollTrigger.refresh(), 450)
     return () => {
       clearTimeout(t)
       ctx.revert()
@@ -120,46 +121,28 @@ export default function ProjectsPage() {
   // was removed: it fought the reveal tweens for opacity and left
   // cards stuck at 0 after scrolling (the "invisible cards" bug).)
 
-  // Filter clicks shrink the OUTGOING cards first, then swap.
+  // Filter clicks — INSTANT swap, no exit animation. The old 0.45s
+  // shrink-out made the page feel dead (click → wait → nothing happens);
+  // Mat's call 2026-08-11: "heavy and not responsive". Now the swap is
+  // immediate and the transition IS the fast card cascade + height
+  // morph. isTransitioning just guards rapid double-clicks (~400ms).
   const handleFilterChange = (cat) => {
     if (cat === activeFilter || isTransitioning) return
     setIsTransitioning(true)
-    gsap.to('.mission-card', {
-      opacity: 0,
-      y: -16,
-      scale: 0.95,
-      duration: 0.45,
-      stagger: 0.03,
-      ease: 'sine.in',
-      overwrite: 'auto',
-      onComplete: () => {
-        setActiveFilter(cat)
-        setPage(1)
-        setIsTransitioning(false)
-      },
-    })
+    setActiveFilter(cat)
+    setPage(1)
+    window.setTimeout(() => setIsTransitioning(false), 400)
   }
 
-  // Page clicks: same shrink-out, then swap page and scroll the grid back
-  // into view (a jump straight to page 3's cards with no scroll cue reads
-  // as broken, especially coming from a Book a Call click further down).
+  // Page clicks: same instant swap, then scroll the grid back into view
+  // (a jump straight to page 3's cards with no scroll cue reads as
+  // broken, especially coming from a Book a Call click further down).
   const handlePageChange = (next) => {
     if (next === page || next < 1 || next > pageCount || isTransitioning) return
     setIsTransitioning(true)
-    gsap.to('.mission-card', {
-      opacity: 0,
-      y: -16,
-      scale: 0.95,
-      duration: 0.45,
-      stagger: 0.025,
-      ease: 'sine.in',
-      overwrite: 'auto',
-      onComplete: () => {
-        setPage(next)
-        setIsTransitioning(false)
-        gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      },
-    })
+    setPage(next)
+    gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    window.setTimeout(() => setIsTransitioning(false), 400)
   }
 
   // ── Sliding active-filter indicator ──
@@ -238,7 +221,7 @@ export default function ProjectsPage() {
           style={{
             height: wrapperHeight,
             overflow: 'hidden',
-            transition: useHeightTransition ? 'height 0.75s cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
+            transition: useHeightTransition ? 'height 0.4s cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
           }}
         >
           <div ref={contentInnerRef}>
