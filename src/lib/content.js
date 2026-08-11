@@ -1130,6 +1130,7 @@ export const PRICING = {
       price: '599',
       currency: '₱',
       cadence: '/mo',
+      badge: 'Most popular',
       features: [
         'Landing page or simple website',
         'Mobile-ready, responsive design',
@@ -1143,6 +1144,7 @@ export const PRICING = {
       name: 'Customize',
       tagline: 'Tailored to you',
       price: null,
+      badge: 'Premium',
       features: [
         'Custom scope & features',
         'Complex systems & integrations',

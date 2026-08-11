@@ -63,14 +63,14 @@ export default function HomePage() {
       <SpaceHero />
       <AuroraBand />
       <SpaceServices />
-      <SpacePricing />
       <SpacePortfolio />
       <SpaceProcess />
       <WhyInoversSection />
       <TestimonialsSection />
-      {/* The crew sits right before Contact — who you're talking to,
-          then the contact itself (Mat's call 2026-08-11: moved from
-          after Services). */}
+      {/* The close-the-deal order (Mat's call 2026-08-11): proof
+          (testimonials) → pricing → who you're talking to (crew) →
+          contact. Pricing moved down from after Services. */}
+      <SpacePricing />
       <SpaceAbout />
       <SpaceContact />
     </main>

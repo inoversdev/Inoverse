@@ -2,13 +2,15 @@ import { BRAND, PRICING } from '../lib/content'
 import SplitHeading from './SplitHeading'
 
 // ─── Pricing — two tiers (Mat's call 2026-08-11): Starter at ₱599 "as
-// low as" + Customize for tailored quotes. Same v2 grammar as the other
-// sections: kicker, SplitHeading, glass cards, ember CTAs. Data lives
-// in content.js (PRICING) — copy edits never touch code. ───
+// low as" + Customize for tailored quotes. Redesigned same-day: bigger
+// presence (larger padding, oversized price, bolder hierarchy), same
+// clean glass grammar, and the 3D tilt interaction from the Why Inovers
+// cards (compare-deck style rotateX/rotateY/translateZ on hover —
+// motion-reduce kills it). Data lives in content.js (PRICING). ───
 export default function SpacePricing() {
   return (
     <section id="pricing" className="relative mx-auto max-w-6xl px-6 py-20 lg:px-10">
-      <div className="mx-auto mb-14 max-w-2xl text-center">
+      <div className="mx-auto mb-16 max-w-2xl text-center">
         <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-ember-500">
           {PRICING.eyebrow}
         </p>
@@ -21,62 +23,86 @@ export default function SpacePricing() {
         <p className="mx-auto mt-4 max-w-xl leading-relaxed text-star-400">{PRICING.sub}</p>
       </div>
 
-      <div className="mx-auto grid max-w-3xl gap-6 sm:grid-cols-2">
+      <div className="mx-auto grid max-w-4xl gap-8 sm:grid-cols-2">
         {PRICING.plans.map((plan, i) => (
           <div
             key={plan.id}
-            className={`v2-pricing-card glass relative flex flex-col rounded-2xl p-8 ${
-              i === 0 ? 'border-ember-500/25' : ''
+            className={`v2-pricing-card group relative flex flex-col rounded-3xl p-10 transition-transform duration-500 ease-out [transform-style:preserve-3d] hover:[transform:rotateX(5deg)_rotateY(-6deg)_translateZ(24px)] motion-reduce:hover:transform-none sm:p-12 ${
+              i === 0
+                ? 'glass border-ember-500/30 shadow-[0_30px_70px_-25px_rgba(245,48,3,0.45)]'
+                : 'premium-card border-ember-500/25 bg-gradient-to-b from-white/95 to-white/70 shadow-[0_30px_80px_-30px_rgba(245,48,3,0.4)] dark:from-white/[0.08] dark:to-white/[0.02]'
             }`}
           >
-            {i === 0 && (
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-ember-500 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white shadow-[0_6px_20px_rgba(245,48,3,0.35)]">
-                Most popular
+            {plan.badge && (
+              <span
+                className={`absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest text-white shadow-[0_8px_24px_rgba(245,48,3,0.4)] ${
+                  i === 0
+                    ? 'bg-ember-500'
+                    : 'premium-badge bg-gradient-to-r from-ember-600 via-ember-500 to-amber-400 shadow-[0_8px_24px_rgba(245,48,3,0.45)]'
+                }`}
+              >
+                {plan.badge}
               </span>
+            )}
+
+            {/* Premium sheen — a light stripe glides across the Customize
+                card every few seconds (the classic premium glint).
+                pointer-events-none so the tilt/hover stays clean; its own
+                overflow-hidden wrapper so the badge outside is never
+                clipped. */}
+            {i === 1 && (
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl"
+              >
+                <span className="premium-sheen absolute left-0 top-0 h-full w-1/3 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+              </div>
             )}
 
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ember-600 dark:text-ember-300">
               {plan.tagline}
             </p>
-            <div className="mt-2 flex items-baseline gap-1">
+
+            {/* Oversized price — the hero of the card */}
+            <div className="mt-4 flex items-baseline gap-2">
               {plan.price ? (
                 <>
-                  <span className="font-display text-5xl font-bold tracking-[-0.03em] text-star-100">
+                  <span className="font-display text-6xl font-bold leading-none tracking-[-0.04em] text-star-100 sm:text-7xl">
                     {plan.currency}
                     {plan.price}
                   </span>
-                  <span className="text-sm text-star-500">{plan.cadence}</span>
+                  <span className="text-base text-star-500">{plan.cadence}</span>
                 </>
               ) : (
-                <span className="font-display text-3xl font-semibold tracking-tight text-star-100">
+                <span className="font-display text-4xl font-bold tracking-[-0.03em] text-star-100 sm:text-5xl">
                   {plan.name}
                 </span>
               )}
             </div>
-            <h3 className="mt-1 font-display text-xl font-semibold tracking-tight text-star-100">
+            <h3 className="mt-3 font-display text-2xl font-semibold tracking-tight text-star-100">
               {plan.name}
             </h3>
 
-            <ul className="mt-6 space-y-2.5 border-t border-star-300/20 pt-6">
+            <ul className="mt-8 space-y-3.5 border-t border-star-300/20 pt-8">
               {plan.features.map((f) => (
-                <li key={f} className="flex items-start gap-2.5 text-sm text-star-300">
-                  <span className="mt-0.5 text-ember-500">✦</span>
+                <li key={f} className="flex items-start gap-3 text-base text-star-300">
+                  <span className="mt-1 text-ember-500">✦</span>
                   {f}
                 </li>
               ))}
             </ul>
 
-            <div className="mt-8 pt-2">
+            <div className="mt-10 pt-2">
               <a
                 href={BRAND.calendly}
                 target="_blank"
                 rel="noreferrer"
-                className={`${i === 0 ? 'v2-btn v2-btn-primary' : 'v2-btn v2-btn-ghost'} group w-full`}
+                className={`${i === 0 ? 'v2-btn v2-btn-primary' : 'v2-btn v2-btn-ghost'} group/btn w-full`}
               >
                 {plan.cta}
                 <span
                   aria-hidden="true"
-                  className="transition-transform duration-300 ease-out group-hover:translate-x-1 motion-reduce:translate-x-0 motion-reduce:transition-none"
+                  className="transition-transform duration-300 ease-out group-hover/btn:translate-x-1 motion-reduce:translate-x-0 motion-reduce:transition-none"
                 >→</span>
               </a>
             </div>
