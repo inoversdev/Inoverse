@@ -1,62 +1,47 @@
-// ─── AuroraBand — cosmic lightning page breaker (Hero → Services) ───
-// Mat's reference art (a diagonal red nebula band shot through with
-// white/cyan lightning filaments), recreated as real generated SVG
-// geometry — LightningBand — instead of a static image (Mat's call
-// 2026-08-10: "make it as a part of the code" + animate it). Masked to
-// fade at both edges so it melts into the sections.
+// ─── AuroraBand — ember cloud page breaker (Hero → Services) ───
+// The orange cloud between hero and services — the SAME WispyCloud
+// curtains as SpacePortfolio's delivery cloud (duplicated, Mat's call
+// 2026-08-11: "put back the old orange cloud, duplicate the one from
+// the our work section"). Layered sine-wave ribbons drawn additively
+// ('lighter') so overlapping glows read as a glowing gas cloud.
 //
-// Scroll-reactive depth: the whole band lags behind the page via
-// data-parallax (drifts slower than scroll = reads as a layer further
-// back), while LightningBand itself pans laterally with a scrubbed
-// trigger as you pass it, on top of its own internal regeneration and
-// dash-flow animation. It also extends above and below the band, so it
-// visibly slides across the hero's bottom edge and the services' top
-// edge — hero melts into services.
+// Scroll-reactive depth via data-parallax — the band lags behind the
+// page. The fill gradient fades to transparent at the canvas top AND
+// bottom, so the cloud melts into the hero above and services below;
+// the horizontal mask feathers both edges (same as the delivery strip).
+//
+// CosmicCloud (the straight-line FBM nebula experiment) is parked —
+// swap the import back to restore it.
 
-import { useEffect, useRef } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import LightningBand from './LightningBand'
+import WispyCloud from './WispyCloud'
 
-gsap.registerPlugin(ScrollTrigger)
+// Exact copy of SpacePortfolio's DELIVERY_CLOUD_CURTAINS (Mat's call):
+// ember-toned to match the brand accent (dune fills used the same
+// tokens before).
+const BAND_CLOUD_CURTAINS = [
+  { color: [245, 48, 3], amp: 14, freq: 0.02, speed: 1.0, phase: 0, height: 0.55, alpha: 0.22, line: false },
+  { color: [255, 138, 92], amp: 10, freq: 0.026, speed: -1.2, phase: 2.0, height: 0.4, alpha: 0.16, line: false },
+  { color: [192, 36, 2], amp: 9, freq: 0.017, speed: 0.7, phase: 3.4, height: 0.28, alpha: 0.14, line: false },
+]
 
 export default function AuroraBand() {
-  const rootRef = useRef(null)
-
-  // Lateral pan: as the band crosses the viewport, the artwork drifts
-  // right→left (scrubbed to scroll) — a slow pan across the frame.
-  // LightningBand's SVG is 12% wider than the band and the mask fade
-  // lives at the band's own edges, so the pan never exposes a hard
-  // boundary.
-  useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        '.aurora-nebula',
-        { xPercent: -3 },
-        {
-          xPercent: 3,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: rootRef.current,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 1.6,
-          },
-        }
-      )
-    }, rootRef)
-    return () => ctx.revert()
-  }, [])
-
   return (
     <section
-      ref={rootRef}
       data-parallax="0.18"
       className="aurora-band relative h-64 overflow-x-clip sm:h-96"
       aria-hidden="true"
     >
-      <LightningBand />
+      <WispyCloud
+        curtains={BAND_CLOUD_CURTAINS}
+        canvasClassName="absolute inset-0 h-full w-full"
+        style={{
+          filter: 'blur(6px)',
+          maskImage:
+            'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
+          WebkitMaskImage:
+            'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
+        }}
+      />
     </section>
   )
 }
