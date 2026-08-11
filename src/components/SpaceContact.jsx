@@ -86,7 +86,7 @@ export default function SpaceContact() {
                   </span>
                 </div>
                 <p className="mt-5 text-sm uppercase tracking-widest text-star-500">{CONTACT.vibs.label}</p>
-                <p className="mt-1 text-xl text-star-100">Message us on {CONTACT.vibs.label}</p>
+                <p className="mt-1 text-xl text-star-100">{CONTACT.vibs.heading}</p>
                 <p className="mt-2 text-sm leading-relaxed text-star-400">{CONTACT.vibs.blurb}</p>
                 <div className="mt-6">
                   {vibsLive ? (

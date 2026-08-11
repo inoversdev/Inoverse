@@ -1087,21 +1087,23 @@ export const PROJECTS_PAGE = {
 export const CONTACT = {
   heading: "Let's build something together",
   subheading:
-    'Tell us about your project — a free call or a chat on Vibs, your choice. No commitment required.',
+    'Tell us about your project — a free call or a live chat, your choice. No commitment required.',
   callWhy: [
     'Get immediate expert feedback on your ideas',
     'Detailed discussion of project requirements',
     'Personalized recommendations for your business',
     'No commitment required completely free!',
   ],
-  // Vibs — the contact feature Mat's co-developer is building (replaces
+  // The contact chat feature Mat's co-developer is building (replaces
   // the old email form, Mat's call 2026-08-11). It's an API; this block
   // is the wiring point: set `url` (or endpoint + auth once the spec is
   // shared) and the contact card goes live. Empty url → the card shows
-  // a disabled "coming soon" state.
+  // a disabled "coming soon" state. Label is deliberately generic —
+  // the internal name "Vibs" is not client-facing (Mat's call).
   vibs: {
-    label: 'Vibs',
-    url: '', // co-developer's Vibs link/endpoint — paste when shared
+    label: 'Live chat',
+    heading: 'Message us',
+    url: '', // co-developer's link/endpoint — paste when shared
     blurb:
       'Chat with the crew in real time — the fastest way to get answers about your project.',
   },
