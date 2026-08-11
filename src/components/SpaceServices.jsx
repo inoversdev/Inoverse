@@ -151,10 +151,10 @@ const KINDS = {
       {/* hero copy */}
       <div className="mt-1 space-y-1">
         <MiniLabel className="text-ember-500/80">GROW YOUR BUSINESS</MiniLabel>
-        <Line w="w-4/5" h="h-2.5" tone="bg-star-100/45" />
-        <Line w="w-3/5" h="h-2.5" tone="bg-star-100/45" />
-        <Line w="w-2/3" tone="bg-star-100/15" />
-        <Line w="w-1/2" tone="bg-star-100/15" />
+        <Line w="w-4/5" h="h-2.5" tone="bg-star-100/45" className="draw-line" />
+        <Line w="w-3/5" h="h-2.5" tone="bg-star-100/45" className="draw-line" style={{ animationDelay: '0.3s' }} />
+        <Line w="w-2/3" tone="bg-star-100/15" className="draw-line" style={{ animationDelay: '0.6s' }} />
+        <Line w="w-1/2" tone="bg-star-100/15" className="draw-line" style={{ animationDelay: '0.9s' }} />
       </div>
       <div className="flex items-center gap-1.5">
         <Pill w="w-12" tone="bg-ember-500/80" />
@@ -162,7 +162,7 @@ const KINDS = {
       </div>
       {/* hero visual with floating stat card */}
       <div className="relative min-h-0 flex-1">
-        <Block className="h-full w-full bg-gradient-to-br from-ember-500/25 via-star-100/10 to-transparent" />
+        <Block className="img-shimmer h-full w-full bg-gradient-to-br from-ember-500/25 via-star-100/10 to-transparent" />
         <div className="loop-bob absolute right-1.5 top-1.5 rounded-md bg-white/80 px-1.5 py-1 shadow-sm dark:bg-space-900/80">
           <MiniLabel className="text-star-200">+38%</MiniLabel>
           <MiniSub className="text-emerald-500">this week</MiniSub>
@@ -192,8 +192,8 @@ const KINDS = {
           ['from-star-100/20 to-transparent', '7 likes'],
           ['from-ember-500/20 to-star-100/5', '23 likes'],
         ].map(([g, likes], i) => (
-          <div key={i} className={`relative overflow-hidden rounded-md bg-gradient-to-br ${g}`}>
-            <span className="absolute right-1 top-1 rounded-full bg-white/70 px-1 py-px text-[6px] font-semibold text-star-800 dark:bg-space-900/70 dark:text-star-200">
+          <div key={i} className={`photo-cycle relative overflow-hidden rounded-md bg-gradient-to-br ${g}`} style={{ animationDelay: `${i * 1.1}s` }}>
+            <span className="loop-pulse absolute right-1 top-1 rounded-full bg-white/70 px-1 py-px text-[6px] font-semibold text-star-800 dark:bg-space-900/70 dark:text-star-200">
               ♥ {likes}
             </span>
             <div className="absolute bottom-1 left-1 right-1 flex items-center gap-1">
@@ -237,10 +237,10 @@ const KINDS = {
       </div>
       <div className="space-y-1">
         <MiniSub className="text-star-500">PROJECT DETAILS *</MiniSub>
-        <Block className="h-6 border border-star-300/20 bg-white/60 dark:bg-space-950/60" />
+        <Block className="h-6 border border-star-300/20 bg-white/60 dark:bg-space-950/60"><span className="loop-blink inline-block h-2 w-px translate-y-1 bg-ember-500" /></Block>
       </div>
       <div className="flex items-center gap-1">
-        <span className="h-2 w-2 rounded-[2px] bg-ember-500/60" />
+        <span className="check-tick h-2 w-2 rounded-[2px] bg-ember-500/70" />
         <MiniSub className="text-star-500">I agree to the terms & privacy policy</MiniSub>
       </div>
       <Pill w="w-full" h="h-4" tone="bg-ember-500/80" className="loop-pulse" />
@@ -261,8 +261,8 @@ const KINDS = {
           ['bg-ember-500/30', 'Maria Santos', 'Order #1042', 'Paid', 'bg-emerald-400/20 text-emerald-600 dark:text-emerald-300', '₱2,450'],
           ['bg-star-100/20', 'Juan Dela Cruz', 'Order #1041', 'Pending', 'bg-amber-400/20 text-amber-600 dark:text-amber-300', '₱1,200'],
           ['bg-star-100/20', 'Ana Reyes', 'Order #1040', 'Shipped', 'bg-sky-400/20 text-sky-600 dark:text-sky-300', '₱3,800'],
-        ].map(([tone, name, sub, status, st, amt]) => (
-          <div key={name} className="flex items-center gap-1.5 rounded-md border border-star-300/10 bg-white/40 px-1.5 py-1 dark:bg-white/5">
+        ].map(([tone, name, sub, status, st, amt], i) => (
+          <div key={name} className="row-slide flex items-center gap-1.5 rounded-md border border-star-300/10 bg-white/40 px-1.5 py-1 dark:bg-white/5" style={{ animationDelay: `${i * 1.8}s` }}>
             <Avatar tone={tone} size="h-5 w-5" />
             <div className="min-w-0 flex-1">
               <MiniLabel className="text-star-300">{name}</MiniLabel>
@@ -290,7 +290,7 @@ const KINDS = {
         ['from-star-100/20 to-star-100/5', '₱1,299', '★ 4.7'],
       ].map(([g, price, rating], i) => (
         <div key={i} className="flex flex-col overflow-hidden rounded-md border border-star-300/15 bg-white/40 dark:bg-white/5">
-          <Block className={`relative min-h-0 flex-1 bg-gradient-to-br ${g}`}>
+          <Block className={`img-shimmer relative min-h-0 flex-1 bg-gradient-to-br ${g}`}>
             <span className="loop-pulse absolute right-1 top-1 rounded-full bg-ember-500/80 px-1 py-px text-[6px] font-bold text-white">
               NEW
             </span>
@@ -301,7 +301,7 @@ const KINDS = {
               <MiniLabel className="text-star-200">{price}</MiniLabel>
               <MiniSub className="text-star-500">{rating}</MiniSub>
             </div>
-            <Pill w="w-full" h="h-2.5" tone="bg-star-100/10" />
+            <Pill w="w-full" h="h-2.5" tone="bg-ember-500/60" className="loop-pulse" />
           </div>
         </div>
       ))}
@@ -315,10 +315,10 @@ const KINDS = {
           <MiniLabel className="text-star-300">Brand</MiniLabel>
         </div>
         <div className="flex items-center gap-1">
-          <Dot tone="bg-star-100/20" />
-          <Dot tone="bg-star-100/20" />
-          <Dot tone="bg-star-100/20" />
-          <Dot tone="bg-ember-500/40" />
+          <Dot tone="bg-star-100/20" className="loop-pulse" style={{ animationDelay: '0s' }} />
+          <Dot tone="bg-star-100/20" className="loop-pulse" style={{ animationDelay: '0.2s' }} />
+          <Dot tone="bg-star-100/20" className="loop-pulse" style={{ animationDelay: '0.4s' }} />
+          <Dot tone="bg-ember-500/40" className="loop-pulse" style={{ animationDelay: '0.6s' }} />
         </div>
       </div>
       <div className="grid grid-cols-3 gap-2">
@@ -334,7 +334,7 @@ const KINDS = {
       </div>
       <div className="flex items-center gap-1 rounded-full bg-star-100/10 p-1">
         <Line w="flex-1" h="h-1" tone="bg-star-100/15" />
-        <Pill w="w-8" h="h-2.5" tone="bg-ember-500/70" />
+        <Pill w="w-8" h="h-2.5" tone="bg-ember-500/70" className="loop-pulse" />
       </div>
       <div className="flex items-center justify-between border-t border-star-300/10 pt-1.5">
         <MiniSub className="text-star-500">© 2026 Brand. All rights reserved.</MiniSub>
@@ -349,7 +349,7 @@ const KINDS = {
           <Avatar tone="bg-ember-500/30" size="h-5 w-5" />
           <div>
             <MiniLabel className="text-star-300">Good morning</MiniLabel>
-            <MiniSub className="text-star-500">Maria 👋</MiniSub>
+            <MiniSub className="text-star-500">Maria <span className="wave-hand">👋</span></MiniSub>
           </div>
         </div>
         <div className="relative">
@@ -372,7 +372,7 @@ const KINDS = {
           ['bg-gradient-to-br from-star-100/20 to-star-100/5', '₱1,299', '★ 4.7'],
         ].map(([g, price, rating], i) => (
           <div key={i} className="overflow-hidden rounded-md border border-star-300/10 bg-white/40 dark:bg-white/5">
-            <Block className={`min-h-0 flex-1 bg-gradient-to-br ${g}`} />
+            <Block className={`img-shimmer min-h-0 flex-1 bg-gradient-to-br ${g}`} />
             <div className="space-y-0.5 p-1">
               <Line w="w-3/4" h="h-1" tone="bg-star-100/20" />
               <div className="flex items-center justify-between">
@@ -385,7 +385,7 @@ const KINDS = {
       </div>
       <div className="flex items-center justify-around border-t border-star-300/10 pt-1">
         {['Home', 'Shop', 'Cart', 'Profile'].map((l, i) => (
-          <MiniSub key={l} className={i === 0 ? 'text-ember-500' : 'text-star-500'}>{l}</MiniSub>
+          <MiniSub key={l} className={i === 0 ? 'loop-pulse text-ember-500' : 'text-star-500'}>{l}</MiniSub>
         ))}
       </div>
     </div>
@@ -394,7 +394,7 @@ const KINDS = {
     <div className="flex h-full flex-col p-2.5">
       <div className="flex items-center justify-between pb-1">
         <MiniLabel className="text-star-300">Messages</MiniLabel>
-        <MiniSub className="text-star-500">Mark all read</MiniSub>
+        <MiniSub className="loop-pulse text-star-500">Mark all read</MiniSub>
       </div>
       <div className="flex-1 space-y-1.5">
         {[
@@ -402,8 +402,8 @@ const KINDS = {
           ['bg-star-100/20', 'Design Sync', 'Can we move the demo?', '8:12 AM', false],
           ['bg-star-100/20', 'Daily Standup', 'Blockers: none today', 'Yesterday', true],
           ['bg-star-100/20', 'Launch Plan', 'Domain: confirmed ✅', 'Mon', false],
-        ].map(([tone, name, msg, time, unread]) => (
-          <div key={name} className="flex items-center gap-1.5">
+        ].map(([tone, name, msg, time, unread], i) => (
+          <div key={name} className="row-slide flex items-center gap-1.5" style={{ animationDelay: `${i * 1.4}s` }}>
             <Avatar tone={tone} size="h-6 w-6" />
             <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between gap-1">

@@ -400,6 +400,94 @@ body {
   }
 }
 
+/* ─── Bentos: the Web tiles' star show (pass 3) ───
+   Mat's call: the website-development tiles are the FIRST thing
+   visitors see, so they get the most interesting animation; the
+   Software phone tiles (app-home / app-list) were dead and get life
+   too. Systems untouched (already good). New moves:
+   draw-line — headlines draw themselves in a loop
+   img-shimmer — light sweeps across hero/product photos
+   check-tick — the form checkbox ticks on and off
+   row-slide — list/message rows cycle in and out like live data
+   photo-cycle — gallery photos do a slow Ken Burns zoom
+   wave-hand — the 👋 actually waves
+   All compositor-friendly, all reduced-motion safe. */
+@keyframes draw-line {
+  0%, 50% { transform: scaleX(0); opacity: 0.5; }
+  72%, 100% { transform: scaleX(1); opacity: 1; }
+}
+.draw-line {
+  transform-box: fill-box;
+  transform-origin: left;
+  animation: draw-line 4.5s ease-out infinite;
+}
+@keyframes img-shimmer-move {
+  0% { transform: translateX(-100%); }
+  55%, 100% { transform: translateX(100%); }
+}
+.img-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.img-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 60%
+  );
+  transform: translateX(-100%);
+  animation: img-shimmer-move 3.4s ease-in-out infinite;
+}
+@keyframes check-tick {
+  0%, 32% { transform: scale(1); opacity: 1; }
+  48%, 82% { transform: scale(0.65); opacity: 0.35; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.check-tick {
+  animation: check-tick 2.6s ease-in-out infinite;
+}
+@keyframes row-slide {
+  0%, 10% { opacity: 0; transform: translateY(10px); }
+  22%, 72% { opacity: 1; transform: none; }
+  84%, 100% { opacity: 0; transform: translateY(-6px); }
+}
+.row-slide {
+  animation: row-slide 6s ease-in-out infinite;
+}
+@keyframes photo-cycle {
+  0%, 18% { transform: scale(1); }
+  40%, 60% { transform: scale(1.09); }
+  82%, 100% { transform: scale(1); }
+}
+.photo-cycle {
+  animation: photo-cycle 8s ease-in-out infinite;
+}
+@keyframes wave-hand {
+  0%, 55%, 100% { transform: rotate(0deg); }
+  65% { transform: rotate(20deg); }
+  75% { transform: rotate(-10deg); }
+  85% { transform: rotate(14deg); }
+}
+.wave-hand {
+  display: inline-block;
+  transform-origin: 70% 70%;
+  animation: wave-hand 2.8s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .draw-line,
+  .img-shimmer::after,
+  .check-tick,
+  .row-slide,
+  .photo-cycle,
+  .wave-hand {
+    animation: none;
+  }
+}
+
 /* ─── Buttons ───
    Classic rounded pills. Ember solid + hairline ghost, set in the body
    sans. No decoration beyond the shape and the color: the familiar,
