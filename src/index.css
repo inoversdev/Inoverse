@@ -555,6 +555,31 @@ body {
   50%, 100% { opacity: 0.25; transform: scale(0.85); }
 }
 .demo-node { animation: demo-node 6s ease-in-out infinite; }
+@keyframes demo-row-in {
+  0%, 8% { opacity: 0; transform: translateX(-10px); }
+  20%, 58% { opacity: 1; transform: none; }
+  70%, 100% { opacity: 0; transform: translateX(8px); }
+}
+.demo-row { animation: demo-row-in 6s ease-in-out infinite; }
+@keyframes demo-cal-pop {
+  0%, 6% { opacity: 0; transform: scale(0.7); }
+  18%, 52% { opacity: 1; transform: scale(1); }
+  62%, 100% { opacity: 0.35; transform: scale(0.92); }
+}
+.demo-cal { animation: demo-cal-pop 6s ease-in-out infinite; }
+@keyframes demo-receipt {
+  0%, 42% { opacity: 0; transform: translateY(12px); }
+  56%, 100% { opacity: 1; transform: none; }
+}
+.demo-receipt { animation: demo-receipt 6s ease-in-out infinite; }
+@keyframes demo-total {
+  0%, 28% { transform: scaleX(0.35); }
+  55%, 100% { transform: scaleX(1); }
+}
+.demo-total {
+  transform-origin: left;
+  animation: demo-total 6s ease-in-out infinite;
+}
 @media (prefers-reduced-motion: reduce) {
   .project-modal-panel,
   .demo-lowfi,
@@ -564,7 +589,11 @@ body {
   .demo-status,
   .demo-bar,
   .demo-pin,
-  .demo-node {
+  .demo-node,
+  .demo-row,
+  .demo-cal,
+  .demo-receipt,
+  .demo-total {
     animation: none;
   }
 }
