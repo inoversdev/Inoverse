@@ -236,6 +236,50 @@ body {
   border-top: 1px solid rgba(255, 255, 255, 0.09);
 }
 
+/* ─── Live glow (SpacePricing Customize card) ───
+   Mat's call 2026-08-11: a LIVE glow on the Premium card. Two layers:
+   1. premium-glow — the card's own ember shadow BREATHES (4s
+      ease-in-out pulse, wider spread + inner bloom at peak).
+   2. premium-halo — a blurred ember aura BEHIND the card swells and
+      fades on a slower 5s cycle — reads as the card glowing from
+      within. Both reduced-motion safe. */
+@keyframes premium-glow {
+  0%, 100% {
+    box-shadow:
+      0 30px 70px -25px rgba(245, 48, 3, 0.4),
+      0 0 40px -10px rgba(245, 48, 3, 0.25);
+  }
+  50% {
+    box-shadow:
+      0 30px 90px -22px rgba(245, 48, 3, 0.65),
+      0 0 70px -8px rgba(245, 48, 3, 0.45);
+  }
+}
+.premium-glow {
+  animation: premium-glow 4s ease-in-out infinite;
+}
+@keyframes premium-halo {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.04);
+  }
+}
+.premium-halo {
+  background: radial-gradient(ellipse at center, rgba(245, 48, 3, 0.35), transparent 70%);
+  filter: blur(24px);
+  animation: premium-halo 5s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .premium-glow,
+  .premium-halo {
+    animation: none;
+  }
+}
+
 /* ─── Buttons ───
    Classic rounded pills. Ember solid + hairline ghost, set in the body
    sans. No decoration beyond the shape and the color: the familiar,
