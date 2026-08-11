@@ -39,15 +39,16 @@ const Squiggle = ({ className = '' }) => (
 )
 
 // ─── Wireframe atoms — the vocabulary every "kind" below composes from.
-// Deliberately abstract (bars, dots, blocks): illustrative UI shapes, not
-// a claim that this is a real screenshot. Same honesty rule as the
-// browser/phone chrome itself, just with actual content instead of one
-// centered dot (Mat's call 2026-08-10 — "put a visualized image there"). */
+// HIGH-FIDELITY pass (Mat's call 2026-08-11): the tiles now read as
+// polished product screens — real charts (SVG), KPI numbers, tables,
+// chat bubbles, kanban boards — instead of abstract bars. Still
+// illustrations, not fabricated screenshots (same honesty rule):
+// labels are generic UI copy, never a claim about a real product. */
 const Line = ({ w = 'w-full', h = 'h-1.5', tone = 'bg-star-100/12' }) => (
   <span className={`block rounded-full ${w} ${h} ${tone}`} />
 )
-const Block = ({ className = '', tone = 'bg-star-100/8' }) => (
-  <span className={`block rounded-md ${tone} ${className}`} />
+const Block = ({ className = '', tone = 'bg-star-100/8', children }) => (
+  <span className={`block rounded-md ${tone} ${className}`}>{children}</span>
 )
 const Pill = ({ w = 'w-10', tone = 'bg-ember-500/20' }) => (
   <span className={`block h-3 rounded-full ${w} ${tone}`} />
@@ -55,54 +56,151 @@ const Pill = ({ w = 'w-10', tone = 'bg-ember-500/20' }) => (
 const Dot = ({ tone = 'bg-ember-500/40' }) => (
   <span className={`block h-2 w-2 shrink-0 rounded-full ${tone}`} />
 )
+const Avatar = ({ tone = 'bg-ember-500/25', size = 'h-6 w-6' }) => (
+  <span className={`block shrink-0 rounded-full ${size} ${tone}`} />
+)
+const MiniLabel = ({ children, className = '' }) => (
+  <span className={`block truncate text-[9px] font-medium leading-tight tracking-wide ${className}`}>
+    {children}
+  </span>
+)
+const MiniSub = ({ children, className = '' }) => (
+  <span className={`block truncate text-[8px] leading-tight ${className}`}>
+    {children}
+  </span>
+)
+const Chip = ({ children, tone = 'bg-ember-500/20 text-ember-600 dark:text-ember-300' }) => (
+  <span className={`inline-flex items-center rounded-full px-1.5 py-px text-[7px] font-semibold uppercase tracking-wider ${tone}`}>
+    {children}
+  </span>
+)
 
-// ─── Kind renderers — one per media.items[].kind. Fill the content area
-// inside the browser/phone chrome with a themed wireframe: Website leans
-// on layout blocks (hero/gallery/forms), Software on app/code chrome,
-// Systems on data (charts/tables/pipelines) — the visual vocabulary
-// matches what each service actually builds. ───
+// Tiny SVG bar chart — data-driven, ember bars, subtle grid
+const MiniBars = ({ values = [40, 65, 30, 80, 55, 70, 45], className = '' }) => (
+  <svg viewBox="0 0 100 40" preserveAspectRatio="none" className={`h-full w-full ${className}`} aria-hidden="true">
+    {[10, 20, 30].map((y) => (
+      <line key={y} x1="0" y1={y} x2="100" y2={y} stroke="currentColor" strokeOpacity="0.08" strokeWidth="0.5" />
+    ))}
+    {values.map((v, i) => (
+      <rect
+        key={i}
+        x={i * (100 / values.length) + 3}
+        y={40 - v * 0.36}
+        width={100 / values.length - 6}
+        height={v * 0.36}
+        rx="1.5"
+        className={i === values.length - 1 ? 'fill-ember-500/80' : 'fill-ember-500/30'}
+      />
+    ))}
+  </svg>
+)
+
+// Tiny SVG area/line chart — smooth revenue-style curve
+const MiniArea = ({ className = '' }) => (
+  <svg viewBox="0 0 120 44" preserveAspectRatio="none" className={`h-full w-full ${className}`} aria-hidden="true">
+    <defs>
+      <linearGradient id="mini-area-fill" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="rgba(245,48,3,0.35)" />
+        <stop offset="100%" stopColor="rgba(245,48,3,0)" />
+      </linearGradient>
+    </defs>
+    <path d="M0 36 C 15 30, 25 34, 38 26 S 60 18, 72 22 S 100 8, 120 6 L120 44 L0 44 Z" fill="url(#mini-area-fill)" />
+    <path d="M0 36 C 15 30, 25 34, 38 26 S 60 18, 72 22 S 100 8, 120 6" fill="none" stroke="rgba(245,48,3,0.8)" strokeWidth="1.6" strokeLinecap="round" />
+    <circle cx="120" cy="6" r="2.2" fill="rgba(245,48,3,0.9)" />
+  </svg>
+)
+
+// ─── Kind renderers — one per media.items[].kind. High-fidelity
+// product-screen mockups: Website leans on marketing layouts,
+// Software on app/code chrome, Systems on data (charts/tables/
+// pipelines) — the visual vocabulary matches what each service
+// actually builds. ───
 const KINDS = {
   hero: () => (
-    <div className="flex h-full flex-col gap-2.5 p-3">
-      <div className="flex items-center gap-2">
-        <Line w="w-10" tone="bg-star-100/15" />
-        <Line w="w-8" tone="bg-star-100/10" />
-        <Line w="w-8" tone="bg-star-100/10" />
+    <div className="flex h-full flex-col gap-2 p-3">
+      {/* nav */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-ember-500/70" />
+          <Line w="w-8" h="h-1.5" tone="bg-star-100/20" />
+        </div>
+        <div className="flex items-center gap-1.5">
+          <Line w="w-6" h="h-1" tone="bg-star-100/15" />
+          <Pill w="w-8" />
+        </div>
+      </div>
+      {/* hero */}
+      <div className="mt-1 space-y-1">
+        <MiniLabel className="text-ember-500/80">YOUR BRAND HERE</MiniLabel>
+        <Line w="w-4/5" h="h-2.5" tone="bg-star-100/40" />
+        <Line w="w-3/5" h="h-2.5" tone="bg-star-100/40" />
+        <Line w="w-2/3" tone="bg-star-100/15" />
+        <Line w="w-1/2" tone="bg-star-100/15" />
+      </div>
+      <div className="flex items-center gap-1.5">
         <Pill w="w-12" />
+        <Pill w="w-10" tone="bg-star-100/10" />
       </div>
-      <Block className="min-h-0 flex-1 bg-gradient-to-br from-ember-500/15 via-star-100/8 to-transparent" />
-      <div className="space-y-1.5">
-        <Line w="w-2/3" h="h-2" tone="bg-star-100/18" />
-        <Line w="w-1/3" tone="bg-star-100/10" />
+      {/* hero image */}
+      <Block className="min-h-0 flex-1 bg-gradient-to-br from-ember-500/25 via-star-100/10 to-transparent" />
+      <div className="flex items-center gap-2">
+        <Avatar />
+        <div className="flex-1 space-y-1">
+          <Line w="w-3/4" h="h-1.5" tone="bg-star-100/20" />
+          <Line w="w-1/2" tone="bg-star-100/10" />
+        </div>
+        <span className="h-2 w-2 rounded-full bg-ember-500/60" />
       </div>
-      <Pill w="w-16" />
     </div>
   ),
   gallery: () => (
-    <div className="grid h-full grid-cols-2 gap-1.5 p-2.5">
-      <Block tone="bg-ember-500/10" />
-      <Block tone="bg-star-100/8" />
-      <Block tone="bg-star-100/8" />
-      <Block tone="bg-ember-500/10" />
+    <div className="flex h-full flex-col gap-2 p-3">
+      <div className="grid flex-1 grid-cols-2 gap-1.5">
+        {['from-ember-500/30 to-star-100/5', 'from-star-100/25 to-star-100/5', 'from-star-100/20 to-transparent', 'from-ember-500/20 to-star-100/5'].map((g, i) => (
+          <div key={i} className={`relative overflow-hidden rounded-md bg-gradient-to-br ${g}`}>
+            <Line w="w-1/2" h="h-1" className="absolute bottom-1 left-1" tone="bg-white/40" />
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center justify-between">
+        <MiniLabel className="text-star-500">PROJECT GALLERY</MiniLabel>
+        <Chip>View all</Chip>
+      </div>
     </div>
   ),
   form: () => (
-    <div className="flex h-full flex-col items-center justify-center gap-2 p-4">
-      <Line w="w-4/5" />
-      <Line w="w-4/5" />
-      <Line w="w-3/5" />
-      <Pill w="w-14" />
+    <div className="flex h-full flex-col justify-center gap-2 p-4">
+      <MiniLabel className="text-star-500">TELL US ABOUT YOU</MiniLabel>
+      <div className="space-y-1">
+        <MiniSub className="text-star-500">NAME</MiniSub>
+        <Block className="h-4 bg-star-100/10" />
+      </div>
+      <div className="space-y-1">
+        <MiniSub className="text-star-500">EMAIL</MiniSub>
+        <Block className="h-4 bg-star-100/10" />
+      </div>
+      <div className="space-y-1">
+        <MiniSub className="text-star-500">MESSAGE</MiniSub>
+        <Block className="h-6 bg-star-100/10" />
+      </div>
+      <Pill w="w-full" className="h-4" />
+      <MiniSub className="text-center text-star-500">We reply within 24 hours</MiniSub>
     </div>
   ),
   list: () => (
-    <div className="flex h-full flex-col justify-center gap-3 p-3">
-      {[0, 1, 2].map((i) => (
-        <div key={i} className="flex items-center gap-2 border-b border-star-300/10 pb-2 last:border-0">
-          <Dot tone="bg-star-100/15" />
-          <div className="flex-1 space-y-1">
-            <Line w="w-3/4" />
-            <Line w="w-1/2" tone="bg-star-100/8" />
+    <div className="flex h-full flex-col justify-center gap-2.5 p-3">
+      {[
+        ['bg-ember-500/30', 'Maria Santos', 'Order #1042', 'Paid', 'bg-emerald-400/20 text-emerald-600 dark:text-emerald-300'],
+        ['bg-star-100/20', 'Juan Dela Cruz', 'Order #1041', 'Pending', 'bg-amber-400/20 text-amber-600 dark:text-amber-300'],
+        ['bg-star-100/20', 'Ana Reyes', 'Order #1040', 'Shipped', 'bg-sky-400/20 text-sky-600 dark:text-sky-300'],
+      ].map(([tone, name, sub, status, st]) => (
+        <div key={name} className="flex items-center gap-2">
+          <Avatar tone={tone} size="h-5 w-5" />
+          <div className="min-w-0 flex-1">
+            <MiniLabel className="text-star-300">{name}</MiniLabel>
+            <MiniSub className="text-star-500">{sub}</MiniSub>
           </div>
+          <Chip tone={st}>{status}</Chip>
         </div>
       ))}
     </div>
@@ -110,176 +208,318 @@ const KINDS = {
   cards: () => (
     <div className="grid h-full grid-cols-2 gap-1.5 p-2.5">
       {[0, 1].map((i) => (
-        <div key={i} className="flex flex-col justify-end gap-1.5 rounded-md bg-star-100/6 p-2">
-          <Line w="w-full" tone="bg-star-100/12" />
-          <Line w="w-2/3" tone="bg-ember-500/20" />
+        <div key={i} className="flex flex-col overflow-hidden rounded-md border border-star-300/15">
+          <Block className={`min-h-0 flex-1 ${i === 0 ? 'bg-gradient-to-br from-ember-500/25 to-star-100/5' : 'bg-gradient-to-br from-star-100/20 to-star-100/5'}`} />
+          <div className="space-y-1 p-1.5">
+            <Line w="w-3/4" h="h-1" tone="bg-star-100/20" />
+            <div className="flex items-center justify-between">
+              <Line w="w-6" h="h-1.5" tone="bg-ember-500/40" />
+              <span className="h-2 w-2 rounded-full bg-ember-500/50" />
+            </div>
+          </div>
         </div>
       ))}
     </div>
   ),
   footer: () => (
-    <div className="grid h-full grid-cols-3 gap-3 p-3">
-      {[0, 1, 2].map((i) => (
-        <div key={i} className="space-y-1.5">
-          <Line w="w-4/5" tone="bg-star-100/15" />
-          <Line w="w-3/5" tone="bg-star-100/8" />
-          <Line w="w-2/3" tone="bg-star-100/8" />
+    <div className="flex h-full flex-col justify-between p-3">
+      <div className="flex items-center gap-1.5">
+        <span className="h-2.5 w-2.5 rounded-full bg-ember-500/70" />
+        <Line w="w-10" h="h-1.5" tone="bg-star-100/25" />
+      </div>
+      <div className="grid grid-cols-3 gap-2">
+        {['PRODUCT', 'COMPANY', 'LEGAL'].map((h) => (
+          <div key={h} className="space-y-1">
+            <MiniLabel className="text-star-500">{h}</MiniLabel>
+            <Line w="w-4/5" tone="bg-star-100/12" />
+            <Line w="w-3/5" tone="bg-star-100/12" />
+            <Line w="w-2/3" tone="bg-star-100/12" />
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center justify-between border-t border-star-300/10 pt-1.5">
+        <MiniSub className="text-star-500">© 2026 Your Brand</MiniSub>
+        <div className="flex gap-1">
+          <Dot tone="bg-star-100/20" />
+          <Dot tone="bg-star-100/20" />
+          <Dot tone="bg-ember-500/40" />
         </div>
-      ))}
+      </div>
     </div>
   ),
   'app-home': () => (
     <div className="flex h-full flex-col gap-2 p-2.5">
-      {[0, 1, 2].map((i) => (
-        <div key={i} className="flex items-center gap-2 rounded-lg bg-star-100/6 p-2">
-          <Dot tone="bg-ember-500/30" />
-          <div className="flex-1 space-y-1">
-            <Line w="w-3/4" />
-            <Line w="w-1/2" tone="bg-star-100/8" />
-          </div>
+      <div className="flex items-center justify-between">
+        <Avatar tone="bg-ember-500/30" size="h-5 w-5" />
+        <Line w="w-12" h="h-1.5" tone="bg-star-100/25" />
+        <span className="h-3 w-3 rounded-full bg-star-100/15" />
+      </div>
+      <div className="grid grid-cols-2 gap-1.5">
+        <div className="rounded-md bg-star-100/6 p-1.5">
+          <MiniLabel className="text-star-500">SALES</MiniLabel>
+          <MiniLabel className="text-star-200">₱1.2k</MiniLabel>
+          <MiniSub className="text-emerald-500">↑ 12%</MiniSub>
         </div>
-      ))}
-      <div className="mt-auto flex justify-center gap-3 pt-1">
+        <div className="rounded-md bg-ember-500/10 p-1.5">
+          <MiniLabel className="text-star-500">ORDERS</MiniLabel>
+          <MiniLabel className="text-star-200">48</MiniLabel>
+          <MiniSub className="text-ember-500">today</MiniSub>
+        </div>
+      </div>
+      <Block className="min-h-0 flex-1">
+        <MiniBars values={[30, 55, 40, 70, 60, 85]} className="p-1" />
+      </Block>
+      <div className="flex items-center justify-around border-t border-star-300/10 pt-1.5">
         {[0, 1, 2, 3].map((i) => (
-          <Dot key={i} tone={i === 0 ? 'bg-ember-500/50' : 'bg-star-100/12'} />
+          <Dot key={i} tone={i === 0 ? 'bg-ember-500/60' : 'bg-star-100/15'} />
         ))}
       </div>
     </div>
   ),
   'app-list': () => (
-    <div className="flex h-full flex-col justify-center gap-2.5 p-2.5">
-      {[0, 1, 2, 3].map((i) => (
-        <div key={i} className="flex items-center gap-2">
-          <Dot tone="bg-star-100/12" />
-          <Line w="w-3/4" />
-          <Dot tone="bg-ember-500/25" />
+    <div className="flex h-full flex-col justify-center gap-2 p-2.5">
+      {[
+        ['bg-ember-500/30', 'Team Alpha', '9:41 AM', true],
+        ['bg-star-100/20', 'Design Sync', '8:12 AM', false],
+        ['bg-star-100/20', 'Daily Standup', 'Yesterday', true],
+        ['bg-star-100/20', 'Launch Plan', 'Mon', false],
+      ].map(([tone, name, time, unread]) => (
+        <div key={name} className="flex items-center gap-2">
+          <Avatar tone={tone} size="h-6 w-6" />
+          <div className="min-w-0 flex-1">
+            <MiniLabel className="text-star-300">{name}</MiniLabel>
+            <MiniSub className="text-star-500">{time}</MiniSub>
+          </div>
+          {unread && <span className="flex h-3 w-3 items-center justify-center rounded-full bg-ember-500 text-[6px] font-bold text-white">2</span>}
         </div>
       ))}
     </div>
   ),
   'app-chat': () => (
-    <div className="flex h-full flex-col justify-center gap-2 p-3">
-      <Block className="h-5 w-2/3 self-start bg-star-100/8" />
-      <Block className="h-5 w-1/2 self-end bg-ember-500/20" />
-      <Block className="h-5 w-3/5 self-start bg-star-100/8" />
+    <div className="flex h-full flex-col justify-center gap-1.5 p-3">
+      <Block className="h-5 w-2/3 self-start rounded-lg bg-star-100/10 p-1">
+        <MiniSub className="text-star-500">Hi! Is the site live yet?</MiniSub>
+      </Block>
+      <Block className="h-5 w-1/2 self-end rounded-lg bg-ember-500/25 p-1">
+        <MiniSub className="text-ember-600 dark:text-ember-300">Deploying tomorrow 🚀</MiniSub>
+      </Block>
+      <Block className="h-5 w-3/5 self-start rounded-lg bg-star-100/10 p-1">
+        <MiniSub className="text-star-500">Perfect — excited to see it!</MiniSub>
+      </Block>
+      <Block className="h-5 w-2/5 self-end rounded-lg bg-ember-500/25 p-1">
+        <MiniSub className="text-ember-600 dark:text-ember-300">You'll love it :)</MiniSub>
+      </Block>
+      <div className="mt-1 flex items-center gap-1.5 rounded-full bg-star-100/10 px-2 py-1">
+        <Line w="flex-1" h="h-1" tone="bg-star-100/15" />
+        <span className="h-3 w-3 shrink-0 rounded-full bg-ember-500/60" />
+      </div>
     </div>
   ),
   dashboard: () => (
-    <div className="flex h-full gap-2 p-2.5">
-      <div className="flex w-4 flex-col items-center gap-2 pt-1">
+    <div className="flex h-full gap-1.5 p-2">
+      {/* sidebar */}
+      <div className="flex w-7 flex-col items-center gap-1.5 rounded-md bg-star-100/6 py-1.5">
+        <span className="h-2 w-2 rounded-full bg-ember-500/70" />
         {[0, 1, 2].map((i) => (
-          <Dot key={i} tone={i === 0 ? 'bg-ember-500/40' : 'bg-star-100/12'} />
+          <Dot key={i} tone={i === 0 ? 'bg-ember-500/50' : 'bg-star-100/15'} />
         ))}
       </div>
-      <div className="flex flex-1 flex-col gap-2">
-        <div className="flex gap-1.5">
-          <Block className="h-6 flex-1 bg-ember-500/12" />
-          <Block className="h-6 flex-1 bg-star-100/8" />
+      <div className="flex flex-1 flex-col gap-1.5">
+        {/* KPI row */}
+        <div className="grid grid-cols-2 gap-1.5">
+          <div className="rounded-md bg-star-100/6 p-1">
+            <MiniSub className="text-star-500">REVENUE</MiniSub>
+            <MiniLabel className="text-star-200">$12.4k</MiniLabel>
+          </div>
+          <div className="rounded-md bg-star-100/6 p-1">
+            <MiniSub className="text-star-500">USERS</MiniSub>
+            <MiniLabel className="text-star-200">8,204</MiniLabel>
+          </div>
         </div>
-        <div className="flex flex-1 items-end gap-1">
-          {[40, 65, 30, 80, 55].map((h, i) => (
-            <span key={i} className="flex-1 rounded-t-sm bg-ember-500/25" style={{ height: `${h}%` }} />
+        {/* chart */}
+        <Block className="min-h-0 flex-1">
+          <MiniBars values={[35, 60, 42, 75, 50, 88]} className="p-1" />
+        </Block>
+        {/* table */}
+        <div className="space-y-1 rounded-md bg-star-100/6 p-1.5">
+          {[0, 1].map((i) => (
+            <div key={i} className="flex items-center gap-1">
+              <Dot tone={i === 0 ? 'bg-emerald-400/60' : 'bg-amber-400/60'} />
+              <Line w="w-1/3" h="h-1" tone="bg-star-100/15" />
+              <Line w="w-1/4" h="h-1" tone="bg-ember-500/25" />
+            </div>
           ))}
         </div>
       </div>
     </div>
   ),
   code: () => (
-    <div className="flex h-full flex-col justify-center gap-1.5 p-3 font-mono">
-      {[
-        ['w-1/4', 'bg-ember-500/25', ''],
-        ['w-2/3', 'bg-star-100/10', 'ml-3'],
-        ['w-1/2', 'bg-star-100/10', 'ml-3'],
-        ['w-1/3', 'bg-ember-500/20', 'ml-3'],
-        ['w-1/5', 'bg-star-100/10', ''],
-      ].map(([w, tone, indent], i) => (
-        <Line key={i} w={`${w} ${indent}`} h="h-1.5" tone={tone} />
-      ))}
+    <div className="flex h-full flex-col p-2.5 font-mono">
+      <div className="flex items-center gap-1 pb-1.5">
+        <span className="h-1.5 w-1.5 rounded-full bg-ember-500/60" />
+        <span className="h-1.5 w-1.5 rounded-full bg-ember-500/30" />
+        <span className="h-1.5 w-1.5 rounded-full bg-star-100/20" />
+        <Line w="w-16" h="h-1" className="ml-2" tone="bg-star-100/10" />
+      </div>
+      <div className="flex-1 space-y-1">
+        {[
+          ['text-ember-500/80', 'import', ' { deliver }', 'from', "'inovers'", ';'],
+          ['text-star-100/40', 'const', ' project', ' = ', 'await', ' deliver({'],
+          ['text-star-100/40', '  scope:', "'website'", ','],
+          ['text-star-100/40', '  speed:', "'3 days'", ','],
+          ['text-star-100/40', '});'],
+        ].map((parts, i) => (
+          <div key={i} className="flex items-center gap-1 whitespace-nowrap">
+            {parts.map((p, j) => (
+              <span key={j} className={`text-[8px] leading-tight ${j === 0 ? p : 'text-star-100/45'}`}>{j === 0 ? '' : p}</span>
+            ))}
+          </div>
+        ))}
+        <span className="block h-2 w-6 rounded-full bg-ember-500/50" />
+      </div>
     </div>
   ),
   kanban: () => (
-    <div className="grid h-full grid-cols-3 gap-2 p-2.5">
-      {[2, 1, 3].map((n, col) => (
-        <div key={col} className="space-y-1.5">
-          <Line w="w-3/4" tone="bg-star-100/15" />
-          {Array.from({ length: n }).map((_, i) => (
-            <Block key={i} className="h-5 bg-star-100/6" />
+    <div className="grid h-full grid-cols-3 gap-1.5 p-2">
+      {[
+        ['TODO', 'bg-star-100/15', [
+          ['w-4/5', 'bg-ember-500/25'],
+          ['w-3/5', 'bg-star-100/20'],
+        ]],
+        ['DOING', 'bg-amber-400/50', [
+          ['w-3/4', 'bg-ember-500/30'],
+          ['w-full', 'bg-star-100/20'],
+          ['w-2/3', 'bg-star-100/20'],
+        ]],
+        ['DONE', 'bg-emerald-400/50', [
+          ['w-4/5', 'bg-star-100/20'],
+          ['w-1/2', 'bg-star-100/20'],
+        ]],
+      ].map(([title, headTone, cards]) => (
+        <div key={title} className="flex flex-col gap-1.5 rounded-md bg-star-100/5 p-1.5">
+          <div className="flex items-center justify-between">
+            <MiniLabel className="text-star-500">{title}</MiniLabel>
+            <Dot tone={headTone} />
+          </div>
+          {cards.map(([w, tone], i) => (
+            <div key={i} className="space-y-1 rounded bg-white/40 p-1 dark:bg-white/5">
+              <Line w={w} h="h-1" tone={tone} />
+              <Line w="w-1/2" h="h-1" tone="bg-star-100/10" />
+            </div>
           ))}
         </div>
       ))}
     </div>
   ),
   'dashboard-big': () => (
-    <div className="flex h-full flex-col gap-2.5 p-3">
-      <div className="flex gap-2">
-        {[0, 1, 2].map((i) => (
-          <div key={i} className="flex-1 space-y-1 rounded-md bg-star-100/6 p-2">
-            <Line w="w-1/2" h="h-2" tone="bg-ember-500/25" />
-            <Line w="w-3/4" tone="bg-star-100/10" />
+    <div className="flex h-full flex-col gap-1.5 p-2.5">
+      <div className="grid grid-cols-3 gap-1.5">
+        {[['$48.2k', '↑ 8.2%'], ['1,284', '↑ 3.1%'], ['96.4%', '↑ 0.8%']].map(([v, d]) => (
+          <div key={v} className="rounded-md bg-star-100/6 p-1.5">
+            <MiniLabel className="text-star-200">{v}</MiniLabel>
+            <MiniSub className="text-emerald-500">{d}</MiniSub>
           </div>
         ))}
       </div>
-      <div className="flex flex-1 items-end gap-1.5">
-        {[35, 60, 45, 80, 50, 70, 40].map((h, i) => (
-          <span key={i} className="flex-1 rounded-t-sm bg-ember-500/25" style={{ height: `${h}%` }} />
-        ))}
+      <Block className="min-h-0 flex-1">
+        <MiniArea className="p-1" />
+      </Block>
+      <div className="flex items-center justify-between rounded-md bg-star-100/6 px-1.5 py-1">
+        <MiniLabel className="text-star-500">GROWTH</MiniLabel>
+        <Chip>Quarterly</Chip>
       </div>
     </div>
   ),
   flow: () => (
-    <div className="flex h-full flex-col items-center justify-center gap-2 p-3">
-      {[0, 1, 2].map((i) => (
-        <div key={i} className="flex w-full items-center gap-2">
-          <Block className="h-6 w-6 shrink-0 bg-ember-500/20" />
-          <Line w="flex-1" tone="bg-star-100/10" />
-          {i < 2 && <span className="text-star-100/20">↓</span>}
+    <div className="flex h-full flex-col items-center justify-center gap-1.5 p-3">
+      {[
+        ['bg-ember-500/30', 'Discover', true],
+        ['bg-star-100/10', 'Build', false],
+        ['bg-star-100/10', 'Launch', false],
+      ].map(([tone, label, active], i) => (
+        <div key={label} className="flex w-full items-center gap-1.5">
+          <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md ${tone}`}>
+            <span className={`h-1.5 w-1.5 rounded-full ${active ? 'bg-ember-500' : 'bg-star-100/40'}`} />
+          </span>
+          <Line w="flex-1" h="h-1.5" tone={active ? 'bg-ember-500/40' : 'bg-star-100/15'} />
+          {i < 2 && <span className="shrink-0 text-[8px] text-star-100/30">→</span>}
         </div>
       ))}
     </div>
   ),
   table: () => (
-    <div className="flex h-full flex-col gap-2 p-2.5">
-      <div className="flex gap-2">
-        <Line w="w-1/3" tone="bg-star-100/15" />
-        <Line w="w-1/3" tone="bg-star-100/15" />
-        <Line w="w-1/3" tone="bg-star-100/15" />
+    <div className="flex h-full flex-col gap-1 p-2.5">
+      <div className="flex items-center gap-1 rounded-md bg-star-100/8 px-1.5 py-1">
+        <MiniLabel className="w-1/3 text-star-500">CLIENT</MiniLabel>
+        <MiniLabel className="w-1/3 text-star-500">STATUS</MiniLabel>
+        <MiniLabel className="w-1/3 text-right text-star-500">AMOUNT</MiniLabel>
       </div>
-      {[0, 1, 2].map((i) => (
-        <div key={i} className="flex gap-2 border-t border-star-300/10 pt-2">
-          <Line w="w-1/3" tone="bg-star-100/8" />
-          <Line w="w-1/3" tone="bg-ember-500/15" />
-          <Line w="w-1/3" tone="bg-star-100/8" />
+      {[
+        ['Dory Delivery', 'Active', '₱12,400', 'bg-emerald-400/20 text-emerald-600 dark:text-emerald-300'],
+        ['WhatAHotel', 'In review', '₱8,900', 'bg-amber-400/20 text-amber-600 dark:text-amber-300'],
+        ['Kanto Bites', 'Active', '₱5,200', 'bg-emerald-400/20 text-emerald-600 dark:text-emerald-300'],
+      ].map(([name, status, amt, tone]) => (
+        <div key={name} className="flex items-center gap-1 border-t border-star-300/10 px-1.5 pt-1">
+          <MiniLabel className="w-1/3 text-star-300">{name}</MiniLabel>
+          <div className="w-1/3"><Chip tone={tone}>{status}</Chip></div>
+          <MiniLabel className="w-1/3 text-right text-star-400">{amt}</MiniLabel>
         </div>
       ))}
     </div>
   ),
   metrics: () => (
-    <div className="flex h-full items-center gap-3 p-3">
-      {[0, 1, 2, 3].map((i) => (
-        <div key={i} className="flex-1 space-y-1.5">
-          <Line w="w-1/2" h="h-2.5" tone="bg-ember-500/25" />
-          <Line w="w-3/4" tone="bg-star-100/10" />
+    <div className="flex h-full items-center gap-2 p-3">
+      {[
+        ['Views', '84.2k', '↑ 12%', 'text-ember-500/70'],
+        ['Leads', '1,024', '↑ 4%', 'text-ember-500/50'],
+        ['Rate', '68%', '↑ 2%', 'text-ember-500/30'],
+        ['Goal', '92%', '↓ 1%', 'text-star-100/25'],
+      ].map(([label, v, d, tone]) => (
+        <div key={label} className="flex-1 space-y-1 rounded-md bg-star-100/6 p-1.5">
+          <MiniSub className="text-star-500">{label}</MiniSub>
+          <MiniLabel className="text-star-200">{v}</MiniLabel>
+          <div className={`h-1 w-full rounded-full ${tone}`} />
+          <MiniSub className="text-emerald-500">{d}</MiniSub>
         </div>
       ))}
     </div>
   ),
   pipeline: () => (
-    <div className="flex h-full items-center gap-2 p-3">
-      {[0, 1, 2, 3].map((i) => (
-        <div key={i} className="flex flex-1 items-center gap-2">
-          <div className="flex-1 rounded-full bg-star-100/8 px-2 py-2 text-center">
-            <Line w="w-2/3 mx-auto" tone="bg-star-100/15" />
+    <div className="flex h-full items-center gap-1 p-3">
+      {[
+        ['bg-star-100/8', 'Source'],
+        ['bg-ember-500/20', 'Process'],
+        ['bg-star-100/8', 'Enrich'],
+        ['bg-star-100/8', 'Store'],
+        ['bg-star-100/8', 'Serve'],
+      ].map(([tone, label], i) => (
+        <div key={label} className="flex flex-1 items-center gap-1">
+          <div className={`flex-1 rounded-md px-1 py-2 text-center ${tone}`}>
+            <MiniLabel className={i === 1 ? 'text-ember-600 dark:text-ember-300' : 'text-star-500'}>{label}</MiniLabel>
           </div>
-          {i < 3 && <span className="shrink-0 text-star-100/20">→</span>}
+          {i < 4 && <span className="shrink-0 text-[8px] text-star-100/30">→</span>}
         </div>
       ))}
     </div>
   ),
   integrations: () => (
-    <div className="grid h-full grid-cols-6 items-center gap-2 p-3">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <Block key={i} className={`aspect-square ${i % 2 === 0 ? 'bg-ember-500/15' : 'bg-star-100/8'}`} />
+    <div className="grid h-full grid-cols-6 items-center gap-1.5 p-3">
+      {[
+        'bg-ember-500/25',
+        'bg-sky-400/20',
+        'bg-emerald-400/20',
+        'bg-violet-400/20',
+        'bg-amber-400/20',
+        'bg-star-100/15',
+      ].map((tone, i) => (
+        <div key={i} className={`flex aspect-square items-center justify-center rounded-lg ${tone}`}>
+          <span className={`h-3 w-3 rounded-sm ${i % 2 ? 'bg-star-100/40' : 'bg-ember-500/50'}`} />
+        </div>
       ))}
+      <div className="col-span-6 space-y-1">
+        <Line w="w-2/3" h="h-1.5" tone="bg-star-100/15" />
+        <MiniSub className="text-star-500">Connect your stack — 40+ integrations</MiniSub>
+      </div>
     </div>
   ),
 }
