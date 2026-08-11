@@ -22,15 +22,21 @@ export function applyCardReveal(scope, selector, opts = {}) {
   // gsap.utils.toArray does not — pass through .current if present).
   const scopeEl = scope && scope.current ? scope.current : scope
 
-  gsap.utils.toArray(selector, scopeEl || document).forEach((card, i) => {
-    const fromX = i % 2 ? x : -x
-    const fromRot = i % 2 ? rotation : -rotation
+  // Mobile (below 768px): the alternating horizontal slide is v4's
+  // desktop choreography — on a phone, cards skating in from off-screen
+  // edges feel heavy. Fall back to a clean fade-up (Mat's call 2026-08-11,
+  // mobile pass). Desktop keeps the full slide.
+  const mobile = window.matchMedia('(max-width: 767.98px)').matches
+  const fromX = mobile ? 0 : x
+  const fromRot = mobile ? 0 : rotation
 
+  gsap.utils.toArray(selector, scopeEl || document).forEach((card, i) => {
     gsap.from(card, {
-      x: fromX,
-      rotation: fromRot,
+      x: i % 2 ? fromX : -fromX,
+      y: mobile ? 26 : 0,
+      rotation: i % 2 ? fromRot : -fromRot,
       opacity: 0,
-      duration: 0.9,
+      duration: mobile ? 0.6 : 0.9,
       ease: 'power3.out',
       scrollTrigger: {
         trigger: card,

@@ -50,7 +50,7 @@ export default function SpaceFooter() {
               <Link
                 key={l.to}
                 to={l.to}
-                className="text-sm text-star-400 transition-colors hover:text-ember-500"
+                className="py-2 text-sm text-star-400 transition-colors hover:text-ember-500"
               >
                 {l.label}
               </Link>
@@ -59,7 +59,7 @@ export default function SpaceFooter() {
                 key={l.target}
                 href={`#${l.target}`}
                 onClick={(e) => handleNav(e, l.target)}
-                className="text-sm text-star-400 transition-colors hover:text-ember-500"
+                className="py-2 text-sm text-star-400 transition-colors hover:text-ember-500"
               >
                 {l.label}
               </a>
