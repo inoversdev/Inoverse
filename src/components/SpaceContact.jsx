@@ -1,63 +1,12 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { BRAND, CONTACT } from '../lib/content'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const FIELD =
-  'w-full rounded-lg border border-star-300/30 bg-white px-4 py-3 text-sm text-star-100 placeholder:text-star-600 outline-none transition-colors focus:border-ember-500/60 dark:bg-space-950/60'
-
 export default function SpaceContact() {
   const rootRef = useRef(null)
-  const [status, setStatus] = useState('idle')
-  const [form, setForm] = useState({ name: '', email: '', message: '' })
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    const { name, email, message } = form
-    const subject = `Project Inquiry — ${name}`
-    const body = `Hi Inovers team,\n\n${message}\n\n— ${name} (${email})`
-
-    // True API delivery once an access key is configured (Web3Forms)
-    if (CONTACT.formAccessKey) {
-      setStatus('sending')
-      try {
-        const res = await fetch('https://api.web3forms.com/submit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify({
-            access_key: CONTACT.formAccessKey,
-            name,
-            email,
-            message,
-            subject,
-          }),
-        })
-        const data = await res.json()
-        setStatus(data.success ? 'success' : 'error')
-      } catch {
-        setStatus('error')
-      }
-      return
-    }
-
-    // Fallback — same flow the old inovers.vercel.app used: open the
-    // visitor's email app with the message pre-filled, and if the page
-    // is still visible a second later, open Gmail compose as backup.
-    const enc = encodeURIComponent
-    const mailto = `mailto:${BRAND.email}?subject=${enc(subject)}&body=${enc(body)}`
-    window.location.href = mailto
-    setTimeout(() => {
-      if (!document.hidden) {
-        window.open(
-          `https://mail.google.com/mail/?view=cm&fs=1&to=${BRAND.email}&su=${enc(subject)}&body=${enc(body)}`,
-          '_blank'
-        )
-      }
-    }, 1000)
-    setStatus('success')
-  }
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -81,6 +30,8 @@ export default function SpaceContact() {
     }, rootRef)
     return () => ctx.revert()
   }, [])
+
+  const vibsLive = Boolean(CONTACT.vibs.url)
 
   return (
     <section id="contact" ref={rootRef} className="relative mx-auto max-w-7xl px-6 py-28 lg:px-10">
@@ -109,80 +60,60 @@ export default function SpaceContact() {
           </div>
 
           <div className="v2-contact-block space-y-5">
-            <form onSubmit={handleSubmit} className="rounded-2xl border border-star-300/30 bg-white/80 p-6 dark:bg-white/5">
-              <p className="text-sm uppercase tracking-widest text-star-500">Email us</p>
-              <div className="mt-4 space-y-3">
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <input
-                    type="text"
-                    required
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    placeholder="Your name"
-                    className={FIELD}
-                  />
-                  <input
-                    type="email"
-                    required
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    placeholder="Your email"
-                    className={FIELD}
-                  />
-                </div>
-                <textarea
-                  required
-                  rows={4}
-                  value={form.message}
-                  onChange={(e) => setForm({ ...form, message: e.target.value })}
-                  placeholder="Tell us about your project…"
-                  className={`${FIELD} resize-none`}
-                />
-                <div className="flex flex-wrap items-center gap-3">
-                  <button
-                    type="submit"
-                    disabled={status === 'sending'}
-                    aria-busy={status === 'sending'}
-                    className="v2-btn v2-btn-primary group min-w-[12.5rem]"
+            {/* ── Vibs — THE contact channel now. Email form removed,
+                   then the free-consultation card removed too (Mat's
+                   calls 2026-08-11) — Vibs takes the full spotlight.
+                   CONTACT.vibs.url is the wiring point; empty → disabled
+                   "coming soon" state so demos never look broken. ── */}
+            <div className="relative overflow-hidden rounded-2xl border border-ember-500/25 bg-white/80 p-7 dark:border-ember-500/20 dark:bg-white/5">
+              <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-ember-500/15 blur-[60px]" />
+              <div className="relative">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-ember-500/40 text-ember-500">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-5 w-5" aria-hidden="true">
+                      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+                    </svg>
+                  </span>
+                  <span
+                    className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-medium ${
+                      vibsLive
+                        ? 'bg-ember-500/15 text-ember-600 dark:text-ember-300'
+                        : 'bg-star-100/10 text-star-500'
+                    }`}
                   >
-                    {status === 'sending' ? 'Sending…' : 'Send message'}
-                    <span
-                      aria-hidden="true"
-                      className={`transition-transform duration-300 ease-out group-hover:translate-x-1 motion-reduce:translate-x-0 motion-reduce:transition-none ${
-                        status === 'sending' ? 'opacity-0' : ''
-                      }`}
-                    >→</span>
-                  </button>
-                  {status === 'success' && (
-                    <p className="text-xs text-star-300">
-                      {CONTACT.formAccessKey
-                        ? "Message sent — we'll get back to you within 24 hours."
-                        : 'Your email app is opening — press Send to deliver it.'}
-                    </p>
-                  )}
-                  {status === 'error' && (
-                    <p className="text-xs text-ember-600">
-                      Send failed — please email {BRAND.email} directly.
-                    </p>
+                    <span className={`h-1.5 w-1.5 rounded-full ${vibsLive ? 'bg-ember-500' : 'bg-star-500'}`} />
+                    {vibsLive ? 'Live' : 'Coming soon'}
+                  </span>
+                </div>
+                <p className="mt-5 text-sm uppercase tracking-widest text-star-500">{CONTACT.vibs.label}</p>
+                <p className="mt-1 text-xl text-star-100">Message us on {CONTACT.vibs.label}</p>
+                <p className="mt-2 text-sm leading-relaxed text-star-400">{CONTACT.vibs.blurb}</p>
+                <div className="mt-6">
+                  {vibsLive ? (
+                    <a
+                      href={CONTACT.vibs.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="v2-btn v2-btn-primary group w-full"
+                    >
+                      Start a conversation
+                      <span aria-hidden="true" className="transition-transform duration-300 ease-out group-hover:translate-x-1">→</span>
+                    </a>
+                  ) : (
+                    <button
+                      type="button"
+                      disabled
+                      aria-disabled="true"
+                      className="v2-btn v2-btn-primary w-full opacity-60"
+                    >
+                      Start a conversation
+                    </button>
                   )}
                 </div>
               </div>
-            </form>
+            </div>
 
-            <a
-              href={BRAND.calendly}
-              target="_blank"
-              rel="noreferrer"
-              className="group flex items-center justify-between rounded-2xl border border-star-300/30 bg-white/80 p-6 transition-all hover:border-ember-500/50 hover:bg-ember-500/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ember-400 dark:bg-white/5 dark:hover:bg-ember-500/10"
-            >
-              <div>
-                <p className="text-sm uppercase tracking-widest text-star-500">Free consultation</p>
-                <p className="mt-1 text-lg text-star-100">Book a 30-minute call</p>
-              </div>
-              <span className="text-2xl text-star-500 transition-all group-hover:translate-x-1 group-hover:text-ember-500">→</span>
-            </a>
-
-            <div className="flex items-center justify-between rounded-2xl border border-star-300/30 bg-white/80 p-6 dark:bg-white/5">
+            <div className="flex items-center justify-between rounded-2xl border border-star-300/30 bg-white/80 p-5 dark:bg-white/5">
               <p className="text-sm uppercase tracking-widest text-star-500">Phone</p>
               <p className="text-lg text-star-100">{BRAND.phone}</p>
             </div>

@@ -1087,25 +1087,24 @@ export const PROJECTS_PAGE = {
 export const CONTACT = {
   heading: "Let's build something together",
   subheading:
-    'Tell us about your project a call or an email, your choice. No commitment required.',
+    'Tell us about your project — a free call or a chat on Vibs, your choice. No commitment required.',
   callWhy: [
     'Get immediate expert feedback on your ideas',
     'Detailed discussion of project requirements',
     'Personalized recommendations for your business',
     'No commitment required completely free!',
   ],
-  emailWhy: [
-    'Brief description of your project',
-    'Your goals and timeline',
-    'Any specific requirements or preferences',
-    'Your budget range (if available)',
-  ],
-  mailtoHref:
-    'mailto:inovers.dev@gmail.com?subject=Project%20Inquiry&body=Hi%20Inovers%20team,%0D%0A%0D%0AI%27m%20interested%20in%20discussing%20a%20project%20with%20you.%0D%0A%0D%0AProject%20Details:%0D%0A-%20%0D%0A%0D%0ABest%20regards,',
-  // Web3Forms access key — paste it here to enable true API delivery.
-  // Empty → the contact form falls back to the pre-filled Gmail compose
-  // flow (the same behavior the old inovers.vercel.app used).
-  formAccessKey: '',
+  // Vibs — the contact feature Mat's co-developer is building (replaces
+  // the old email form, Mat's call 2026-08-11). It's an API; this block
+  // is the wiring point: set `url` (or endpoint + auth once the spec is
+  // shared) and the contact card goes live. Empty url → the card shows
+  // a disabled "coming soon" state.
+  vibs: {
+    label: 'Vibs',
+    url: '', // co-developer's Vibs link/endpoint — paste when shared
+    blurb:
+      'Chat with the crew in real time — the fastest way to get answers about your project.',
+  },
 }
 
 export const FOOTER = {
