@@ -1,39 +1,26 @@
-import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { BRAND, PROJECTS } from '../lib/content'
-import MissionCard from './MissionCard'
 import SplitHeading from './SplitHeading'
 import Ufo2D from './Ufo2D'
 import WispyCloud from './WispyCloud'
 
-gsap.registerPlugin(ScrollTrigger)
-
-// Live value of the reduced-motion preference, so the section can swap
-// between the marquee (motion) and the static grid (no motion).
-function useReducedMotion() {
-  const [reduce, setReduce] = useState(
-    () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  )
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const onChange = () => setReduce(mq.matches)
-    mq.addEventListener('change', onChange)
-    return () => mq.removeEventListener('change', onChange)
-  }, [])
-  return reduce
-}
-
-// ─── Mission marquee row — fixed-width cards on one track, duplicated
-// twice by the caller for the seamless -50% loop (same grammar as the
-// testimonial marquee). ───
-function MissionMarqueeRow({ items }) {
+// ─── The showcase — a pocketdevs-style logo wall (Mat's call
+// 2026-08-11: "make the work section look like the 'businesses and
+// startups we have worked with' part of pocketdevs.ph"). Uniform
+// bordered tiles — the 6 featured wordmarks, one clean row at
+// desktop (2/3/6 columns), no marquee, no links. Logo images swap in
+// later once the designers' assets land. ───
+function LogoWall({ items }) {
   return (
-    <div className="flex gap-5 pr-5">
+    <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-6">
       {items.map((p) => (
-        <div key={p.id} className="w-[300px] shrink-0 sm:w-[360px]">
-          <MissionCard project={p} />
+        <div
+          key={p.id}
+          className="group flex items-center justify-center rounded-xl border border-star-300/20 bg-white/50 px-4 py-7 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-ember-500/40 hover:shadow-[0_12px_30px_-12px_rgba(245,48,3,0.3)] dark:bg-white/[0.03]"
+        >
+          <span className="text-center font-display text-sm font-semibold uppercase tracking-[0.18em] text-star-400 transition-colors duration-300 group-hover:text-ember-600 dark:group-hover:text-ember-300">
+            {p.name}
+          </span>
         </div>
       ))}
     </div>
@@ -50,37 +37,12 @@ const DELIVERY_CLOUD_CURTAINS = [
 ]
 
 export default function SpacePortfolio() {
-  const rootRef = useRef(null)
-  const reduce = useReducedMotion()
-
-  // Home is a clean showcase: exactly the 6 featured missions. The full
-  // grid (all 20 + industry filters) lives on /projects.
+  // The wall shows the 6 featured missions — the full 63 live on
+  // /projects behind "View all missions".
   const featured = PROJECTS.filter((p) => p.featured)
 
-  // Mission card reveal — simple one-shot fade-up (Mat's call 2026-08-10:
-  // the scrubbed scale+blur was too heavy to render — filter: blur on
-  // every card recomposites constantly while scrolling). Now: transform +
-  // opacity only, fires once per card, no scrub, no reverse, no filter.
-  // Marquee mode (normal motion): skipped entirely — the cards live in a
-  // constantly moving track, per-card reveals would fight it.
-  useEffect(() => {
-    if (!reduce) return
-    const ctx = gsap.context(() => {
-      gsap.utils.toArray('.mission-card').forEach((card) => {
-        gsap.from(card, {
-          y: 28,
-          opacity: 0,
-          duration: 0.6,
-          ease: 'power2.out',
-          scrollTrigger: { trigger: card, start: 'top 90%', once: true },
-        })
-      })
-    }, rootRef)
-    return () => ctx.revert()
-  }, [reduce])
-
   return (
-    <section id="work" ref={rootRef} className="relative mx-auto max-w-7xl px-6 py-24 lg:px-10">
+    <section id="work" className="relative mx-auto max-w-7xl px-6 py-24 lg:px-10">
       {/* ── Delivery strip — the saucer flies a simple in/out arc, dips
              into a sparse ember cloud to drop a mission, then banks away.
              12s loop, synced with the beam/capsule timings inside Ufo2D
@@ -178,35 +140,12 @@ export default function SpacePortfolio() {
         </div>
       </div>
 
-      {/* ── The six featured missions — INFINITE MARQUEE, two mirrored
-             rows (top flows left, bottom flows right), same pattern as
-             the testimonials feed (Mat's call 2026-08-11: "adopt the
-             infinite marquee animation, keep the v2 design"). Each row
-             is two identical copies on one track (-50% CSS loop, 26s).
-             Cards are NOT clickable anymore — pure showcase. Reduced
-             motion falls back to the static grid. ── */}
-      {reduce ? (
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {featured.map((p) => (
-            <MissionCard key={p.id} project={p} />
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col gap-6">
-          <div className="marquee-mask overflow-hidden">
-            <div className="marquee-track flex w-max">
-              <MissionMarqueeRow items={featured.slice(0, 3)} />
-              <MissionMarqueeRow items={featured.slice(0, 3)} />
-            </div>
-          </div>
-          <div className="marquee-mask overflow-hidden">
-            <div className="marquee-track marquee-track-reverse flex w-max">
-              <MissionMarqueeRow items={featured.slice(3, 6)} />
-              <MissionMarqueeRow items={featured.slice(3, 6)} />
-            </div>
-          </div>
-        </div>
-      )}
+      {/* ── The showcase — pocketdevs-style logo wall (Mat's call
+             2026-08-11): uniform tiles, one clean row of the 6
+             featured wordmarks. No marquee, no links — calm and
+             consistent. Logo images swap in later once the designers'
+             assets land. ── */}
+      <LogoWall items={featured} />
 
       {/* ── View More → /projects + the section's primary CTA. Was a bare
              uppercase-tracked text link (star-400, blended into the page,
@@ -221,7 +160,7 @@ export default function SpacePortfolio() {
           to="/projects"
           className="group inline-flex items-center gap-2.5 rounded-full border border-ember-500/35 bg-ember-500/[0.06] px-6 py-3 text-sm font-semibold text-ember-600 backdrop-blur-sm transition-all duration-300 hover:border-ember-500 hover:bg-ember-500/[0.12] hover:shadow-[0_10px_30px_-12px_rgba(245,48,3,0.45)] dark:text-ember-300"
         >
-          View {PROJECTS.length - featured.length} more missions
+          View all missions
           <span
             aria-hidden="true"
             className="transition-transform duration-300 ease-out group-hover:translate-x-1 motion-reduce:translate-x-0 motion-reduce:transition-none"
