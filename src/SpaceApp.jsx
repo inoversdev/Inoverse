@@ -19,6 +19,7 @@ import { useTheme } from './theme'
 // "optimize the website").
 const ProjectsPage = lazy(() => import('./pages/ProjectsPage'))
 const CrewPage = lazy(() => import('./pages/CrewPage'))
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -199,6 +200,7 @@ export default function SpaceApp() {
               <Route path="/" element={<HomePage />} />
               <Route path="/projects" element={<ProjectsPage />} />
               <Route path="/crew" element={<CrewPage />} />
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Suspense>
           <SpaceFooter />
