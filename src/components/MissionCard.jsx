@@ -74,7 +74,7 @@ export default function MissionCard({ project, onOpen }) {
           onOpen?.(p)
         }
       }}
-      className="mission-card group glass relative flex h-full min-h-[15.25rem] min-w-0 cursor-pointer flex-col overflow-hidden rounded-2xl p-6 text-left transition-all duration-500 hover:-translate-y-1 hover:border-ember-500/40 hover:shadow-[0_0_50px_rgba(245,48,3,0.12)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ember-400"
+      className="mission-card group glass relative flex h-full min-h-[15.25rem] min-w-0 cursor-pointer flex-col overflow-hidden rounded-2xl p-6 text-left transition-all duration-500 hover:-translate-y-1 hover:border-ember-500/40 hover:shadow-[0_24px_48px_-20px_rgba(17,17,17,0.16)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ember-400"
     >
       {/* Logo zone — live favicon for shipped projects, stylised monogram
           for the rest. Both fade right-to-left via the same CSS mask. */}

@@ -163,11 +163,11 @@ const KINDS = {
       {/* hero visual with floating stat card */}
       <div className="relative min-h-0 flex-1">
         <Block className="img-shimmer h-full w-full bg-gradient-to-br from-ember-500/25 via-star-100/10 to-transparent" />
-        <div className="loop-bob absolute right-1.5 top-1.5 rounded-md bg-white/80 px-1.5 py-1 shadow-sm dark:bg-space-900/80">
+        <div className="loop-bob absolute right-1.5 top-1.5 rounded-md bg-white/80 px-1.5 py-1 shadow-sm dark:bg-[rgba(22,18,15,0.50)]">
           <MiniLabel className="text-star-200">+38%</MiniLabel>
           <MiniSub className="text-emerald-500">this week</MiniSub>
         </div>
-        <div className="loop-bob-sm absolute bottom-1.5 left-1.5 flex items-center gap-1.5 rounded-md bg-white/80 px-1.5 py-1 shadow-sm dark:bg-space-900/80" style={{ animationDelay: '1.2s' }}>
+        <div className="loop-bob-sm absolute bottom-1.5 left-1.5 flex items-center gap-1.5 rounded-md bg-white/80 px-1.5 py-1 shadow-sm dark:bg-[rgba(22,18,15,0.50)]" style={{ animationDelay: '1.2s' }}>
           <Avatar tone="bg-emerald-400/30" size="h-4 w-4" />
           <div className="space-y-0.5">
             <MiniLabel className="text-star-300">2,400+ signups</MiniLabel>
@@ -193,7 +193,7 @@ const KINDS = {
           ['from-ember-500/20 to-star-100/5', '23 likes'],
         ].map(([g, likes], i) => (
           <div key={i} className={`photo-cycle relative overflow-hidden rounded-md bg-gradient-to-br ${g}`} style={{ animationDelay: `${i * 1.1}s` }}>
-            <span className="loop-pulse absolute right-1 top-1 rounded-full bg-white/70 px-1 py-px text-[6px] font-semibold text-star-800 dark:bg-space-900/70 dark:text-star-200">
+            <span className="loop-pulse absolute right-1 top-1 rounded-full bg-white/70 px-1 py-px text-[6px] font-semibold text-star-800 dark:bg-[rgba(22,18,15,0.50)] dark:text-star-200">
               ♥ {likes}
             </span>
             <div className="absolute bottom-1 left-1 right-1 flex items-center gap-1">
@@ -222,11 +222,11 @@ const KINDS = {
           <MiniSub className="text-star-500">FULL NAME *</MiniSub>
           <MiniSub className="text-ember-500">required</MiniSub>
         </div>
-        <Block className="h-4 border border-star-300/20 bg-white/60 dark:bg-space-950/60" />
+        <Block className="h-4 border border-star-300/20 bg-white/60 dark:bg-[rgba(22,18,15,0.50)]" />
       </div>
       <div className="space-y-1">
         <MiniSub className="text-star-500">EMAIL *</MiniSub>
-        <Block className="h-4 border border-star-300/20 bg-white/60 dark:bg-space-950/60" />
+        <Block className="h-4 border border-star-300/20 bg-white/60 dark:bg-[rgba(22,18,15,0.50)]" />
       </div>
       <div className="space-y-1">
         <MiniSub className="text-star-500">BUDGET</MiniSub>
@@ -237,7 +237,7 @@ const KINDS = {
       </div>
       <div className="space-y-1">
         <MiniSub className="text-star-500">PROJECT DETAILS *</MiniSub>
-        <Block className="h-6 border border-star-300/20 bg-white/60 dark:bg-space-950/60"><span className="loop-blink inline-block h-2 w-px translate-y-1 bg-ember-500" /></Block>
+        <Block className="h-6 border border-star-300/20 bg-white/60 dark:bg-[rgba(22,18,15,0.50)]"><span className="loop-blink inline-block h-2 w-px translate-y-1 bg-ember-500" /></Block>
       </div>
       <div className="flex items-center gap-1">
         <span className="check-tick h-2 w-2 rounded-[2px] bg-ember-500/70" />
@@ -262,7 +262,7 @@ const KINDS = {
           ['bg-star-100/20', 'Juan Dela Cruz', 'Order #1041', 'Pending', 'bg-amber-400/20 text-amber-600 dark:text-amber-300', '₱1,200'],
           ['bg-star-100/20', 'Ana Reyes', 'Order #1040', 'Shipped', 'bg-sky-400/20 text-sky-600 dark:text-sky-300', '₱3,800'],
         ].map(([tone, name, sub, status, st, amt], i) => (
-          <div key={name} className="row-slide flex items-center gap-1.5 rounded-md border border-star-300/10 bg-white/40 px-1.5 py-1 dark:bg-white/5" style={{ animationDelay: `${i * 1.8}s` }}>
+          <div key={name} className="row-slide flex items-center gap-1.5 rounded-md border border-star-300/10 bg-white/40 px-1.5 py-1 dark:bg-[rgba(22,18,15,0.50)]" style={{ animationDelay: `${i * 1.8}s` }}>
             <Avatar tone={tone} size="h-5 w-5" />
             <div className="min-w-0 flex-1">
               <MiniLabel className="text-star-300">{name}</MiniLabel>
@@ -289,7 +289,7 @@ const KINDS = {
         ['from-ember-500/25 to-star-100/5', '₱599', '★ 4.9'],
         ['from-star-100/20 to-star-100/5', '₱1,299', '★ 4.7'],
       ].map(([g, price, rating], i) => (
-        <div key={i} className="flex flex-col overflow-hidden rounded-md border border-star-300/15 bg-white/40 dark:bg-white/5">
+        <div key={i} className="flex flex-col overflow-hidden rounded-md border border-star-300/15 bg-white/40 dark:bg-[rgba(22,18,15,0.50)]">
           <Block className={`img-shimmer relative min-h-0 flex-1 bg-gradient-to-br ${g}`}>
             <span className="loop-pulse absolute right-1 top-1 rounded-full bg-ember-500/80 px-1 py-px text-[6px] font-bold text-white">
               NEW
@@ -371,7 +371,7 @@ const KINDS = {
           ['bg-gradient-to-br from-ember-500/25 to-star-100/5', '₱599', '★ 4.9'],
           ['bg-gradient-to-br from-star-100/20 to-star-100/5', '₱1,299', '★ 4.7'],
         ].map(([g, price, rating], i) => (
-          <div key={i} className="overflow-hidden rounded-md border border-star-300/10 bg-white/40 dark:bg-white/5">
+          <div key={i} className="overflow-hidden rounded-md border border-star-300/10 bg-white/40 dark:bg-[rgba(22,18,15,0.50)]">
             <Block className={`img-shimmer min-h-0 flex-1 bg-gradient-to-br ${g}`} />
             <div className="space-y-0.5 p-1">
               <Line w="w-3/4" h="h-1" tone="bg-star-100/20" />
@@ -592,7 +592,7 @@ const KINDS = {
             <span className="loop-pulse rounded-full bg-star-100/10 px-1 text-[7px] text-star-500">{count}</span>
           </div>
           {cards.map(([w, tone, prio], i) => (
-            <div key={i} className="kanban-pop space-y-1 rounded-md bg-white/40 p-1 shadow-sm dark:bg-white/5" style={{ animationDelay: `${col * 1.9 + i * 0.7}s` }}>
+            <div key={i} className="kanban-pop space-y-1 rounded-md bg-white/40 p-1 shadow-sm dark:bg-[rgba(22,18,15,0.50)]" style={{ animationDelay: `${col * 1.9 + i * 0.7}s` }}>
               <div className="flex items-center justify-between">
                 <span className="flex gap-px">
                   <Dot tone="bg-star-100/25" />
@@ -803,8 +803,8 @@ const MediaTile = ({ item }) => {
 
   if (item.shape === 'phone') {
     return (
-      <div className="flex h-full w-full items-center justify-center rounded-lg border border-star-300/25 bg-white/60 dark:bg-white/5">
-        <div className="flex h-4/5 w-3/5 flex-col overflow-hidden rounded-[0.9rem] border border-star-300/30 bg-white/80 dark:bg-space-900/70">
+      <div className="flex h-full w-full items-center justify-center rounded-lg border border-star-300/20 bg-white shadow-[0_1px_2px_rgba(21,20,18,0.04)] dark:border-white/10 dark:bg-[rgba(26,22,18,0.68)] dark:shadow-[0_24px_48px_-24px_rgba(0,0,0,0.55)] dark:backdrop-blur-md">
+        <div className="flex h-4/5 w-3/5 flex-col overflow-hidden rounded-[0.9rem] border border-star-300/25 bg-white shadow-sm dark:border-white/10 dark:bg-[rgba(20,17,14,0.72)] dark:backdrop-blur-sm">
           <div className="mx-auto mt-1.5 h-0.5 w-1/3 rounded-full bg-star-100/15" />
           <div className="min-h-0 flex-1">{content}</div>
         </div>
@@ -813,8 +813,8 @@ const MediaTile = ({ item }) => {
   }
 
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden rounded-lg border border-star-300/25 bg-white/60 dark:bg-white/5">
-      <div className="flex items-center gap-1 border-b border-star-300/20 px-2 py-1">
+    <div className="flex h-full w-full flex-col overflow-hidden rounded-lg border border-star-300/20 bg-white shadow-[0_1px_2px_rgba(21,20,18,0.04)] dark:border-white/10 dark:bg-[rgba(26,22,18,0.68)] dark:shadow-[0_24px_48px_-24px_rgba(0,0,0,0.55)] dark:backdrop-blur-md">
+      <div className="flex items-center gap-1 border-b border-star-300/15 px-2 py-1 dark:border-white/10">
         <span className="h-1.5 w-1.5 rounded-full bg-ember-400/70" />
         <span className="h-1.5 w-1.5 rounded-full bg-ember-400/40" />
         <span className="h-1.5 w-1.5 rounded-full bg-ember-400/20" />
@@ -1030,7 +1030,7 @@ export default function SpaceServices() {
       <div className="mx-auto mb-16 max-w-3xl text-center">
         <div className="mb-4 flex items-center justify-center gap-4">
           <Squiggle className="h-2 w-16 -scale-x-100 text-ember-500/60" />
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ember-500">
+          <p data-parallax="-0.1" className="text-xs font-semibold uppercase tracking-[0.2em] text-ember-500">
             What we build
           </p>
           <Squiggle className="h-2 w-16 text-ember-500/60" />
@@ -1039,7 +1039,7 @@ export default function SpaceServices() {
           as="h2"
           text={servicesHeading}
           accent="drive results"
-          className="font-display text-4xl font-semibold leading-[1.05] tracking-tight text-star-100 sm:text-5xl"
+          className="font-display text-[2.75rem] font-semibold leading-[1.02] tracking-[-0.03em] text-star-100 sm:text-6xl"
         />
         <p className="mx-auto mt-5 max-w-xl leading-relaxed text-star-400">{servicesSubtitle}</p>
       </div>

@@ -53,7 +53,7 @@ function StandardsGrid() {
 
   return (
     <div ref={rootRef} className="mb-16" style={{ perspective: '1200px' }}>
-      <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-ember-500">{WHY.standards.eyebrow}</p>
+      <p data-parallax="-0.1" className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-ember-500">{WHY.standards.eyebrow}</p>
       <h3 className="mb-10 font-display text-2xl font-semibold text-star-100 sm:text-3xl">
         {WHY.standards.heading}
       </h3>
@@ -84,12 +84,12 @@ export default function WhyInoversSection() {
   return (
     <section id="why-inovers" className="relative mx-auto max-w-7xl overflow-x-clip px-6 py-20 lg:px-10">
       <div className="mb-14 max-w-xl">
-        <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-ember-500">{WHY.eyebrow}</p>
+        <p data-parallax="-0.1" className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-ember-500">{WHY.eyebrow}</p>
         <SplitHeading
           as="h2"
           text={WHY.heading}
           accent={WHY.headingAccent}
-          className="font-display text-4xl font-semibold leading-[1.05] tracking-tight text-star-100 sm:text-5xl"
+          className="font-display text-[2.75rem] font-semibold leading-[1.02] tracking-[-0.03em] text-star-100 sm:text-6xl"
         />
         <p className="mt-5 leading-relaxed text-star-400">{WHY.lede}</p>
       </div>

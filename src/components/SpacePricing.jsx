@@ -22,14 +22,14 @@ export default function SpacePricing() {
   return (
     <section id="pricing" className="relative mx-auto max-w-6xl px-6 py-20 lg:px-10">
       <div className="mx-auto mb-16 max-w-2xl text-center">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-ember-500">
+        <p data-parallax="-0.1" className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-ember-500">
           {PRICING.eyebrow}
         </p>
         <SplitHeading
           as="h2"
           text={PRICING.heading}
           accent={PRICING.headingAccent}
-          className="font-display text-4xl font-semibold leading-[1.05] tracking-tight text-star-100 sm:text-5xl"
+          className="font-display text-[2.75rem] font-semibold leading-[1.02] tracking-[-0.03em] text-star-100 sm:text-6xl"
         />
         <p className="mx-auto mt-4 max-w-xl leading-relaxed text-star-400">{PRICING.sub}</p>
       </div>
@@ -46,7 +46,7 @@ export default function SpacePricing() {
               className={`v2-pricing-card isolate relative flex flex-col rounded-3xl p-8 transition-transform duration-500 ease-out [transform-style:preserve-3d] hover:[transform:rotateX(6deg)_rotateY(-8deg)_translateZ(20px)] motion-reduce:hover:transform-none sm:p-9 ${
                 standout
                   ? 'premium-glow border border-ember-500/35 bg-gradient-to-b from-ember-500/[0.09] to-transparent shadow-[0_30px_70px_-25px_rgba(245,48,3,0.45)] md:scale-[1.03]'
-                  : 'border border-star-300/15 bg-star-800/[0.015] dark:bg-white/[0.02] md:scale-[0.97]'
+                  : 'border border-star-300/20 bg-white shadow-[0_1px_2px_rgba(17,17,17,0.04),0_16px_40px_-20px_rgba(17,17,17,0.10)] dark:bg-[rgba(26,22,18,0.68)] md:scale-[0.97]'
               }`}
             >
               {/* Live halo — the blurred ember aura behind the Premium

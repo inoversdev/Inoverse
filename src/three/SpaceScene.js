@@ -1,13 +1,20 @@
 import * as THREE from 'three'
 import { buildUFO, buildMotes } from './buildUfo'
 import { makeNebulaTexture, makeStarBloomTexture, makeStarTexture, makeGalaxyBandTexture, makeStreakTexture } from './textures'
+import { getDeviceProfile } from '../hooks/useDeviceProfile'
 
 // ─── SpaceScene — fixed full-screen universe, camera flies on scroll ───
 // Scroll progress (0..1) maps to a camera path through space.
 // The UFO leads ahead of the camera, leading the way.
+//
+// LOW-END DEGRADE (Mat's call 2026-08-12): weak devices get a reduced
+// starfield (starScale 0.35 → ~770 far stars, ~150 near), capped 1x
+// pixel ratio (half the fill rate), and the expensive extras are
+// skipped — galaxy bands, galaxy cores, shooting stars, and motes.
 
 const SPACE_DEPTH = 260 // total flight distance
-const STAR_COUNT = 2200
+const FULL_STAR_COUNT = 2200
+const FULL_NEAR_STAR_COUNT = 420
 
 // Ease 0..1 with smoothstep (no harsh start/stop)
 const smoothstep = (x) => {
@@ -23,24 +30,28 @@ export default class SpaceScene {
     this.mount = mount
     this.disposed = false
     this.isDark = theme === 'dark'
+    const profile = getDeviceProfile()
+    this.lowEnd = profile.lowEnd
+    this.starCount = Math.max(150, Math.floor(FULL_STAR_COUNT * profile.starScale))
+    this.nearStarCount = Math.max(60, Math.floor(FULL_NEAR_STAR_COUNT * profile.starScale))
 
     // ─── Renderer ───
     this.renderer = new THREE.WebGLRenderer({
-      antialias: true,
+      antialias: false, // low-end: no AA (half the fill); cheap either way
       alpha: false,
       powerPreference: 'high-performance',
     })
     this.renderer.setSize(mount.clientWidth, mount.clientHeight)
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5))
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, profile.dprCap))
     this.renderer.outputColorSpace = THREE.SRGBColorSpace
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping
     this.renderer.toneMappingExposure = 1.2
     mount.appendChild(this.renderer.domElement)
 
-    // ─── Scene (theme-aware: dark = deep space, light = daylight) ───
+    // ─── Scene (theme-aware: dark = deep space, light = calm paper) ───
     this.scene = new THREE.Scene()
-    this.scene.background = new THREE.Color(this.isDark ? 0x070605 : 0xffffff)
-    this.scene.fog = new THREE.Fog(this.isDark ? 0x070605 : 0xffffff, 14, 60)
+    this.scene.background = new THREE.Color(this.isDark ? 0x070605 : 0xf7f6f4)
+    this.scene.fog = new THREE.Fog(this.isDark ? 0x070605 : 0xf7f6f4, 14, 60)
 
     // ─── Camera ───
     this.camera = new THREE.PerspectiveCamera(55, mount.clientWidth / mount.clientHeight, 0.1, 300)
@@ -61,9 +72,13 @@ export default class SpaceScene {
     this.ufo.position.set(0, 0.4, -6)
     this.scene.add(this.ufo)
 
-    // ─── Ember motes around ship ───
-    this.motes = buildMotes(140)
-    this.scene.add(this.motes)
+    // ─── Ember motes around ship (skipped on low-end) ───
+    if (!this.lowEnd) {
+      this.motes = buildMotes(140)
+      this.scene.add(this.motes)
+    } else {
+      this.motes = null
+    }
 
     // ─── Mouse drift (VERY slow reaction — leans, never chases) ───
     this.mouseX = 0
@@ -83,9 +98,9 @@ export default class SpaceScene {
     // ─── Starfield (deep box, recycled as camera flies) ───
     // Light: dark warm-gray ink specks (NormalBlending). Dark: warm-white additive.
     this.starGeo = new THREE.BufferGeometry()
-    const starPos = new Float32Array(STAR_COUNT * 3)
-    const starColors = new Float32Array(STAR_COUNT * 3)
-    for (let i = 0; i < STAR_COUNT * 3; i += 3) {
+    const starPos = new Float32Array(this.starCount * 3)
+    const starColors = new Float32Array(this.starCount * 3)
+    for (let i = 0; i < this.starCount * 3; i += 3) {
       starPos[i] = (Math.random() - 0.5) * 160
       starPos[i + 1] = (Math.random() - 0.5) * 80
       starPos[i + 2] = -(2 + Math.random() * (SPACE_DEPTH - 2))
@@ -111,7 +126,7 @@ export default class SpaceScene {
       color: 0xffffff,
       size: this.isDark ? 0.09 : 0.1,
       transparent: true,
-      opacity: this.isDark ? 0.85 : 0.9,
+      opacity: this.isDark ? 0.85 : 0.12,
       sizeAttenuation: true,
       depthWrite: false,
       vertexColors: true,
@@ -126,9 +141,9 @@ export default class SpaceScene {
 
     // Brighter near stars (a second, sparser layer)
     this.nearStarGeo = new THREE.BufferGeometry()
-    const nearPos = new Float32Array(420 * 3)
-    const nearColors = new Float32Array(420 * 3)
-    for (let i = 0; i < 420 * 3; i += 3) {
+    const nearPos = new Float32Array(this.nearStarCount * 3)
+    const nearColors = new Float32Array(this.nearStarCount * 3)
+    for (let i = 0; i < this.nearStarCount * 3; i += 3) {
       nearPos[i] = (Math.random() - 0.5) * 120
       nearPos[i + 1] = (Math.random() - 0.5) * 60
       nearPos[i + 2] = -(30 + Math.random() * (SPACE_DEPTH - 30))
@@ -154,7 +169,7 @@ export default class SpaceScene {
       color: 0xffffff,
       size: this.isDark ? 0.45 : 0.5,
       transparent: true,
-      opacity: this.isDark ? 0.8 : 0.85,
+      opacity: this.isDark ? 0.8 : 0.10,
       depthWrite: false,
       sizeAttenuation: true,
       vertexColors: true,
@@ -184,7 +199,7 @@ export default class SpaceScene {
           map: nebulaTex,
           color: this.isDark ? 0xf53003 : 0xf7a078,
           transparent: true,
-          opacity: this.isDark ? 0.28 : 0.16,
+          opacity: this.isDark ? 0.28 : 0.045,
           depthWrite: false,
           fog: false, // stay visible at any distance
           ...(this.isDark ? { blending: THREE.AdditiveBlending } : {}),
@@ -198,9 +213,11 @@ export default class SpaceScene {
     })
     this.nebulas.forEach((n) => (n.userData.texture = nebulaTex))
 
-    // ─── Interstellar galaxy band (warm dust streak across the flight) ───
-    const bandTex = makeGalaxyBandTexture()
+    // ─── Interstellar galaxy band (warm dust streak across the flight) —
+    //     SKIPPED on low-end (extra additive sprites cost fill rate) ───
     this.galaxyBands = []
+    if (!this.lowEnd) {
+    const bandTex = makeGalaxyBandTexture()
     const bandWaypoints = [
       { x: 0, y: 1.2, z: -35, s: 120, o: 0.10 },
       { x: 3, y: -1.6, z: -75, s: 140, o: 0.13 },
@@ -227,10 +244,13 @@ export default class SpaceScene {
       this.galaxyBands.push(sprite)
     })
     this.galaxyBands.forEach((n) => (n.userData.texture = bandTex))
+    }
 
-    // ─── Distant galaxy cores (bright warm spots, like far galaxies) ───
-    const coreTex = makeStarBloomTexture()
+    // ─── Distant galaxy cores (bright warm spots, like far galaxies) —
+    //     SKIPPED on low-end ───
     this.galaxyCores = []
+    if (!this.lowEnd) {
+    const coreTex = makeStarBloomTexture()
     const cores = [
       { x: -14, y: 2.6, z: -50, s: 5 },
       { x: 16, y: -2.4, z: -90, s: 6 },
@@ -257,15 +277,17 @@ export default class SpaceScene {
       this.galaxyCores.push(core)
     })
     this.galaxyCores.forEach((n) => (n.userData.texture = coreTex))
+    }
 
     // ─── Shooting stars ───
     // Bright comet streaks that cross the sky, spawning more frequently
     // when the user is in body sections (Services–Contact). Each star is a
     // stretched sprite so it can fade via its own opacity AND rotate along
     // its screen-space motion direction (a Points pool can't do either).
-    const SHOOTING_STAR_COUNT = 6
+    // SKIPPED on low-end — they spawn per-frame math + sprites.
     this.shootingStarTex = makeStreakTexture()
     this.shootingStars = []
+    const SHOOTING_STAR_COUNT = this.lowEnd ? 0 : 6
     for (let i = 0; i < SHOOTING_STAR_COUNT; i++) {
       const sprite = new THREE.Sprite(
         new THREE.SpriteMaterial({
@@ -370,13 +392,24 @@ export default class SpaceScene {
       const t = this.clock.elapsedTime
 
       // Smooth progress (eases camera)
-      this.smoothProgress += (this.progress - this.smoothProgress) * 0.06
+       this.smoothProgress += (this.progress - this.smoothProgress) * 0.06
 
        // ─── Camera flight path (scroll-driven, gentle) ───
        const p = this.smoothProgress
        const scrollZ = p * SPACE_DEPTH
        const camX = Math.sin(p * Math.PI * 2) * 2.8
        const camY = 0.6 + Math.sin(p * Math.PI * 3) * 1.0
+
+       // Camera-moved gate: the starfield recycle loops below iterate
+       // every star with float math + a GPU upload EVERY frame — that's
+       // the heaviest CPU cost in the scene. When the camera isn't
+       // actually moving (scroll idle), skip them entirely; the stars
+       // still render in place. (Mat's stutter report 2026-08-12.)
+       const camMoved =
+         Math.abs(this.camera.position.z - scrollZ) > 0.001 ||
+         Math.abs(this.camera.position.x - camX) > 0.001 ||
+         Math.abs(this.camera.position.y - camY) > 0.001 ||
+         !this.entranceComplete
 
        // ─── Entrance warp-speed fly-in ───
        // Camera starts BEHIND the hero (positive z) and rockets FORWARD
@@ -434,9 +467,11 @@ export default class SpaceScene {
       this.ufo.rotation.x = Math.sin(t * 0.6) * 0.03 - this.mouseDriftY * 0.04
 
       // Motes follow ship — fade as it departs
-      this.motes.position.set(this.ufo.position.x, this.ufo.position.y, this.ufo.position.z + 2)
-      this.motes.rotation.y = t * 0.05
-      this.motes.material.opacity = 0.5 * (1 - dep * 0.9)
+      if (this.motes) {
+        this.motes.position.set(this.ufo.position.x, this.ufo.position.y, this.ufo.position.z + 2)
+        this.motes.rotation.y = t * 0.05
+        this.motes.material.opacity = 0.5 * (1 - dep * 0.9)
+      }
 
       // ─── Stars recede in sync with the UFO's departure ───
       // As the ship shrinks away, the whole starfield pulls back with it.
@@ -450,6 +485,9 @@ export default class SpaceScene {
       // Every branch lands stars safely AHEAD (never on the lens) — a point
       // sprite's screen size is size*scale/distance, so anything crossing
       // the camera plane within a unit or two flashes the whole screen.
+      // SKIPPED when the camera is idle (see camMoved) — the loops below
+      // are the heaviest CPU cost in the scene.
+      if (camMoved) {
       const starPos = this.starGeo.attributes.position.array
       for (let i = 0; i < starPos.length; i += 3) {
         if (starPos[i + 2] > z + 10) {
@@ -487,12 +525,15 @@ export default class SpaceScene {
         }
       }
       this.nearStarGeo.attributes.position.needsUpdate = true
+      }
 
       // ─── Recycle galaxy details — infinite corridor like the starfield ───
       // Bands/cores/nebulas track the camera both directions so the body
       // sections always fly through them. Landing spots are always well
       // AHEAD of the lens — combined with lensFade below, a fog:false sprite
       // never reaches the camera plane (that was the full-screen flash).
+      // Only needed while the camera moves (see camMoved).
+      if (camMoved) {
       const recycle = (sprite) => {
         if (sprite.position.z > z + 20) {
           sprite.position.z = z - 60 - Math.random() * 180
@@ -503,6 +544,7 @@ export default class SpaceScene {
       this.galaxyBands.forEach(recycle)
       this.galaxyCores.forEach(recycle)
       this.nebulas.forEach(recycle)
+      }
 
       // Lens fade: fade sprites to nothing in the last 16 units before the
       // camera, so a giant additive sprite crossing the plane is invisible.
@@ -513,20 +555,20 @@ export default class SpaceScene {
 
       // Nebulas slowly breathe
       this.nebulas.forEach((n, i) => {
-        const base = this.isDark ? 0.22 : 0.15
+        const base = this.isDark ? 0.22 : 0.04
         n.material.opacity = (base + Math.sin(t * 0.3 + i * 1.7) * 0.06) * lensFade(n)
       })
 
       // Galaxy bands gently shimmer
       this.galaxyBands.forEach((n, i) => {
-        const base = this.isDark ? 0.10 + (i % 2) * 0.03 : 0.28 + (i % 2) * 0.08
-        const amp = this.isDark ? 0.025 : 0.03
+        const base = this.isDark ? 0.10 + (i % 2) * 0.03 : 0.05 + (i % 2) * 0.02
+        const amp = this.isDark ? 0.025 : 0.015
         n.material.opacity = (base + Math.sin(t * 0.2 + i * 1.3) * amp) * lensFade(n)
       })
 
       // Galaxy cores (fixed brightness, just faded at the lens)
       this.galaxyCores.forEach((c) => {
-        c.material.opacity = (this.isDark ? 0.45 : 0.5) * lensFade(c)
+        c.material.opacity = (this.isDark ? 0.45 : 0.10) * lensFade(c)
       })
 
       // ─── Starfield twinkle — multi-frequency composite opacity ───
@@ -534,14 +576,14 @@ export default class SpaceScene {
       // frequency pulse. The result is a gentle organic breathing that makes
       // the field feel alive without distracting from the scene.
       const starTwinkle =
-        (this.isDark ? 0.85 : 0.88) +
+        (this.isDark ? 0.85 : 0.12) +
         0.08 * Math.sin(t * 0.6 + 1.2) +
         0.05 * Math.sin(t * 1.4 + 3.5) +
         0.03 * Math.sin(t * 2.3 + 0.8)
       this.stars.material.opacity = starTwinkle
 
       const nearTwinkle =
-        (this.isDark ? 0.72 : 0.82) +
+        (this.isDark ? 0.72 : 0.10) +
         0.10 * Math.sin(t * 0.45 + 2.1) +
         0.06 * Math.sin(t * 1.05 + 4.2) +
         0.04 * Math.sin(t * 1.7 + 0.3)
@@ -554,7 +596,7 @@ export default class SpaceScene {
       // is actually moving on screen (projected velocity) — a comet look
       // instead of a blinking dot.
       const inBody = this.smoothProgress > 0.15 && this.smoothProgress < 0.85
-      const shootRate = inBody ? 0.05 : 0.008
+      const shootRate = this.isDark ? (inBody ? 0.05 : 0.008) : inBody ? 0.012 : 0.002
       this.camera.updateMatrixWorld()
       const proj0 = new THREE.Vector3()
       const proj1 = new THREE.Vector3()
@@ -621,7 +663,8 @@ export default class SpaceScene {
         else obj.material.dispose()
       }
     })
-    ;[this.stars, this.nearStars, this.motes, ...this.nebulas, ...this.galaxyBands, ...this.galaxyCores].forEach((obj) => {
+    ;[this.stars, this.nearStars, this.motes, ...this.nebulas, ...(this.galaxyBands || []), ...(this.galaxyCores || [])].forEach((obj) => {
+      if (!obj) return
       if (obj?.userData?.texture) obj.userData.texture.dispose()
     })
     this.shootingStarTex.dispose()

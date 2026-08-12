@@ -44,7 +44,7 @@ export default function SpaceContact() {
         <div className="relative grid gap-12 lg:grid-cols-2">
           <div className="v2-contact-block">
             <p data-parallax="-0.1" className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-ember-500">Contact</p>
-            <h2 className="font-display text-4xl font-semibold leading-[1.05] tracking-tight text-star-100 sm:text-5xl">
+            <h2 className="font-display text-[2.75rem] font-semibold leading-[1.02] tracking-[-0.03em] text-star-100 sm:text-6xl">
               Let's build something <span className="ember-text font-light">together</span>
             </h2>
             <p className="mt-5 text-star-400">{CONTACT.subheading}</p>
@@ -65,7 +65,7 @@ export default function SpaceContact() {
                    calls 2026-08-11) — Vibs takes the full spotlight.
                    CONTACT.vibs.url is the wiring point; empty → disabled
                    "coming soon" state so demos never look broken. ── */}
-            <div className="relative overflow-hidden rounded-2xl border border-ember-500/25 bg-white/80 p-7 dark:border-ember-500/20 dark:bg-white/5">
+            <div className="relative overflow-hidden rounded-2xl border border-star-300/20 bg-white p-7 shadow-[0_1px_2px_rgba(17,17,17,0.04),0_12px_32px_-16px_rgba(17,17,17,0.08)] dark:border-ember-500/20 dark:bg-[rgba(26,22,18,0.68)]">
               <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-ember-500/15 blur-[60px]" />
               <div className="relative">
                 <div className="flex items-center justify-between gap-3">
@@ -113,7 +113,7 @@ export default function SpaceContact() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between rounded-2xl border border-star-300/30 bg-white/80 p-5 dark:bg-white/5">
+            <div className="flex items-center justify-between rounded-2xl border border-star-300/20 bg-white p-5 shadow-[0_1px_2px_rgba(17,17,17,0.04)] dark:bg-[rgba(26,22,18,0.68)]">
               <p className="text-sm uppercase tracking-widest text-star-500">Phone</p>
               <p className="text-lg text-star-100">{BRAND.phone}</p>
             </div>

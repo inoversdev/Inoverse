@@ -10,7 +10,8 @@ import TestimonialCard from './TestimonialCard'
 gsap.registerPlugin(ScrollTrigger)
 
 // Live value of the reduced-motion preference, so the section can swap
-// between the marquee (motion) and the static grid (no motion).
+// between the marquee (motion) and the static grid (no motion). Low-end
+// keeps the marquee — it pauses offscreen, so no perf need to swap.
 function useReducedMotion() {
   const [reduce, setReduce] = useState(
     () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -44,18 +45,33 @@ function TestimonialRow() {
 // own track of two identical copies (CSS -50% keyframe loop), the top row
 // flows left while the bottom row flows right — mirrored, no hover pause
 // (Mat's call 2026-08-10). Same TestimonialCard, same design, cards fade
-// at the section edges through a mask. ───
+// at the section edges through a mask. PAUSES OFFSCREEN (Intersection-
+// Observer) so the loop stops costing paint when scrolled away. ───
 function TestimonialMarquee() {
+  const trackARef = useRef(null)
+  const trackBRef = useRef(null)
+  useEffect(() => {
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        const state = entry.isIntersecting ? 'running' : 'paused'
+        if (trackARef.current) trackARef.current.style.animationPlayState = state
+        if (trackBRef.current) trackBRef.current.style.animationPlayState = state
+      },
+      { rootMargin: '120px' }
+    )
+    if (trackARef.current) io.observe(trackARef.current)
+    return () => io.disconnect()
+  }, [])
   return (
     <div className="flex flex-col gap-6">
       <div className="marquee-mask overflow-hidden">
-        <div className="marquee-track flex w-max">
+        <div ref={trackARef} className="marquee-track flex w-max">
           <TestimonialRow />
           <TestimonialRow />
         </div>
       </div>
       <div className="marquee-mask overflow-hidden">
-        <div className="marquee-track marquee-track-reverse flex w-max">
+        <div ref={trackBRef} className="marquee-track marquee-track-reverse flex w-max">
           <TestimonialRow />
           <TestimonialRow />
         </div>
@@ -110,12 +126,12 @@ export default function TestimonialsSection() {
   return (
     <section id="testimonials" className="relative mx-auto max-w-7xl px-6 py-20 lg:px-10">
       <div className="mb-14 max-w-xl">
-        <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-ember-500">{TESTIMONIALS_PAGE.eyebrow}</p>
+        <p data-parallax="-0.1" className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-ember-500">{TESTIMONIALS_PAGE.eyebrow}</p>
         <SplitHeading
           as="h2"
           text={TESTIMONIALS_PAGE.heading}
           accent={TESTIMONIALS_PAGE.headingAccent}
-          className="font-display text-4xl font-semibold leading-[1.05] tracking-tight text-star-100 sm:text-5xl"
+          className="font-display text-[2.75rem] font-semibold leading-[1.02] tracking-[-0.03em] text-star-100 sm:text-6xl"
         />
         <p className="mt-5 leading-relaxed text-star-400">{TESTIMONIALS_PAGE.lede}</p>
       </div>

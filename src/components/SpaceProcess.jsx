@@ -17,24 +17,46 @@ gsap.registerPlugin(ScrollTrigger)
 // Breakpoint note: 768px means iPad portrait (768–834px wide) keeps the
 // desktop layout, matching "keep the current design on Desktop/iPads".
 
-// Mobile serpentine geometry (viewBox 300×700) — the path passes through
-// the four node anchors exactly, so the numbered circles sit ON the curve:
+// Mobile serpentine geometry (viewBox 300×700). The four numbered
+// circles sit at fixed display positions (see MOBILE_NODES below), now
+// alternating left/right the whole way down instead of N4 sitting
+// dead-center:
 //   N1 (40,150) upper-left · N2 (260,280) mid-right
-//   N3 (40,430) lower-left · N4 (150,600) bottom-center
-// The N3→N4 leg hugs the left rail until it is BELOW the step-4 text
-// block, then dives right into the bottom-center node — the curve never
-// slices through the "Launch & Grow" copy.
+//   N3 (40,430) lower-left · N4 (260,600) bottom-right
 //
-// LITERAL-S path (Mat's call 2026-08-11 — "the fly path is literally
-// letter S"): every segment is a CURVE — the old straight rails (top
-// vertical drop, bottom left rail) made it read as a rounded Z. Now:
-// soft top entry -> right dome -> left dome -> bottom-left bulge ->
-// gentle dive into N4. Vertical tangents kept at the N2/N3 inflections
-// (the cursive-S signature), all four numbered nodes still sit exactly
-// on the path, and the bottom bulge still hugs x<=32 until below the
-// step-4 text (y > 548) before diving.
+// N4 used to sit centered with its caption text centered and full-width
+// above it — the ONLY node whose text couldn't sit to one side, which
+// forced the curve into a special "hug the far-left rail, then dive"
+// detour just to dodge it. Moving N4's caption beside it instead (same
+// left/right rhythm as N1-N3, see MOBILE_NODES) removes the obstacle
+// instead of routing around it: the P3→P4 leg is now the exact same
+// S-connector construction as every other leg, no detour needed.
+//
+// Per Mat's reference sketch: the line runs on the OUTSIDE of each
+// circle — the circle nests inside the bend of the curve, not straddled
+// by it. So the curve's own waypoints (below) sit ~24-26 units PAST
+// each circle, away from the frame's center, toward whichever edge that
+// node already leans. The circle ends up tucked on the inside of each
+// turn, with the line clearly outside it.
+//
+// Every leg uses the "S-connector" construction — control points
+// directly above/below their own endpoint, at the vertical midpoint of
+// the leg (cp1 = (xa, midY), cp2 = (xb, midY)) — so the tangent stays
+// vertical at every waypoint (the cursive-S signature: steepest right
+// at the turn, full belly in between) rather than a near-straight
+// diagonal.
+const P1 = [16, 150] // outside N1 (40,150), further left
+const P2 = [284, 280] // outside N2 (260,280), further right
+const P3 = [16, 430] // outside N3 (40,430), further left
+const P4 = [284, 600] // outside N4 (260,600), further right
+// Exit flourish — a small curl past N4 that mirrors the entry hook at
+// the top of the path (M 55 20 → P1), so the S reads as bookended by
+// matching curls, per the sketch. Continues straight down from P4
+// (vertical-tangent departure, same construction as every other leg)
+// before curling back left.
+const TAIL_END = [225, 660]
 const MOBILE_PATH_D =
-  'M 40 40 C 48 85, 52 115, 40 150 C 40 190, 110 205, 180 235 C 230 258, 260 262, 260 280 C 260 300, 200 330, 140 365 C 90 395, 55 410, 40 430 C 30 460, 28 505, 30 548 C 32 575, 95 595, 150 600'
+  `M 55 20 C 80 30, ${P1[0]} 100, ${P1[0]} ${P1[1]} C ${P1[0]} 215, ${P2[0]} 215, ${P2[0]} ${P2[1]} C ${P2[0]} 355, ${P3[0]} 355, ${P3[0]} ${P3[1]} C ${P3[0]} 515, ${P4[0]} 515, ${P4[0]} ${P4[1]} C ${P4[0]} 630, 250 655, ${TAIL_END[0]} ${TAIL_END[1]}`
 const MOBILE_VIEW_W = 300
 const MOBILE_VIEW_H = 700
 
@@ -208,7 +230,7 @@ export default function SpaceProcess() {
     { circle: 'left-[13%] top-[21%]', text: 'left-[27%] top-[21%] w-[61%] text-left' },
     { circle: 'left-[87%] top-[40%]', text: 'left-[12%] top-[40%] w-[61%] text-left' },
     { circle: 'left-[13%] top-[61%]', text: 'left-[27%] top-[61%] w-[61%] text-left' },
-    { circle: 'left-1/2 top-[86%]', text: 'left-1/2 top-[74%] w-[80%] -translate-x-1/2 text-center' },
+    { circle: 'left-[87%] top-[86%]', text: 'left-[12%] top-[86%] w-[61%] text-left' },
   ]
 
   return (
@@ -219,7 +241,7 @@ export default function SpaceProcess() {
           as="h2"
           text="Our flight plan"
           accent="flight"
-          className="font-display text-4xl font-semibold leading-[1.05] tracking-tight text-star-100 sm:text-5xl"
+          className="font-display text-[2.75rem] font-semibold leading-[1.02] tracking-[-0.03em] text-star-100 sm:text-6xl"
         />
         <p className="mt-4 text-sm leading-relaxed text-star-400">
           Four waypoints, one takeoff — follow the saucer as it flies the route from first
@@ -261,7 +283,7 @@ export default function SpaceProcess() {
       <div className="md:hidden">
         <div
           ref={mobileFrameRef}
-          className="relative mx-auto w-full max-w-[360px] overflow-hidden rounded-[2.5rem] border border-star-300/25 bg-white/30 shadow-[0_20px_60px_rgba(17,17,17,0.08)] dark:bg-white/[0.03]"
+          className="relative mx-auto w-full max-w-[360px] overflow-hidden rounded-[2.5rem] border border-star-300/25 bg-white/30 shadow-[0_20px_60px_rgba(17,17,17,0.08)] dark:bg-[rgba(26,22,18,0.68)]"
           style={{ aspectRatio: `${MOBILE_VIEW_W} / ${MOBILE_VIEW_H}` }}
         >
           {/* The S-curve — ember gradient, flowing dashes */}

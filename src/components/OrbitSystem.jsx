@@ -74,53 +74,42 @@ const TEAM_ANGLES = [0, 90, 180, 270]
 const LEAD_ANGLES = [0, 180]
 
 export default function OrbitSystem() {
-  const rootRef = useRef(null)
   const orbitRef = useRef(null)
   const sceneRef = useRef(null)
   const [grabbing, setGrabbing] = useState(false)
 
-  // Scroll entrance — the disc settles in, rings breathe in, the core
-  // pops, satellites cascade into orbit. Scoped to rootRef.
+  // Scroll entrance — REMOVED (Mat's bug 2026-08-12). Any GSAP tween
+  // (even opacity) on an element in the preserve-3d chain — the
+  // entrance wrapper, the scene, the rings, or the nodes — forces
+  // Chromium to flatten that layer, so the medallions render squashed
+  // while the tween runs, then "snap" to full 3D when it ends. The
+  // orbit simply renders at full opacity; the scene's idle drift keeps
+  // it alive. No entrance animation, no flattening, no snap.
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const ctx = gsap.context(() => {
-      const orbitTrig = { trigger: '.v2-orbit', start: 'top 82%', once: true }
-      gsap.fromTo(
-        '.v2-orbit-scene',
-        { opacity: 0, scale: 0.94 },
-        { opacity: 1, scale: 1, duration: 1.5, ease: 'power3.out', scrollTrigger: orbitTrig }
-      )
-      gsap.fromTo(
-        '.v2-orbit-ring',
-        { opacity: 0 },
-        { opacity: 1, duration: 1.4, ease: 'power2.out', scrollTrigger: orbitTrig }
-      )
-      gsap.fromTo(
-        '.v2-orbit-core',
-        { opacity: 0, scale: 0.4 },
-        {
-          opacity: 1,
-          scale: 1,
-          duration: 0.9,
-          ease: 'back.out(1.7)',
-          scrollTrigger: orbitTrig,
-        }
-      )
+      const orbitTrig = { trigger: orbitRef.current, start: 'top 85%', once: true }
+      // Fade ONLY the flat inner content wrappers (firstElementChild of
+      // each node) — these are outside the preserve-3d billboards, so
+      // GSAP opacity here cannot flatten the 3D chain. The rings/core/
+      // scene stay at full opacity (no tween on them at all).
       gsap.utils.toArray('.v2-orbit-node').forEach((el, i) => {
-        gsap.fromTo(
-          el,
-          { opacity: 0, scale: 0.5 },
-          {
-            opacity: 1,
-            scale: 1,
-            duration: 0.7,
-            delay: 0.2 + i * 0.12,
-            ease: 'power3.out',
-            scrollTrigger: orbitTrig,
-          }
-        )
+        const inner = el.firstElementChild
+        if (inner) {
+          gsap.fromTo(
+            inner,
+            { opacity: 0 },
+            {
+              opacity: 1,
+              duration: 0.7,
+              delay: 0.2 + i * 0.12,
+              ease: 'power3.out',
+              scrollTrigger: orbitTrig,
+            }
+          )
+        }
       })
-    }, rootRef)
+    }, orbitRef)
     return () => ctx.revert()
   }, [])
 
@@ -262,7 +251,7 @@ export default function OrbitSystem() {
               {/* The tilted disc */}
               <div
                 ref={sceneRef}
-                className="v2-orbit-scene absolute inset-0 will-change-transform"
+                className="v2-orbit-scene absolute inset-0"
                 style={{ transform: `rotateX(${TILT}deg)`, transformStyle: 'preserve-3d' }}
               >
                 {/* Outer boundary ring — farthest plane */}
@@ -274,7 +263,7 @@ export default function OrbitSystem() {
                 {/* Main orbit — teams ring, rotating; Saturn-style shading
                     gives it volume without extra lines. Carries the team
                     satellites with counter-spun icons so they stay upright. */}
-                <div className="v2-orbit-ring oc-ring-a absolute inset-[15%]" style={{ transformStyle: 'preserve-3d' }}>
+                <div className="v2-orbit-ring absolute inset-[15%]" style={{ transformStyle: 'preserve-3d' }}>
                   <div className="absolute inset-0 rounded-full border border-star-300/45" style={{ transform: 'translateZ(0)' }} />
                   <div className="ring-shade pointer-events-none absolute inset-0 rounded-full" style={{ transform: 'translateZ(0)' }} />
                   {ORG_CHART.rings[1].roles.map((r, i) => (
@@ -288,7 +277,7 @@ export default function OrbitSystem() {
                       }}
                     >
                       <div className="v2-orbit-node">
-                        <div className="oc-spin-a flex flex-col items-center gap-2" title={r.description}>
+                        <div className="flex flex-col items-center gap-2" title={r.description}>
                           <span
                             className="relative flex h-14 w-14 items-center justify-center rounded-full border border-ember-500/40 text-ember-100 shadow-[0_0_25px_rgba(245,48,3,0.25),inset_0_3px_4px_rgba(255,255,255,0.3),inset_0_-7px_11px_rgba(0,0,0,0.8)] sm:h-16 sm:w-16"
                             style={{
@@ -318,7 +307,7 @@ export default function OrbitSystem() {
 
                 {/* Inner ember dashed ring — leadership, counter-rotating,
                     with a beacon dot */}
-                <div className="v2-orbit-ring oc-ring-b absolute inset-[33%] rounded-full border border-dashed border-ember-500/35" style={{ transformStyle: 'preserve-3d' }}>
+                <div className="v2-orbit-ring absolute inset-[33%] rounded-full border border-dashed border-ember-500/35" style={{ transformStyle: 'preserve-3d' }}>
                   <span className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ember-500/80 shadow-[0_0_12px_rgba(245,48,3,0.9)]" />
                   {ORG_CHART.rings[0].roles.map((r, i) => (
                     <div
@@ -331,7 +320,7 @@ export default function OrbitSystem() {
                       }}
                     >
                       <div className="v2-orbit-node">
-                        <div className="oc-spin-b flex flex-col items-center gap-2" title={r.description}>
+                        <div className="flex flex-col items-center gap-2" title={r.description}>
                           <span
                             className="relative flex h-12 w-12 items-center justify-center rounded-full border border-ember-500/45 text-ember-100 shadow-[0_0_22px_rgba(245,48,3,0.3),inset_0_3px_3px_rgba(255,255,255,0.3),inset_0_-6px_9px_rgba(0,0,0,0.8)] sm:h-14 sm:w-14"
                             style={{

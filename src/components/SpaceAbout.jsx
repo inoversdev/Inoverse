@@ -36,14 +36,14 @@ export default function SpaceAbout() {
       <div className="grid gap-14 lg:grid-cols-12 lg:gap-10">
         {/* Narrative */}
         <div className="lg:col-span-5">
-          <p className="v2-about-copy mb-3 text-xs font-medium uppercase tracking-[0.2em] text-ember-600">
+          <p data-parallax="-0.1" className="v2-about-copy mb-3 text-xs font-medium uppercase tracking-[0.2em] text-ember-600">
             {ABOUT.eyebrow}
           </p>
           <SplitHeading
             as="h2"
             text={`${ABOUT.heading} ${ABOUT.headingHighlight}`}
             accent={ABOUT.headingHighlight}
-            className="font-display text-4xl font-semibold leading-[1.05] tracking-tight text-star-100 sm:text-5xl"
+            className="font-display text-[2.75rem] font-semibold leading-[1.02] tracking-[-0.03em] text-star-100 sm:text-6xl"
           />
           {ABOUT.paragraphs.map((p) => (
             <p key={p} className="v2-about-copy mt-5 leading-relaxed text-star-400">

@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
+import { getDeviceProfile } from '../../hooks/useDeviceProfile'
 
 // A soft ember glow that trails the cursor with lag — the ship's running
 // lights reading the room, not a spotlight. Desktop pointer-only; fades in
 // only after the first real mouse movement so it never sits pinned at
 // (0,0) before the visitor moves, and is fully inert under
-// prefers-reduced-motion.
+// prefers-reduced-motion. DISABLED on low-end devices (per-frame blur
+// + a 440px soft-glow layer is exactly the paint cost they don't need).
 export default function CursorAura() {
   const ref = useRef(null)
   const [active, setActive] = useState(false)
@@ -13,6 +15,7 @@ export default function CursorAura() {
   useEffect(() => {
     const el = ref.current
     if (!el) return
+    if (getDeviceProfile().lowEnd) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     if (!window.matchMedia('(pointer: fine)').matches) return
 

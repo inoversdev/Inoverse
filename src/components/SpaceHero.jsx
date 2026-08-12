@@ -89,7 +89,7 @@ export default function SpaceHero() {
         <p className="v2-hero-reveal mb-6 text-xs uppercase tracking-[0.2em] text-ember-500">
           {HERO.eyebrow}
         </p>
-        <h1 className="v2-hero-reveal font-display text-5xl font-bold leading-[0.95] tracking-[-0.04em] text-star-100 sm:text-7xl lg:text-8xl text-balance">
+        <h1 className="v2-hero-reveal font-display text-6xl font-bold leading-[0.9] tracking-[-0.045em] text-star-100 sm:text-8xl lg:text-[7.5rem] text-balance">
           Innovating the <span className="ember-text font-light">Future,</span>
           <br />
           Together.

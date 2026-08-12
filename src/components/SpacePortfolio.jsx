@@ -1,27 +1,149 @@
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BRAND, PROJECTS } from '../lib/content'
 import SplitHeading from './SplitHeading'
 import Ufo2D from './Ufo2D'
 import WispyCloud from './WispyCloud'
+import ProjectModal from './ProjectModal'
 
-// ─── The showcase — a pocketdevs-style logo wall (Mat's call
-// 2026-08-11: "make the work section look like the 'businesses and
-// startups we have worked with' part of pocketdevs.ph"). Uniform
-// bordered tiles — the 6 featured wordmarks, one clean row at
-// desktop (2/3/6 columns), no marquee, no links. Logo images swap in
-// later once the designers' assets land. ───
-function LogoWall({ items }) {
+// Live value of the reduced-motion preference — swap between the marquee
+// (motion) and the static grid (no motion), same pattern as testimonials.
+// NOTE: low-end devices keep the marquee too — it already pauses
+// offscreen via IntersectionObserver and has no will-change, so the
+// static-grid swap bought nothing and killed the signature motion.
+function useReducedMotion() {
+  const [reduce, setReduce] = useState(
+    () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  )
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const onChange = () => setReduce(mq.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+  return reduce
+}
+
+// ─── Marquee project card — bigger, richer than the old wordmark tile.
+// Carries the real project identity: index, name, industry pill, one-line
+// description, tech tags. Glass surface (solid white / tinted glass),
+// lifts + ember border on hover, opens the same ProjectModal as /projects. ───
+function ProjectMarqueeCard({ project, index, onOpen }) {
+  const p = project
   return (
-    <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-6">
-      {items.map((p) => (
-        <div
-          key={p.id}
-          className="group flex items-center justify-center rounded-xl border border-star-300/20 bg-white/50 px-4 py-7 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-ember-500/40 hover:shadow-[0_12px_30px_-12px_rgba(245,48,3,0.3)] dark:bg-white/[0.03]"
-        >
-          <span className="text-center font-display text-sm font-semibold uppercase tracking-[0.18em] text-star-400 transition-colors duration-300 group-hover:text-ember-600 dark:group-hover:text-ember-300">
-            {p.name}
+    <button
+      type="button"
+      onClick={() => onOpen?.(p)}
+      className="group glass relative flex h-full min-h-[19rem] w-[400px] shrink-0 cursor-pointer flex-col overflow-hidden rounded-2xl p-8 text-left transition-all duration-500 hover:-translate-y-1 hover:border-ember-500/40 hover:shadow-[0_24px_48px_-20px_rgba(17,17,17,0.16)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ember-400 sm:w-[480px] sm:p-9"
+    >
+      {/* Giant ghost index — the project's fleet number */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-2 -top-5 select-none font-display text-8xl font-bold leading-none tracking-[-0.04em] text-star-100/[0.05] transition-colors duration-500 group-hover:text-ember-500/10 sm:text-9xl"
+      >
+        {String(index + 1).padStart(2, '0')}
+      </span>
+
+      <div className="relative mb-5 flex items-center justify-between gap-3">
+        <span className="inline-flex items-center gap-2 rounded-full border border-ember-500/25 bg-ember-500/5 px-3.5 py-1.5 text-xs font-medium uppercase tracking-widest text-ember-600 dark:text-ember-300">
+          {p.industry}
+        </span>
+        <span className="flex items-center gap-2">
+          {p.demo && (
+            <span className="rounded-full bg-star-100/5 px-2.5 py-1 text-[11px] uppercase tracking-wider text-star-500">
+              concept
+            </span>
+          )}
+          <span className="text-star-500">◆</span>
+        </span>
+      </div>
+
+      <h3 className="relative font-display text-3xl font-semibold tracking-tight text-star-100 transition-colors group-hover:text-ember-600 sm:text-4xl">
+        {p.name}
+      </h3>
+      <p className="relative mt-3 text-[15px] leading-relaxed text-star-400 sm:text-base">{p.description}</p>
+
+      <div className="relative mt-auto flex flex-wrap gap-2.5 pt-6">
+        {p.tags.slice(0, 3).map((t) => (
+          <span
+            key={t}
+            className="rounded-md bg-star-100/5 px-3 py-1.5 text-xs font-medium text-star-300"
+          >
+            {t}
           </span>
+        ))}
+        <span className="ml-auto inline-flex items-center gap-1.5 text-xs font-semibold text-ember-600 transition-transform duration-300 group-hover:translate-x-0.5 dark:text-ember-300">
+          View details →
+        </span>
+      </div>
+    </button>
+  )
+}
+
+// ─── One copy of the marquee row. The trailing padding (not a flex gap on
+// the track) makes the -50% loop seamless: each half is exactly row + gap
+// wide, so translating the track by half its own width lands the second
+// copy exactly where the first one started. ───
+function ProjectRow({ projects, onOpen, offset = 0 }) {
+  return (
+    <div className="flex shrink-0 gap-5 pr-5 sm:gap-6 sm:pr-6">
+      {projects.map((p, i) => (
+        <ProjectMarqueeCard
+          key={`${p.id}-${offset}`}
+          project={p}
+          index={i}
+          onOpen={onOpen}
+        />
+      ))}
+    </div>
+  )
+}
+
+// ─── Infinite marquee — the fleet, in TWO mirrored rows. Top flows left,
+// bottom flows right (reuses the testimonials marquee CSS — same seamless
+// -50% translate loop, same edge mask). No hover pause. PAUSES OFFSCREEN:
+// CSS marquees keep costing paint even when scrolled out of view — an
+// IntersectionObserver stops them until they're near the viewport again. ───
+function ProjectMarquee({ projects, onOpen }) {
+  const trackARef = useRef(null)
+  const trackBRef = useRef(null)
+  useEffect(() => {
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        const state = entry.isIntersecting ? 'running' : 'paused'
+        if (trackARef.current) trackARef.current.style.animationPlayState = state
+        if (trackBRef.current) trackBRef.current.style.animationPlayState = state
+      },
+      { rootMargin: '120px' }
+    )
+    if (trackARef.current) io.observe(trackARef.current)
+    return () => io.disconnect()
+  }, [])
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="marquee-mask overflow-hidden">
+        <div ref={trackARef} className="project-marquee-track flex w-max">
+          <ProjectRow projects={projects} onOpen={onOpen} offset="a" />
+          <ProjectRow projects={projects} onOpen={onOpen} offset="b" />
         </div>
+      </div>
+      <div className="marquee-mask overflow-hidden">
+        <div ref={trackBRef} className="project-marquee-track project-marquee-track-reverse flex w-max">
+          <ProjectRow projects={projects} onOpen={onOpen} offset="c" />
+          <ProjectRow projects={projects} onOpen={onOpen} offset="d" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Static grid — used under prefers-reduced-motion: same cards, no
+// scroll. A clean 3-column wrap (2 on tablet, 1 on mobile). ───
+function ProjectGrid({ projects, onOpen }) {
+  return (
+    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {projects.map((p, i) => (
+        <ProjectMarqueeCard key={p.id} project={p} index={i} onOpen={onOpen} />
       ))}
     </div>
   )
@@ -37,9 +159,14 @@ const DELIVERY_CLOUD_CURTAINS = [
 ]
 
 export default function SpacePortfolio() {
-  // The wall shows the 6 featured missions — the full 63 live on
-  // /projects behind "View all missions".
+  const reduce = useReducedMotion()
+  const [activeProject, setActiveProject] = useState(null)
+
+  // The marquee fleet: the featured missions first, then demo projects —
+  // richer than the old 12-wordmark wall, all clickable to the modal.
   const featured = PROJECTS.filter((p) => p.featured)
+  const demo = PROJECTS.filter((p) => p.demo && !p.featured)
+  const marqueeProjects = [...featured, ...demo].slice(0, 12)
 
   return (
     <section id="work" className="relative mx-auto max-w-7xl px-6 py-24 lg:px-10">
@@ -56,12 +183,6 @@ export default function SpacePortfolio() {
         className="pointer-events-none relative -mx-6 mb-8 h-36 overflow-x-clip contain-paint sm:-mx-10 sm:h-64"
         aria-hidden="true"
       >
-        {/* delivery cloud — low-density, so the saucer dipping into it
-            reads as "delivering into the cloud" rather than landing on
-            solid ground. The strip runs full-bleed (-mx-6/-mx-10), so
-            the ember cloud used to hard-stop at the viewport edges —
-            the mask feathers both sides in smoothly (Mat's call
-            2026-08-10). */}
         <WispyCloud
           curtains={DELIVERY_CLOUD_CURTAINS}
           canvasClassName="absolute inset-x-0 bottom-0 h-[65%] w-full"
@@ -74,16 +195,6 @@ export default function SpacePortfolio() {
           }}
         />
 
-        {/* the saucer — simple arc: emerges from the left portal, dips
-            down into the cloud to drop the mission, rises and dives into
-            the right portal. The wrapper spans the full strip (w-full) so
-            the %-based flight keyframes move the saucer across the strip,
-            not across its own width. Flight line is responsive: mobile
-            shrinks the saucer (scale .7) and flies at 34% so the
-            entry/exit dips never clip the frame; desktop flies at 46%.
-            The .ufo-tilt wrapper carries the banking rotation around the
-            saucer's own center (rotate on the full-width track would tilt
-            the whole flight line diagonally). */}
         <div className="ufo-track absolute top-[34%] left-0 w-full sm:top-[46%]">
           <div className="ufo-tilt">
             <div className="max-sm:scale-[0.7]">
@@ -94,14 +205,6 @@ export default function SpacePortfolio() {
           </div>
         </div>
 
-        {/* Portals — the saucer emerges from the left portal, delivers,
-            then dives into the right portal. Each portal only APPEARS
-            while the saucer is passing through it (fades in/out on the
-            12s cycle), never static. Centers sit at 4% / 96% of the
-            strip — the exact spots the saucer's run starts and ends.
-            Vertical: desktop portals sit at 55% (the 46% flight line +
-            half the saucer body lands there); mobile portals sit at 45%
-            (the 34% flight line scaled by 0.7). */}
         <div className="ufo-portal ufo-portal-left absolute left-[calc(4%-32px)] top-[calc(45%-32px)] h-16 w-16 sm:left-[calc(4%-48px)] sm:top-[calc(55%-48px)] sm:h-24 sm:w-24">
           <span className="ufo-portal-core" />
           <span className="ufo-portal-ring" />
@@ -113,7 +216,6 @@ export default function SpacePortfolio() {
           <span className="ufo-portal-ring ufo-portal-ring-2" />
         </div>
 
-        {/* twinkling stars in the sky */}
         <span className="animate-dust absolute left-[12%] top-3 h-1.5 w-1.5 rounded-full bg-star-100/70" style={{ animationDelay: '0.6s' }} />
         <span className="animate-dust absolute left-[30%] top-9 h-1 w-1 rounded-full bg-star-100/70" style={{ animationDelay: '1.4s' }} />
         <span className="animate-dust absolute left-[74%] top-4 h-1.5 w-1.5 rounded-full bg-star-100/70" style={{ animationDelay: '2.2s' }} />
@@ -126,7 +228,7 @@ export default function SpacePortfolio() {
             as="h2"
             text="Missions launched"
             accent="launched"
-            className="font-display text-4xl font-semibold leading-[1.05] tracking-tight text-star-100 sm:text-5xl"
+            className="font-display text-[2.75rem] font-semibold leading-[1.02] tracking-[-0.03em] text-star-100 sm:text-6xl"
           />
           <p className="mt-4 max-w-lg text-sm leading-relaxed text-star-400">
             Every mission is a delivered project — from restaurant systems to hotel platforms.
@@ -134,31 +236,27 @@ export default function SpacePortfolio() {
           </p>
         </div>
         <div className="flex items-center gap-4">
-          <span className="rounded-full border border-star-300/25 bg-white/40 px-4 py-1.5 text-xs font-medium text-star-400 backdrop-blur-sm dark:bg-white/5">
+          <span className="rounded-full border border-star-300/25 bg-white px-4 py-1.5 text-xs font-medium text-star-400 shadow-[0_1px_2px_rgba(17,17,17,0.04)] dark:bg-[rgba(26,22,18,0.68)]">
             {PROJECTS.length} missions
           </span>
         </div>
       </div>
 
-      {/* ── The showcase — pocketdevs-style logo wall (Mat's call
-             2026-08-11): uniform tiles, one clean row of the 6
-             featured wordmarks. No marquee, no links — calm and
-             consistent. Logo images swap in later once the designers'
-             assets land. ── */}
-      <LogoWall items={featured} />
+      {/* ── The showcase — infinite project marquee (Mat's call
+             2026-08-12): two mirrored rows of bigger project cards —
+             real name, industry, description, tags — flowing forever.
+             Reduced motion swaps to a static grid. Cards open the same
+             full-view ProjectModal as /projects. ── */}
+      {reduce ? (
+        <ProjectGrid projects={marqueeProjects} onOpen={setActiveProject} />
+      ) : (
+        <ProjectMarquee projects={marqueeProjects} onOpen={setActiveProject} />
+      )}
 
-      {/* ── View More → /projects + the section's primary CTA. Was a bare
-             uppercase-tracked text link (star-400, blended into the page,
-             Mat found it easy to miss) — now a real ember-bordered pill
-             with the actual remaining count, so it reads as a promise
-             ("there's more here") instead of a footnote. ── */}
-      {/* ── View More → /projects + the section's primary CTA. One
-             left-aligned row, the same layout contract as the About
-             section's button pair (Mat's call 2026-08-10). ── */}
       <div className="mt-14 flex flex-wrap items-center gap-4">
         <Link
           to="/projects"
-          className="group inline-flex items-center gap-2.5 rounded-full border border-ember-500/35 bg-ember-500/[0.06] px-6 py-3 text-sm font-semibold text-ember-600 backdrop-blur-sm transition-all duration-300 hover:border-ember-500 hover:bg-ember-500/[0.12] hover:shadow-[0_10px_30px_-12px_rgba(245,48,3,0.45)] dark:text-ember-300"
+          className="group inline-flex items-center gap-2.5 rounded-full border border-ember-500/35 bg-white px-6 py-3 text-sm font-semibold text-ember-600 shadow-[0_1px_2px_rgba(17,17,17,0.04)] transition-all duration-300 hover:border-ember-500 hover:bg-ember-500/[0.06] hover:shadow-[0_10px_30px_-12px_rgba(245,48,3,0.45)] dark:bg-transparent dark:text-ember-300"
         >
           View all missions
           <span
@@ -179,6 +277,10 @@ export default function SpacePortfolio() {
           >→</span>
         </a>
       </div>
+
+      {activeProject && (
+        <ProjectModal project={activeProject} onClose={() => setActiveProject(null)} />
+      )}
     </section>
   )
 }

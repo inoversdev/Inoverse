@@ -179,41 +179,46 @@ export default function ProjectsPage() {
 
       <section ref={gridRef} className="relative mx-auto max-w-7xl px-6 pb-16 lg:px-10">
         {/* ── Mission counter — same row as the filter buttons (Mat's
-               preference). Chips + pill share one wrap row; the pill
-               ml-auto's right and drops to its own line only when the
-               chips genuinely fill the width (tablet). ── */}
+               preference). Chips live in their OWN horizontally-scrollable
+               area; the counter pill is a SIBLING pinned right with
+               shrink-0 + whitespace-nowrap — so however long the pill text
+               gets, it never wraps the row and never drops below the chips.
+               The indicator slides inside the chips' relative container
+               (offsetLeft/offsetTop are measured against it), so it tracks
+               the active chip even as the chips scroll. ── */}
         <div
-          className="relative mb-10 flex flex-wrap items-center gap-2"
+          className="relative mb-10 flex items-center gap-2"
           role="group"
           aria-label="Filter projects by industry"
         >
-          <span
-            aria-hidden="true"
-            className="mission-chip-indicator"
-            style={{
-              transform: `translate3d(${indicator.x}px, ${indicator.y}px, 0)`,
-              width: indicator.width,
-              height: indicator.height,
-              opacity: indicator.ready ? 1 : 0,
-            }}
-          />
-          {['All', ...INDUSTRIES].map((cat) => (
-            <button
-              key={cat}
-              ref={(el) => {
-                chipRefs.current[cat] = el
+          <div className="relative flex min-w-0 flex-1 items-center gap-2 overflow-x-auto no-scrollbar">
+            <span
+              aria-hidden="true"
+              className="mission-chip-indicator"
+              style={{
+                transform: `translate3d(${indicator.x}px, ${indicator.y}px, 0)`,
+                width: indicator.width,
+                height: indicator.height,
+                opacity: indicator.ready ? 1 : 0,
               }}
-              type="button"
-              onClick={() => handleFilterChange(cat)}
-              className={`mission-chip relative z-10 ${activeFilter === cat ? 'mission-chip-active' : ''}`}
-              aria-pressed={activeFilter === cat}
-            >
-              {cat}
-            </button>
-          ))}
-          <span className="ml-auto inline-flex items-center rounded-full border border-star-300/25 bg-white/40 px-3.5 py-1.5 text-xs font-medium text-star-400 backdrop-blur-sm dark:bg-white/5">
+            />
+            {['All', ...INDUSTRIES].map((cat) => (
+              <button
+                key={cat}
+                ref={(el) => {
+                  chipRefs.current[cat] = el
+                }}
+                type="button"
+                onClick={() => handleFilterChange(cat)}
+                className={`mission-chip relative z-10 ${activeFilter === cat ? 'mission-chip-active' : ''}`}
+                aria-pressed={activeFilter === cat}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+          <span className="ml-auto inline-flex shrink-0 items-center whitespace-nowrap rounded-full border border-star-300/25 bg-white px-3.5 py-1.5 text-xs font-medium text-star-400 shadow-[0_1px_2px_rgba(17,17,17,0.04)] dark:bg-[rgba(26,22,18,0.68)]">
             {filtered.length} of {PROJECTS.length} missions
-            {activeFilter !== 'All' ? ` · ${activeFilter}` : ''}
           </span>
         </div>
 

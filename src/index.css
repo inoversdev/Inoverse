@@ -44,19 +44,21 @@
   --color-ember-700: #A92001;
 }
 
-/* ─── Light mode (DEFAULT — white base) ─── */
+/* ─── Light mode (DEFAULT — calm elegant white base) ───
+   Near-white warm paper, NOT pure #FFF: solid white cards sit ON it
+   and read as elevated plates instead of blending into the page. */
 :root {
-  --space-950: #FFFFFF;
-  --space-900: #FAFAFA;
-  --space-800: #F4F4F5;
-  --space-700: #E4E4E7;
-  --space-600: #D4D4D8;
+  --space-950: #F7F6F4;
+  --space-900: #F1F0ED;
+  --space-800: #E9E8E4;
+  --space-700: #E0DFDA;
+  --space-600: #D0CFC9;
 
-  --star-100: #111111;
-  --star-300: #3F3F46;
-  --star-400: #52525B;
-  --star-500: #71717A;
-  --star-600: #A1A1AA;
+  --star-100: #151412;
+  --star-300: #45433E;
+  --star-400: #5A5750;
+  --star-500: #7A766D;
+  --star-600: #A39F95;
 }
 
 /* ─── Dark mode — the original deep-space ink ─── */
@@ -108,6 +110,16 @@ body {
   border-radius: 9999px;
 }
 
+/* Hide scrollbars on horizontally-scrolling chip rows (filter bars).
+   The row still scrolls by drag/shift-wheel — just no visible track. */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* ─── Grain overlay ─── */
 .grain-overlay::after {
   content: '';
@@ -124,29 +136,56 @@ body {
   opacity: 0.03;
 }
 
-/* ─── Glass card — light (white) mode ─── */
+/* ─── Surface card — light (white) mode ───
+   Solid minimal surface (Mat's call 2026-08-12 — replace
+   glassmorphism with solid/minimalism): pure white plate, hairline
+   border, soft diffuse shadow. NO backdrop-filter — the frosted
+   translucency is gone; cards now read as crisp, elevated solids
+   against the warm paper page tone. */
 .glass {
-  background: linear-gradient(160deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.65) 100%);
-  border: 1px solid rgba(17, 17, 17, 0.08);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 8px 32px rgba(17, 17, 17, 0.05);
+  background: #FFFFFF;
+  border: 1px solid rgba(21, 20, 18, 0.09);
+  box-shadow:
+    0 1px 2px rgba(21, 20, 18, 0.05),
+    0 20px 48px -24px rgba(21, 20, 18, 0.14);
 }
-/* Glass card — dark (space) mode: the original translucent white-on-black */
+/* Surface card — dark (space) mode: HEAVILY TINTED glass (Mat's call
+   2026-08-12 — glass fits dark, but make it less transparent). A
+   warm-ink frosted pane that is nearly solid at the top and still
+   reads as glass at the bottom: stars glow through the blur, but text
+   never fights the background. Keep the light-theme cleanliness —
+   hairline border, soft shadow, crisp edges. */
 .dark .glass {
-  background: linear-gradient(160deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: none;
+  background: linear-gradient(
+    160deg,
+    rgba(32, 26, 21, 0.84) 0%,
+    rgba(22, 18, 15, 0.70) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.35),
+    0 24px 48px -24px rgba(0, 0, 0, 0.55);
 }
 
-/* Scrolled header: same glass material, but no all-around outline —
+/* Scrolled header: same solid material, but no all-around outline —
    just a hairline seat at the bottom edge. */
 .v2-header-glass {
   border: 1px solid transparent;
   border-bottom-color: rgba(17, 17, 17, 0.08);
+  box-shadow: 0 1px 0 rgba(17, 17, 17, 0.03);
 }
 .dark .v2-header-glass {
-  border-bottom-color: rgba(255, 255, 255, 0.06);
+  background: linear-gradient(
+    180deg,
+    rgba(32, 26, 21, 0.86) 0%,
+    rgba(22, 18, 15, 0.74) 100%
+  );
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom-color: rgba(255, 255, 255, 0.09);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
 }
 
 /* ─── Bento tiles — cursor-following glow (SpaceServices) ───
@@ -163,7 +202,7 @@ body {
   border-radius: 0.75rem;
   background: radial-gradient(
     340px circle at var(--mx, 50%) var(--my, 50%),
-    color-mix(in srgb, var(--color-ember-500) 30%, transparent),
+    color-mix(in srgb, var(--color-ember-500) 18%, transparent),
     transparent 70%
   );
   border: 1px solid transparent;
@@ -529,19 +568,75 @@ body {
   offset-path: path('M 18 84 C 18 84, 30 26, 96 26 S 220 26, 240 60 S 252 118, 282 118');
   animation: demo-ride-fast 1.8s cubic-bezier(0.45, 0, 0.25, 1) infinite;
 }
-@keyframes demo-status {
-  0%, 12% { opacity: 0; transform: translateY(6px); }
-  18%, 30% { opacity: 1; transform: none; }
-  36%, 100% { opacity: 0; transform: translateY(-4px); }
+/* Status rail — the step text lives in a dedicated strip at the bottom
+   of the device frame (never floating over the UI), one step at a time,
+   crossfading in sync with the rail's progress track. 4-step flows run
+   an 8s cycle, 5-step flows a 10s one; both give each step 2s. */
+@keyframes demo-step {
+  0% { opacity: 0; }
+  3%, 22% { opacity: 1; }
+  25%, 100% { opacity: 0; }
 }
-.demo-status { animation: demo-status 7s ease-in-out infinite; }
+.demo-step {
+  opacity: 0;
+  animation: demo-step 8s linear infinite;
+}
+@keyframes demo-step-5 {
+  0% { opacity: 0; }
+  2.4%, 17.6% { opacity: 1; }
+  20%, 100% { opacity: 0; }
+}
+.demo-step-5 {
+  animation-name: demo-step-5;
+  animation-duration: 10s;
+}
+@keyframes demo-track {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.demo-track {
+  transform-origin: left;
+  animation: demo-track 8s linear infinite;
+}
+.demo-track-5 { animation-duration: 10s; }
+@keyframes demo-live {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.demo-live { animation: demo-live 2s ease-in-out infinite; }
+
+/* Structural UI (product tiles, cart rows, calendar cells) enters once
+   and STAYS — it's the product's furniture, not a status message. */
+@keyframes demo-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.demo-in { animation: demo-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+/* The two genuinely stateful bits: the "tapped" affordance mid-cycle
+   and the confirmation chip near the end, timed to the status rail. */
+@keyframes demo-tap {
+  0%, 24% { box-shadow: 0 0 0 0 rgba(245, 48, 3, 0); }
+  32% { box-shadow: 0 0 0 3px rgba(245, 48, 3, 0.45); }
+  44%, 100% { box-shadow: 0 0 0 0 rgba(245, 48, 3, 0); }
+}
+.demo-tap { animation: demo-tap 8s ease-in-out infinite; }
+@keyframes demo-confirm {
+  0%, 66% { opacity: 0; transform: translateY(6px); }
+  74%, 96% { opacity: 1; transform: none; }
+  100% { opacity: 0; transform: translateY(6px); }
+}
+.demo-confirm {
+  opacity: 0;
+  animation: demo-confirm 8s ease-in-out infinite;
+}
 @keyframes demo-bar {
   from { transform: scaleX(0); }
   to { transform: scaleX(1); }
 }
 .demo-bar {
   transform-origin: left;
-  animation: demo-bar 2.6s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+  animation: demo-bar 1.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 @keyframes demo-pin {
   0%, 62% { transform: scale(1); }
@@ -549,53 +644,27 @@ body {
   78%, 100% { transform: scale(1); }
 }
 .demo-pin { animation: demo-pin 7s ease-in-out infinite; }
-@keyframes demo-node {
-  0%, 10% { opacity: 0.25; transform: scale(0.85); }
-  22%, 40% { opacity: 1; transform: scale(1); }
-  50%, 100% { opacity: 0.25; transform: scale(0.85); }
-}
-.demo-node { animation: demo-node 6s ease-in-out infinite; }
-@keyframes demo-row-in {
-  0%, 8% { opacity: 0; transform: translateX(-10px); }
-  20%, 58% { opacity: 1; transform: none; }
-  70%, 100% { opacity: 0; transform: translateX(8px); }
-}
-.demo-row { animation: demo-row-in 6s ease-in-out infinite; }
-@keyframes demo-cal-pop {
-  0%, 6% { opacity: 0; transform: scale(0.7); }
-  18%, 52% { opacity: 1; transform: scale(1); }
-  62%, 100% { opacity: 0.35; transform: scale(0.92); }
-}
-.demo-cal { animation: demo-cal-pop 6s ease-in-out infinite; }
-@keyframes demo-receipt {
-  0%, 42% { opacity: 0; transform: translateY(12px); }
-  56%, 100% { opacity: 1; transform: none; }
-}
-.demo-receipt { animation: demo-receipt 6s ease-in-out infinite; }
-@keyframes demo-total {
-  0%, 28% { transform: scaleX(0.35); }
-  55%, 100% { transform: scaleX(1); }
-}
-.demo-total {
-  transform-origin: left;
-  animation: demo-total 6s ease-in-out infinite;
-}
 @media (prefers-reduced-motion: reduce) {
   .project-modal-panel,
   .demo-lowfi,
   .demo-hifi,
   .demo-rider,
   .demo-rider-fast,
-  .demo-status,
   .demo-bar,
   .demo-pin,
-  .demo-node,
-  .demo-row,
-  .demo-cal,
-  .demo-receipt,
-  .demo-total {
+  .demo-live,
+  .demo-in,
+  .demo-tap,
+  .demo-track,
+  .demo-step,
+  .demo-confirm {
     animation: none;
   }
+  /* Settle on the finished state: hi-fi map, last status step, chips in. */
+  .demo-lowfi { opacity: 0; }
+  .demo-step,
+  .demo-confirm { opacity: 1; }
+  .demo-step:not(:last-child) { opacity: 0; }
 }
 
 /* ─── Buttons ───
@@ -802,8 +871,12 @@ body {
     black 78%,
     transparent 100%
   );
-  /* light mode (white base): normal blend, dimmed — the source has a
-     black background, so full opacity would read as a black bar */
+  /* light mode (paper base): normal blend, dimmed — the source has a
+     black background, so full opacity would read as a black bar. At
+     this opacity it's a warm orange cloud, present but not a wall.
+     (Restored to the original 0.55 — the elegant-pass 0.28 made the
+     cloud invisible; Mat's call 2026-08-12: stick with the orange
+     cloud for white mode.) */
   opacity: 0.55;
 }
 /* dark mode (deep-space ink base): screen blend drops the black
@@ -867,7 +940,9 @@ body {
 .sh-char {
   display: inline-block;
   transform-style: preserve-3d;
-  will-change: transform, opacity;
+  /* NOTE: no will-change — one-shot entrance only; promoting every
+     heading char to its own layer (hundreds across the page) is pure
+     memory/paint cost after the reveal finishes. */
 }
 .sh-ember {
   color: var(--color-ember-400);
@@ -1088,7 +1163,7 @@ body {
   gap: 0.4rem;
   border-radius: 9999px;
   border: 1px solid rgba(17, 17, 17, 0.12);
-  background: rgba(255, 255, 255, 0.55);
+  background: #FFFFFF;
   color: var(--color-star-400);
   padding: 0.45rem 0.85rem;
   font-size: 0.8125rem;
@@ -1119,7 +1194,7 @@ body {
 }
 .dark .mission-chip {
   border-color: rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(26, 22, 18, 0.65);
   color: var(--color-star-400);
 }
 .dark .mission-chip:hover {
@@ -1172,7 +1247,7 @@ body {
   border-radius: inherit;
   background: radial-gradient(
     220px circle at var(--mx, 50%) var(--my, 50%),
-    rgba(245, 48, 3, 0.14),
+    rgba(17, 17, 17, 0.05),
     transparent 65%
   );
   opacity: 0;
@@ -1234,11 +1309,11 @@ body {
    the feed keeps moving (Mat's call 2026-08-10). The mask feathers each
    row at the section's edges so cards fade in/out like a live feed.
    Reduced motion is handled in JSX (swaps to the static grid), these
-   rules are a fallback. */
-.marquee-track,
-.marquee-track-reverse {
-  will-change: transform;
-}
+   rules are a fallback.
+   NOTE: no will-change here — these tracks are huge (12 cards × 380px
+   per copy), and will-change:transform promotes the WHOLE track to a
+   giant compositor layer that costs memory and paint on every frame.
+   The CSS animation runs on the compositor thread fine without it. */
 .marquee-track {
   animation: testimonials-marquee 26s linear infinite;
 }
@@ -1261,6 +1336,121 @@ body {
     transform: translateX(0);
   }
 }
+
+/* ─── Project marquee (Work section) — same seamless -50% loop, but at a
+   calmer pace. The project row carries 12 cards per copy (double the
+   testimonials' 6), so the shared 26s duration would move it ~2.4x
+   faster (233px/s vs 98px/s — too fast to read). These overrides slow
+   it to a comfortable ~60s loop. ─── */
+.project-marquee-track {
+  animation: testimonials-marquee 60s linear infinite;
+}
+.project-marquee-track-reverse {
+  animation: testimonials-marquee-reverse 60s linear infinite;
+}
+
+/* ─── Cosmic threads band (Hero → Services) — replaces the orange
+   WispyCloud page breaker with the React Bits WebThreads cosmic cloud
+   (Mat's call 2026-08-12). The container fills the band; the mask
+   melts the threads vertically so the cloud dissolves into the hero
+   above and services below, and feathers the horizontal edges like the
+   old aurora did. ─── */
+.web-threads-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.cosmic-threads-band {
+  /* NOTE: no contain:paint here — it isolates stacking, which breaks
+     the canvas's mix-blend-mode: screen (it would blend against the
+     band's transparent bg instead of the page behind it, leaving the
+     dark tint). The band is exactly the canvas size, so containment
+     isn't needed for perf. */
+}
+
+/* Soft warm panel behind the threads — light mode only. The threads
+   sit on a gentle blush so the band reads as a designed glow section,
+   never a stray shadow on blank paper. Dark mode: transparent (the ink
+   page is the backdrop). */
+.cosmic-threads-backdrop {
+  background: transparent;
+}
+:root:not(.dark) .cosmic-threads-backdrop {
+  /* Radial only — no linear layer. A linear-gradient here only fades
+     vertically, so it tints every corner uniformly and reads as a
+     visible rectangle/box behind the glow. The radial ellipse fades in
+     every direction, so it stays organic with no hard container edge. */
+  background: radial-gradient(
+    ellipse 70% 85% at 50% 50%,
+    rgba(255, 154, 96, 0.34) 0%,
+    rgba(255, 138, 92, 0.18) 45%,
+    rgba(255, 170, 130, 0.07) 70%,
+    transparent 90%
+  );
+}
+
+/* Fades on all four sides — combining a vertical + horizontal
+   linear-gradient mask on the SAME element via mask-composite:
+   intersect. (Previously the horizontal fade lived on a `::after`
+   pseudo-element with no background to mask, so it did nothing — the
+   threads hit the left/right screen edges at full brightness with a
+   hard, visible cutoff. This is the actual fix for that.) */
+.cosmic-threads-mask {
+  -webkit-mask-image:
+    linear-gradient(to bottom, transparent 0%, black 22%, black 78%, transparent 100%),
+    linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to bottom, transparent 0%, black 22%, black 78%, transparent 100%),
+    linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  mask-composite: intersect;
+}
+/* Light mode: screen blend makes the thread canvas purely ADDITIVE —
+   every pixel only brightens the paper, never darkens. */
+:root:not(.dark) .cosmic-threads-mask canvas {
+  mix-blend-mode: screen;
+  background: transparent;
+}
+
+/* ─── Tech marquee (Built with band) — same engine, faster pace: the
+   pills are small and readable, so they can drift at ~70px/s instead
+   of the project cards' 101px/s or the 60s crawl. ─── */
+.tech-marquee-track {
+  animation: testimonials-marquee 25s linear infinite;
+}
+
+/* ─── Tech pill surface (Built with band) — SOLID, deliberately NOT the
+   .glass material. The glass pills blurred the starfield behind 24
+   animated elements (backdrop-filter forces re-rasterization every
+   frame the track moves) — that was the lag. These are flat plates:
+   pure compositor transform, near-zero paint cost. Light: white plate
+   on paper. Dark: solid ink plate (blur is invisible on small marks
+   anyway, so the tint stands in for the glass look). ─── */
+.tech-pill {
+  background: #FFFFFF;
+  border: 1px solid rgba(21, 20, 18, 0.08);
+  box-shadow: 0 1px 2px rgba(21, 20, 18, 0.04);
+}
+.dark .tech-pill {
+  background: rgba(26, 22, 18, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* ─── Tech field — the official logos FLOAT along an S-curve (Mat's
+   call, pocketdevs.ph style). The S shape comes from per-tile vertical
+   offsets (sine wave set inline in TechStack — margin, so it composes
+   with the transform below). The float bob is a pure transform on the
+   pill, per-tool delay/duration from a deterministic seed so the field
+   drifts organically. Compositor-friendly, dead under reduced-motion. ─── */
+.tech-float-field .tech-pill {
+  animation: tech-float 5s ease-in-out infinite;
+}
+@keyframes tech-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
 .marquee-mask {
   -webkit-mask-image: linear-gradient(
     to right,
@@ -1282,6 +1472,33 @@ body {
   .marquee-track-reverse {
     animation: none;
   }
+}
+
+/* ─── Low-end devices — declared on <html> by useDeviceProfile ───
+   Weak laptops/phones get the smooth essentials and none of the
+   paint-heavy extras: no backdrop-filter anywhere (blur re-rasterizes
+   every frame), no giant blur glows, no cursor aura, no grain. The 3D
+   scene already drops stars/shooting-stars/motes via the same hook. */
+:root.low-end * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+:root.low-end .v2-hero-glow,
+:root.low-end .mission-card::before,
+:root.low-end .bento-tile::after,
+:root.low-end .cosmic-threads-mask::after {
+  display: none !important;
+}
+:root.low-end .grain-overlay::after {
+  display: none !important;
+}
+:root.low-end .cosmic-threads-band,
+:root.low-end .aurora-band {
+  filter: blur(0px) !important;
+}
+:root.low-end [data-parallax] {
+  /* kill the scroll parallax transforms — pure win on weak GPUs */
+  transform: none !important;
 }
 
 /* ─── Reduced motion ─── */

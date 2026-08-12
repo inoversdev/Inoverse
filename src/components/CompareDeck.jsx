@@ -130,7 +130,7 @@ export default function CompareDeck() {
         {/* Them — muted, receded, flat: the visual contrast IS the argument. */}
         <div className="compare-card-them [perspective:1400px]">
           <div
-            className="rounded-3xl border border-star-300/15 bg-star-800/[0.015] p-8 opacity-80 grayscale-[0.3] transition-transform duration-500 ease-out [transform-style:preserve-3d] hover:[transform:rotateX(6deg)_rotateY(8deg)_translateZ(20px)] hover:opacity-90 motion-reduce:hover:transform-none dark:bg-white/[0.02] md:scale-[0.97] md:p-9"
+            className="rounded-3xl border border-star-300/20 bg-white p-8 opacity-80 grayscale-[0.3] shadow-[0_1px_2px_rgba(17,17,17,0.04),0_16px_40px_-20px_rgba(17,17,17,0.08)] transition-transform duration-500 ease-out [transform-style:preserve-3d] hover:[transform:rotateX(6deg)_rotateY(8deg)_translateZ(20px)] hover:opacity-90 motion-reduce:hover:transform-none dark:bg-[rgba(26,22,18,0.68)] md:scale-[0.97] md:p-9"
           >
             <h3 className="mb-6 flex items-center justify-center gap-2.5 text-xl font-semibold text-star-500">
               <span className="flex h-7 w-7 items-center justify-center rounded-full bg-star-300/15 text-star-500">

@@ -281,6 +281,7 @@ export const PROJECTS = [
     description: 'Logistics system built by the Inovers team.',
     url: null,
     tags: ['Logistics', 'System'],
+    featured: true,
   },
   // ── Demo launches (realistic placeholders — remove as real work lands) ──
   {
@@ -292,6 +293,7 @@ export const PROJECTS = [
     url: null,
     tags: ['Restaurant', 'POS'],
     demo: true,
+    featured: true,
   },
   {
     id: 'harana',
@@ -322,6 +324,7 @@ export const PROJECTS = [
     url: null,
     tags: ['Booking', 'Platform'],
     demo: true,
+    featured: true,
   },
   {
     id: 'tindahan',
@@ -362,6 +365,7 @@ export const PROJECTS = [
     url: null,
     tags: ['Payments', 'Dashboard'],
     demo: true,
+    featured: true,
   },
   {
     id: 'padala',
@@ -402,6 +406,7 @@ export const PROJECTS = [
     url: null,
     tags: ['Marketplace', 'Platform'],
     demo: true,
+    featured: true,
   },
   {
     id: 'eskwela',
@@ -412,6 +417,7 @@ export const PROJECTS = [
     url: null,
     tags: ['EdTech', 'Platform'],
     demo: true,
+    featured: true,
   },
   // ── Batch 2 — dummy projects (Mat's call: expand to 60+ total) ──
   {

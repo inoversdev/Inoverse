@@ -16,7 +16,7 @@ const Star = (props) => (
 export default function TestimonialCard({ item }) {
   return (
     <div
-      className="testimonial-card group glass relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-transparent p-6 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-ember-500/25 hover:shadow-[0_24px_50px_-20px_rgba(245,48,3,0.35)]"
+      className="testimonial-card group glass relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-transparent p-6 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-ember-500/25 hover:shadow-[0_24px_48px_-20px_rgba(17,17,17,0.14)]"
     >
       <span
         aria-hidden="true"

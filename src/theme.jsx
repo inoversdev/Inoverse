@@ -29,7 +29,7 @@ export function ThemeProvider({ children }) {
     const root = document.documentElement
     root.classList.toggle('dark', theme === 'dark')
     const meta = document.querySelector('meta[name="theme-color"]')
-    if (meta) meta.setAttribute('content', theme === 'dark' ? '#080706' : '#FFFFFF')
+    if (meta) meta.setAttribute('content', theme === 'dark' ? '#080706' : '#F7F6F4')
     try {
       localStorage.setItem(STORAGE_KEY, theme)
     } catch {
@@ -40,7 +40,7 @@ export function ThemeProvider({ children }) {
   const applyThemeDom = (t) => {
     document.documentElement.classList.toggle('dark', t === 'dark')
     const meta = document.querySelector('meta[name="theme-color"]')
-    if (meta) meta.setAttribute('content', t === 'dark' ? '#080706' : '#FFFFFF')
+    if (meta) meta.setAttribute('content', t === 'dark' ? '#080706' : '#F7F6F4')
     try {
       localStorage.setItem(STORAGE_KEY, t)
     } catch {
@@ -67,7 +67,7 @@ export function ThemeProvider({ children }) {
     const overlay = document.createElement('div')
     overlay.setAttribute('aria-hidden', 'true')
     overlay.style.cssText = `position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:0;background:${
-      next === 'dark' ? '#080706' : '#FFFFFF'
+      next === 'dark' ? '#080706' : '#F7F6F4'
     }`
     document.body.appendChild(overlay)
 

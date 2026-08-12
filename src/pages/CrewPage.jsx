@@ -202,40 +202,43 @@ export default function CrewPage() {
           </p>
         ) : null}
 
-        {/* ── Department chips + headcount pill, one wrap row (same layout
-               contract as the /projects filter bar) ── */}
+        {/* ── Department chips + headcount pill (same layout contract as
+               the /projects filter bar): chips scroll in their own area,
+               the counter pill is a pinned sibling — never wraps, never
+               drops below the chips. ── */}
         <div
-          className="relative mb-10 flex flex-wrap items-center gap-2"
+          className="relative mb-10 flex items-center gap-2"
           role="group"
           aria-label={CREW_PAGE.filterLabel}
         >
-          <span
-            aria-hidden="true"
-            className="mission-chip-indicator"
-            style={{
-              transform: `translate3d(${indicator.x}px, ${indicator.y}px, 0)`,
-              width: indicator.width,
-              height: indicator.height,
-              opacity: indicator.ready ? 1 : 0,
-            }}
-          />
-          {[CREW_PAGE.allLabel, ...DEPARTMENTS].map((dept) => (
-            <button
-              key={dept}
-              ref={(el) => {
-                chipRefs.current[dept] = el
+          <div className="relative flex min-w-0 flex-1 items-center gap-2 overflow-x-auto no-scrollbar">
+            <span
+              aria-hidden="true"
+              className="mission-chip-indicator"
+              style={{
+                transform: `translate3d(${indicator.x}px, ${indicator.y}px, 0)`,
+                width: indicator.width,
+                height: indicator.height,
+                opacity: indicator.ready ? 1 : 0,
               }}
-              type="button"
-              onClick={() => handleFilterChange(dept)}
-              className={`mission-chip relative z-10 ${activeFilter === dept ? 'mission-chip-active' : ''}`}
-              aria-pressed={activeFilter === dept}
-            >
-              {dept}
-            </button>
-          ))}
-          <span className="ml-auto inline-flex items-center rounded-full border border-star-300/25 bg-white/40 px-3.5 py-1.5 text-xs font-medium text-star-400 backdrop-blur-sm dark:bg-white/5">
+            />
+            {[CREW_PAGE.allLabel, ...DEPARTMENTS].map((dept) => (
+              <button
+                key={dept}
+                ref={(el) => {
+                  chipRefs.current[dept] = el
+                }}
+                type="button"
+                onClick={() => handleFilterChange(dept)}
+                className={`mission-chip relative z-10 ${activeFilter === dept ? 'mission-chip-active' : ''}`}
+                aria-pressed={activeFilter === dept}
+              >
+                {dept}
+              </button>
+            ))}
+          </div>
+          <span className="ml-auto inline-flex shrink-0 items-center whitespace-nowrap rounded-full border border-star-300/25 bg-white px-3.5 py-1.5 text-xs font-medium text-star-400 shadow-[0_1px_2px_rgba(17,17,17,0.04)] dark:bg-[rgba(26,22,18,0.68)]">
             {filtered.length} of {CREW.length} {CREW_PAGE.counterNoun}
-            {activeFilter !== CREW_PAGE.allLabel ? ` · ${activeFilter}` : ''}
           </span>
         </div>
 

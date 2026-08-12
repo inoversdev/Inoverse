@@ -2,8 +2,9 @@ import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useLenis } from 'lenis/react'
 import SpaceHero from '../components/SpaceHero'
-import AuroraBand from '../components/AuroraBand'
+import CosmicThreads from '../components/CosmicThreads'
 import SpaceServices from '../components/SpaceServices'
+import TechStack from '../components/TechStack'
 import SpacePricing from '../components/SpacePricing'
 import SpacePortfolio from '../components/SpacePortfolio'
 import SpaceProcess from '../components/SpaceProcess'
@@ -61,8 +62,12 @@ export default function HomePage() {
   return (
     <main>
       <SpaceHero />
-      <AuroraBand />
+      {/* Cosmic threads — the web-threads cloud page breaker (replaces
+          the orange AuroraBand) */}
+      <CosmicThreads />
       <SpaceServices />
+      {/* The tech-stack band — fills the UFO gap between Services and Work */}
+      <TechStack />
       <SpacePortfolio />
       <SpaceProcess />
       <WhyInoversSection />

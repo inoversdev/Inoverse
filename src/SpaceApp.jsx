@@ -10,6 +10,7 @@ import SpaceFooter from './components/SpaceFooter'
 import CursorAura from './components/effects/CursorAura'
 import HomePage from './pages/HomePage'
 import { useParallaxLayers } from './hooks/useParallaxLayers'
+import { useDeviceProfile } from './hooks/useDeviceProfile'
 import { useTheme } from './theme'
 
 // Home ("/") is where almost every visit starts, so it stays eager — no
@@ -36,6 +37,11 @@ export default function SpaceApp() {
   const location = useLocation()
   const isDark = theme === 'dark'
   const prevTheme = useRef(theme)
+
+  // Detect low-end devices once — flips the `low-end` class on <html>
+  // so CSS drops the expensive blurs/glows, and the 3D scene reads the
+  // same profile to cut stars/shooting-stars/motes.
+  const profile = useDeviceProfile()
 
   // Site-wide scroll-depth layer — see hooks/useParallaxLayers.js. Any
   // element anywhere below with a data-parallax attribute opts in.
@@ -204,23 +210,23 @@ export default function SpaceApp() {
         <div ref={canvasRef} className="fixed inset-0 z-0" aria-hidden="true" />
         {/* Cursor-trailing ember glow — the ship's running lights */}
         <CursorAura />
-        {/* Vignette — light: soft neutral depth; dark: original cinematic frame */}
+        {/* Vignette — light: barely-there depth on the paper tone; dark: original cinematic frame */}
         <div
           className="pointer-events-none fixed inset-0 z-[1]"
           style={{
             background: isDark
               ? 'radial-gradient(ellipse at center, transparent 40%, rgba(5,4,4,0.55) 100%)'
-              : 'radial-gradient(ellipse at center, transparent 55%, rgba(17,17,17,0.045) 100%)',
+              : 'radial-gradient(ellipse at center, transparent 60%, rgba(21,20,18,0.025) 100%)',
           }}
           aria-hidden="true"
         />
-        {/* Edge ambience — light: gentle ember; dark: original warm edge lights */}
+        {/* Edge ambience — light: none (calm paper); dark: original warm edge lights */}
         <div
           className="pointer-events-none fixed inset-0 z-[1]"
           style={{
             background: isDark
               ? 'radial-gradient(ellipse 60% 35% at 50% 0%, rgba(255,240,225,0.07), transparent 70%), radial-gradient(ellipse 60% 35% at 50% 100%, rgba(255,240,225,0.05), transparent 70%), radial-gradient(ellipse 30% 55% at 0% 50%, rgba(255,240,225,0.05), transparent 70%), radial-gradient(ellipse 30% 55% at 100% 50%, rgba(255,240,225,0.05), transparent 70%)'
-              : 'radial-gradient(ellipse 60% 35% at 50% 0%, rgba(245,48,3,0.05), transparent 70%), radial-gradient(ellipse 60% 35% at 50% 100%, rgba(245,48,3,0.03), transparent 70%), radial-gradient(ellipse 30% 55% at 0% 50%, rgba(245,48,3,0.03), transparent 70%), radial-gradient(ellipse 30% 55% at 100% 50%, rgba(245,48,3,0.03), transparent 70%)',
+              : 'none',
           }}
           aria-hidden="true"
         />
