@@ -2,3 +2,11 @@ node_modules/
 dist/
 *.log
 .impeccable/
+.DS_Store
+
+# Local debugging / QA artifacts — not part of the product
+.playwright-mcp/
+DEBUG_STATE.md
+
+# Client screenshot accidentally left in repo root — do NOT publish
+/scpls-qr-codes-admin.png

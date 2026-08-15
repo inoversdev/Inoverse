@@ -4,6 +4,13 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  server: {
+    // Allow public tunnel hostnames to reach the dev server.
+    // Vite blocks unknown hosts by default (DNS-rebinding protection).
+    // ".x" prefix allows any subdomain, so future cloudflared sessions
+    // work without reconfiguring.
+    allowedHosts: ['.trycloudflare.com', '.ngrok-free.app', '.ngrok-free.dev', '.loca.lt', '.localhost.run', '.lhr.life'],
+  },
   build: {
     rollupOptions: {
       output: {
