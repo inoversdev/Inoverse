@@ -53,6 +53,17 @@ const ICONS = {
       <path d="M17.5 14.5c2.4 0 4 1.6 4 3.5" />
     </svg>
   ),
+  coin: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-6 w-6">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v10M9.5 9.5c0-1 1-1.5 2.5-1.5s2.5.5 2.5 1.5-1 1.2-2.5 1.8-2.5 1.3-2.5 2.2 1 1.5 2.5 1.5 2.5-.5 2.5-1.5" />
+    </svg>
+  ),
+  heart: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-6 w-6">
+      <path d="M12 20s-7-4.5-9.5-9C1 8 2.5 5 5.5 5 8 5 12 8 12 8s4-3 6.5-3c3 0 4.5 3 3 6-2.5 4.5-9.5 9-9.5 9z" />
+    </svg>
+  ),
 }
 
 // Tiny specks drifting on the orbital plane
@@ -67,10 +78,11 @@ const DUST = [
   { l: '69%', t: '47%', z: -48, s: 2, d: 2.9 },
 ]
 
-// Satellite placement: teams on the outer main ring (0/90/180/270°),
-// leadership on the inner ember ring (0/180°). Angles distribute the
-// medallions around the circle; the ring's own rotation carries them.
-const TEAM_ANGLES = [0, 90, 180, 270]
+// Satellite placement: teams on the outer main ring, leadership on the
+// inner ember ring. Angles are computed from the actual role count so
+// any number of teams distributes evenly around the circle (0, 72, 144,
+// 216, 288… for 5 teams) instead of relying on a fixed 4-slot list.
+const teamAngles = (count) => Array.from({ length: count }, (_, i) => (360 / count) * i)
 const LEAD_ANGLES = [0, 180]
 
 export default function OrbitSystem() {
@@ -266,34 +278,37 @@ export default function OrbitSystem() {
                 <div className="v2-orbit-ring absolute inset-[15%]" style={{ transformStyle: 'preserve-3d' }}>
                   <div className="absolute inset-0 rounded-full border border-star-300/45" style={{ transform: 'translateZ(0)' }} />
                   <div className="ring-shade pointer-events-none absolute inset-0 rounded-full" style={{ transform: 'translateZ(0)' }} />
-                  {ORG_CHART.rings[1].roles.map((r, i) => (
-                    <div
-                      key={r.id}
-                      className="v2-orbit-billboard absolute left-1/2 top-1/2"
-                      data-base={`rotate(${TEAM_ANGLES[i]}deg) translateX(var(--orbit-main)) rotate(${-TEAM_ANGLES[i]}deg)`}
-                      style={{
-                        transform: `rotate(${TEAM_ANGLES[i]}deg) translateX(var(--orbit-main)) rotate(${-TEAM_ANGLES[i]}deg) rotateX(-${TILT}deg)`,
-                        transformStyle: 'preserve-3d',
-                      }}
-                    >
-                      <div className="v2-orbit-node">
-                        <div className="flex flex-col items-center gap-2" title={r.description}>
-                          <span
-                            className="relative flex h-14 w-14 items-center justify-center rounded-full border border-ember-500/40 text-ember-100 shadow-[0_0_25px_rgba(245,48,3,0.25),inset_0_3px_4px_rgba(255,255,255,0.3),inset_0_-7px_11px_rgba(0,0,0,0.8)] sm:h-16 sm:w-16"
-                            style={{
-                              background:
-                                'radial-gradient(circle at 30% 24%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 20%), radial-gradient(circle at 68% 78%, rgba(245,48,3,0.55) 0%, rgba(245,48,3,0) 45%), radial-gradient(circle at 34% 30%, #786858 0%, #2c221d 55%, #050403 100%)',
-                            }}
-                          >
-                            {ICONS[r.icon] || ICONS.users}
-                          </span>
-                          <span className="whitespace-nowrap text-[10px] font-medium uppercase tracking-[0.2em] text-star-300">
-                            {r.title}
-                          </span>
+                  {ORG_CHART.rings[1].roles.map((r, i) => {
+                    const ang = teamAngles(ORG_CHART.rings[1].roles.length)[i]
+                    return (
+                      <div
+                        key={r.id}
+                        className="v2-orbit-billboard absolute left-1/2 top-1/2"
+                        data-base={`rotate(${ang}deg) translateX(var(--orbit-main)) rotate(${-ang}deg)`}
+                        style={{
+                          transform: `rotate(${ang}deg) translateX(var(--orbit-main)) rotate(${-ang}deg) rotateX(-${TILT}deg)`,
+                          transformStyle: 'preserve-3d',
+                        }}
+                      >
+                        <div className="v2-orbit-node">
+                          <div className="flex flex-col items-center gap-2" title={r.description}>
+                            <span
+                              className="relative flex h-14 w-14 items-center justify-center rounded-full border border-ember-500/40 text-ember-100 shadow-[0_0_25px_rgba(245,48,3,0.25),inset_0_3px_4px_rgba(255,255,255,0.3),inset_0_-7px_11px_rgba(0,0,0,0.8)] sm:h-16 sm:w-16"
+                              style={{
+                                background:
+                                  'radial-gradient(circle at 30% 24%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 20%), radial-gradient(circle at 68% 78%, rgba(245,48,3,0.55) 0%, rgba(245,48,3,0) 45%), radial-gradient(circle at 34% 30%, #786858 0%, #2c221d 55%, #050403 100%)',
+                              }}
+                            >
+                              {ICONS[r.icon] || ICONS.users}
+                            </span>
+                            <span className="whitespace-nowrap text-[10px] font-medium uppercase tracking-[0.2em] text-star-300">
+                              {r.title}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
 
                 {/* Gyroscope ring — precesses in true 3D so the circles

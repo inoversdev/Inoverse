@@ -20,12 +20,12 @@ function seedFrom(str) {
 
 // ─── CrewAvatar — the disc, shared by the card and the home teaser ───
 // Renders the real photo the moment `member.photo` is set; until then
-// every placeholder is a GLASSMORPHISM alien (Mat's call 2026-08-10) —
-// a frosted disc with a per-member colour wash, a top light catch and a
-// rim highlight, holding a friendly alien glyph. The branch IS the
-// "real photos later" contract (plan §7): dropping an image path into
-// content.js is the only change needed — no component edit, no layout
-// shift.
+// every member is a GLASSMORPHISM alien (Mat's call 2026-08-17: put the
+// alien placeholders BACK — the roster is real people, but photos are
+// still pending, so the alien stands in until real images replace it).
+// The branch IS the "real photos later" contract (plan §7): dropping an
+// image path into content.js is the only change needed — no component
+// edit, no layout shift.
 //
 // `size` must be passed as a LITERAL class string from the call site.
 // Tailwind only sees class names that appear verbatim in the source, so

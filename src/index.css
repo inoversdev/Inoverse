@@ -1338,15 +1338,15 @@ body {
 }
 
 /* ─── Project marquee (Work section) — same seamless -50% loop, but at a
-   calmer pace. The project row carries 12 cards per copy (double the
-   testimonials' 6), so the shared 26s duration would move it ~2.4x
-   faster (233px/s vs 98px/s — too fast to read). These overrides slow
-   it to a comfortable ~60s loop. ─── */
+   calmer pace. Tuned for the 14 logo-image roster (2026-08-17): each row
+   copy is ~7,056px (14 cards × ~504px incl. gap), so a 70s loop keeps the
+   comfortable ~101px/s reading speed. Re-tuned after the marquee moved
+   from the full 33-project roster (165s) to image-only (Mat's call). ─── */
 .project-marquee-track {
-  animation: testimonials-marquee 60s linear infinite;
+  animation: testimonials-marquee 70s linear infinite;
 }
 .project-marquee-track-reverse {
-  animation: testimonials-marquee-reverse 60s linear infinite;
+  animation: testimonials-marquee-reverse 70s linear infinite;
 }
 
 /* ─── Cosmic threads band (Hero → Services) — replaces the orange
@@ -1474,6 +1474,33 @@ body {
   }
 }
 
+/* ─── Tech strip — draggable tool strip (Mat's call 2026-08-17). The
+   viewport masks the horizontal edges so logos fade in/out at the sides
+   instead of hard-clipping; the track itself is translated by pointer
+   drag in TechStack (transform lives inline on the track). The per-pill
+   float animation is on .tech-pill (an inner element), so it composes
+   with the track's drag transform — no conflict. ─── */
+.tech-strip-viewport {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 4%,
+    black 96%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 4%,
+    black 96%,
+    transparent
+  );
+}
+.tech-strip-track {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 /* ─── Low-end devices — declared on <html> by useDeviceProfile ───
    Weak laptops/phones get the smooth essentials and none of the
    paint-heavy extras: no backdrop-filter anywhere (blur re-rasterizes
@@ -1537,13 +1564,12 @@ body {
   }
 }
 
-/* ─── Crew placeholder — the glassmorphism alien, alive ───
-   Idle: the disc floats, the antenna sways, the eyes blink, the glints
-   twinkle — each on its own animation-delay (set inline per member from
-   a name hash) so a grid of aliens doesn't move in lockstep. Hover: the
-   antenna perks up and the eyes brighten — reactions to the visitor's
-   cursor, layered on nested elements so they don't fight the idle
-   animation's own `transform` (a plain CSS specificity swap, no JS). */
+/* ─── Crew avatars — the glassmorphism alien, ALIVE (restored 2026-08-17
+   — real roster but photos still pending, so the alien stands in until
+   real images replace it). Idle: the disc floats, the antenna sways, the
+   eyes blink, the glints twinkle — each on its own animation-delay (set
+   inline per member from a name hash) so a grid of aliens doesn't move in
+   lockstep. Hover: the antenna perks up and the eyes brighten. ─── */
 .crew-float {
   animation: crew-float 4.5s ease-in-out infinite;
 }
@@ -1601,5 +1627,9 @@ body {
   to { stroke-dashoffset: -732; }
 }
 .lightning-spark {
-  animation: alien-glint-twinkle 2.4s ease-in-out infinite;
+  animation: lightning-spark-twinkle 2.4s ease-in-out infinite;
+}
+@keyframes lightning-spark-twinkle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
 }

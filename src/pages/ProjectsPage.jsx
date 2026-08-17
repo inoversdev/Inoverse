@@ -9,14 +9,14 @@ import MissionCTA from '../components/MissionCTA'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const PAGE_SIZE = 9
+const PAGE_SIZE = 14
 
 // ─── /projects — the full mission manifest ───
 // All projects, industry filter chips (the taxonomy moved here from the
 // home showcase), the 3-part filter animation (sliding chip indicator +
-// FLIP height morph + card shrink-out), pagination (9/page, Mat's call
-// 2026-08-10 — plain pagination over infinite scroll or grouping), and a
-// closing Book a Call band.
+// FLIP height morph + card shrink-out), and a closing Book a Call band.
+// Pagination (14/page) only appears when a filter exceeds one page —
+// the current 14-project roster renders as a single page.
 export default function ProjectsPage() {
   const rootRef = useRef(null)
   const gridRef = useRef(null)
@@ -248,9 +248,9 @@ export default function ProjectsPage() {
           </div>
         </div>
 
-        {/* ── Pagination — 9 missions/page (Mat's call 2026-08-10: plain
-               pagination over infinite scroll). Shares the shrink-out
-               transition with the filter chips for consistency. ── */}
+        {/* ── Pagination — 12 missions/page (Mat's call 2026-08-10: plain
+               pagination over infinite scroll). Auto-hides when the
+               filtered roster fits a single page. ── */}
         {pageCount > 1 && (
           <nav className="mt-10 flex items-center justify-center gap-2" aria-label="Projects pagination">
             <button

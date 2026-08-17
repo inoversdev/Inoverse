@@ -30,52 +30,72 @@ function useReducedMotion() {
 // lifts + ember border on hover, opens the same ProjectModal as /projects. ───
 function ProjectMarqueeCard({ project, index, onOpen }) {
   const p = project
+  const img = p.image || null
   return (
     <button
       type="button"
       onClick={() => onOpen?.(p)}
-      className="group glass relative flex h-full min-h-[19rem] w-[400px] shrink-0 cursor-pointer flex-col overflow-hidden rounded-2xl p-8 text-left transition-all duration-500 hover:-translate-y-1 hover:border-ember-500/40 hover:shadow-[0_24px_48px_-20px_rgba(17,17,17,0.16)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ember-400 sm:w-[480px] sm:p-9"
+      className={`group glass relative flex h-full shrink-0 cursor-pointer flex-col overflow-hidden rounded-2xl text-left transition-all duration-500 hover:-translate-y-1 hover:border-ember-500/40 hover:shadow-[0_24px_48px_-20px_rgba(17,17,17,0.16)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ember-400 ${
+        img ? 'aspect-[3/2] w-[320px] sm:w-[400px]' : 'min-h-[19rem] w-[400px] p-8 sm:w-[480px] sm:p-9'
+      }`}
     >
-      {/* Giant ghost index — the project's fleet number */}
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-2 -top-5 select-none font-display text-8xl font-bold leading-none tracking-[-0.04em] text-star-100/[0.05] transition-colors duration-500 group-hover:text-ember-500/10 sm:text-9xl"
-      >
-        {String(index + 1).padStart(2, '0')}
-      </span>
-
-      <div className="relative mb-5 flex items-center justify-between gap-3">
-        <span className="inline-flex items-center gap-2 rounded-full border border-ember-500/25 bg-ember-500/5 px-3.5 py-1.5 text-xs font-medium uppercase tracking-widest text-ember-600 dark:text-ember-300">
-          {p.industry}
+      {img ? (
+        /* ── Logo-image container (Mat's call 2026-08-17): the generated
+           project logo IS the marquee card — image only, grayscale,
+           contained (not cropped/zoomed) so it reads at a calm size.
+           Clicking still opens the ProjectModal. ── */
+        <span className="absolute inset-0 flex items-center justify-center bg-white/[0.04] p-6 dark:bg-white/[0.02]">
+          <img
+            src={img}
+            alt={p.name}
+            loading="lazy"
+            className="h-full w-full object-contain grayscale transition-all duration-700 ease-out group-hover:grayscale-0"
+          />
         </span>
-        <span className="flex items-center gap-2">
-          {p.demo && (
-            <span className="rounded-full bg-star-100/5 px-2.5 py-1 text-[11px] uppercase tracking-wider text-star-500">
-              concept
-            </span>
-          )}
-          <span className="text-star-500">◆</span>
-        </span>
-      </div>
-
-      <h3 className="relative font-display text-3xl font-semibold tracking-tight text-star-100 transition-colors group-hover:text-ember-600 sm:text-4xl">
-        {p.name}
-      </h3>
-      <p className="relative mt-3 text-[15px] leading-relaxed text-star-400 sm:text-base">{p.description}</p>
-
-      <div className="relative mt-auto flex flex-wrap gap-2.5 pt-6">
-        {p.tags.slice(0, 3).map((t) => (
+      ) : (
+        <>
+          {/* Giant ghost index — the project's fleet number */}
           <span
-            key={t}
-            className="rounded-md bg-star-100/5 px-3 py-1.5 text-xs font-medium text-star-300"
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-2 -top-5 select-none font-display text-8xl font-bold leading-none tracking-[-0.04em] text-star-100/[0.05] transition-colors duration-500 group-hover:text-ember-500/10 sm:text-9xl"
           >
-            {t}
+            {String(index + 1).padStart(2, '0')}
           </span>
-        ))}
-        <span className="ml-auto inline-flex items-center gap-1.5 text-xs font-semibold text-ember-600 transition-transform duration-300 group-hover:translate-x-0.5 dark:text-ember-300">
-          View details →
-        </span>
-      </div>
+
+          <div className="relative mb-5 flex items-center justify-between gap-3">
+            <span className="inline-flex items-center gap-2 rounded-full border border-ember-500/25 bg-ember-500/5 px-3.5 py-1.5 text-xs font-medium uppercase tracking-widest text-ember-600 dark:text-ember-300">
+              {p.industry}
+            </span>
+            <span className="flex items-center gap-2">
+              {p.demo && (
+                <span className="rounded-full bg-star-100/5 px-2.5 py-1 text-[11px] uppercase tracking-wider text-star-500">
+                  concept
+                </span>
+              )}
+              <span className="text-star-500">◆</span>
+            </span>
+          </div>
+
+          <h3 className="relative font-display text-3xl font-semibold tracking-tight text-star-100 transition-colors group-hover:text-ember-600 sm:text-4xl">
+            {p.name}
+          </h3>
+          <p className="relative mt-3 text-[15px] leading-relaxed text-star-400 sm:text-base">{p.description}</p>
+
+          <div className="relative mt-auto flex flex-wrap gap-2.5 pt-6">
+            {p.tags.slice(0, 3).map((t) => (
+              <span
+                key={t}
+                className="rounded-md bg-star-100/5 px-3 py-1.5 text-xs font-medium text-star-300"
+              >
+                {t}
+              </span>
+            ))}
+            <span className="ml-auto inline-flex items-center gap-1.5 text-xs font-semibold text-ember-600 transition-transform duration-300 group-hover:translate-x-0.5 dark:text-ember-300">
+              View details →
+            </span>
+          </div>
+        </>
+      )}
     </button>
   )
 }
@@ -162,11 +182,11 @@ export default function SpacePortfolio() {
   const reduce = useReducedMotion()
   const [activeProject, setActiveProject] = useState(null)
 
-  // The marquee fleet: the featured missions first, then demo projects —
-  // richer than the old 12-wordmark wall, all clickable to the modal.
-  const featured = PROJECTS.filter((p) => p.featured)
-  const demo = PROJECTS.filter((p) => p.demo && !p.featured)
-  const marqueeProjects = [...featured, ...demo].slice(0, 12)
+  // The marquee fleet — ONLY the projects with generated logo images
+// (14, Mat's call 2026-08-17). Text-only cards stay on /projects; the
+// home showcase is a pure image wall. The counter below reads
+// PROJECTS.length so /projects shows the full roster.
+const marqueeProjects = PROJECTS.filter((p) => p.image)
 
   return (
     <section id="work" className="relative mx-auto max-w-7xl px-6 py-24 lg:px-10">
@@ -232,7 +252,7 @@ export default function SpacePortfolio() {
           />
           <p className="mt-4 max-w-lg text-sm leading-relaxed text-star-400">
             Every mission is a delivered project — from restaurant systems to hotel platforms.
-            Here's a taste of the fleet; the full manifest lives on its own page.
+            The full fleet, filterable by industry on the projects page.
           </p>
         </div>
         <div className="flex items-center gap-4">
