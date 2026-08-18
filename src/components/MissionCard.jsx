@@ -89,7 +89,7 @@ export default function MissionCard({ project, onOpen }) {
             src={img}
             alt={p.name}
             loading="lazy"
-            className="h-full w-full object-contain grayscale transition-all duration-700 ease-out group-hover:grayscale-0"
+            className="h-full w-full object-contain grayscale transition-all duration-700 ease-out dark:brightness-0 dark:invert group-hover:grayscale-0 group-hover:invert-0 dark:group-hover:brightness-100"
           />
         </span>
       ) : (
@@ -129,7 +129,7 @@ export default function MissionCard({ project, onOpen }) {
           {/* Tags pinned to the bottom (mt-auto) — every card in a row/col
               shares the same container size with aligned footers, no matter
               how long the description is (Mat's call 2026-08-11: "consistent
-              size containers in Our Work"). */}
+              size containers in Selected Works"). */}
           <div className="relative mt-5 flex flex-wrap gap-2">
             {p.tags.map((t) => (
               <span

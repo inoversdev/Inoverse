@@ -42,7 +42,7 @@ the one VIP card treatment.
   shadow. Dark — near-transparent white gradient, no shadow, hairline white border. Used for
   standard (non-hero) cards.
 - **Premium/VIP card material** (pricing Customize tier, `.premium-*` classes): a distinct,
-  deliberately louder material reserved for the single highest-value element on a page — dark
+  deliberately louder material reserved for the single highest-value element on a page — darkust to 
   luxe surface even in light mode, rotating ember→gold conic ring (`@property --premium-angle`),
   flowing gold badge shimmer, floating badge, breathing ember glow, periodic light sheen. This
   tier of effect is earned by scarcity: one card per page gets it, never a whole grid.

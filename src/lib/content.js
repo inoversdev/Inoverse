@@ -33,7 +33,7 @@ export const FOOTER_LINKS = [
   ...NAV_LINKS,
   { label: 'About', kind: 'anchor', target: 'about' },
   { label: 'Process', kind: 'anchor', target: 'process' },
-  { label: 'All work', kind: 'route', to: '/projects' },
+  { label: 'Selected works', kind: 'route', to: '/projects' },
 ]
 
 export const HERO = {
@@ -44,7 +44,6 @@ export const HERO = {
   subtitle:
     'Custom software, systems, and technology solutions to help your business thrive in the digital age.',
   ctaPrimary: 'Get Started',
-  ctaSecondary: 'Book Free Consultation',
 }
 
 export const STATS = [
@@ -132,10 +131,27 @@ export const SERVICES = [
       grid: 'lg:grid-cols-3 lg:grid-rows-3',
       items: [
         { shape: 'browser', kind: 'hero', src: null, span: 'lg:col-span-2 lg:row-span-2' }, // big wide hero
-        { shape: 'browser', kind: 'gallery', src: null, span: '' },
+        {
+          shape: 'browser',
+          kind: 'gallery',
+          src: null,
+          span: '',
+          images: [
+            '/services/web-gallery-1.webp',
+            '/services/web-gallery-2.webp',
+            '/services/web-gallery-3.webp',
+            '/services/web-gallery-4.webp',
+          ],
+        },
         { shape: 'browser', kind: 'form', src: null, span: '' },
         { shape: 'browser', kind: 'list', src: null, span: '' },
-        { shape: 'browser', kind: 'cards', src: null, span: '' },
+        {
+          shape: 'browser',
+          kind: 'cards',
+          src: null,
+          span: '',
+          images: ['/services/web-cards-1.webp', '/services/web-cards-2.webp'],
+        },
         { shape: 'browser', kind: 'footer', src: null, span: '' },
       ],
     },
@@ -217,7 +233,7 @@ export const INDUSTRIES = [
 // exact list — one source of truth, no separate "taste" subset.
 export const PROJECTS = [{
     id: 'dory',
-    image: '/projects/dory.png',
+    image: '/projects/dory.webp',
     name: 'Dory Delivery',
     industry: 'Logistics & Delivery',
     category: 'Delivery Platform',
@@ -229,7 +245,7 @@ export const PROJECTS = [{
   },
 {
     id: 'dmap',
-    image: '/projects/dmap.png',
+    image: '/projects/dmap.webp',
     name: 'DMAP',
     industry: 'Platform & SaaS',
     category: 'Web App',
@@ -240,7 +256,7 @@ export const PROJECTS = [{
   },
 {
     id: 'whatahotel',
-    image: '/projects/whatahotel.png',
+    image: '/projects/whatahotel.webp',
     name: 'WhatAHotel',
     industry: 'Hotel & Hospitality',
     category: 'Mobile App',
@@ -251,7 +267,7 @@ export const PROJECTS = [{
   },
 {
     id: 'agenxure',
-    image: '/projects/agenxure.png',
+    image: '/projects/agenxure.webp',
     name: 'Agenxure',
     industry: 'Platform & SaaS',
     category: 'Web Platform',
@@ -262,7 +278,7 @@ export const PROJECTS = [{
   },
 {
     id: 'ukay',
-    image: '/projects/ukay.png',
+    image: '/projects/ukay.webp',
     name: 'UkayApp',
     industry: 'E-commerce',
     category: 'E-commerce App',
@@ -273,7 +289,7 @@ export const PROJECTS = [{
   },
 {
     id: 'byahego',
-    image: '/projects/byahego.png',
+    image: '/projects/byahego.webp',
     name: 'ByaheGo',
     industry: 'Hotel & Hospitality',
     category: 'Travel & Stay System',
@@ -284,7 +300,7 @@ export const PROJECTS = [{
   },
 {
     id: 'dorx',
-    image: '/projects/dorx.png',
+    image: '/projects/dorx.webp',
     name: 'DORX',
     industry: 'Logistics & Delivery',
     category: 'Logistics System',
@@ -295,7 +311,7 @@ export const PROJECTS = [{
   },
 {
     id: 'kanto',
-    image: '/projects/kanto.png',
+    image: '/projects/kanto.webp',
     name: 'Kanto Bites',
     industry: 'Restaurant & Food',
     category: 'Delivery App',
@@ -306,7 +322,7 @@ export const PROJECTS = [{
   },
 {
     id: 'silog',
-    image: '/projects/silog.png',
+    image: '/projects/silog.webp',
     name: 'Silog Express',
     industry: 'Restaurant & Food',
     category: 'Delivery App',
@@ -317,7 +333,7 @@ export const PROJECTS = [{
   },
 {
     id: 'sundo',
-    image: '/projects/sundo.png',
+    image: '/projects/sundo.webp',
     name: 'Sundo Express',
     industry: 'Logistics & Delivery',
     category: 'On-Demand Courier',
@@ -328,7 +344,7 @@ export const PROJECTS = [{
   },
 {
     id: 'padala',
-    image: '/projects/padala.png',
+    image: '/projects/padala.webp',
     name: 'Padala PH',
     industry: 'Logistics & Delivery',
     category: 'Remittance & Parcel',
@@ -339,7 +355,7 @@ export const PROJECTS = [{
   },
 {
     id: 'tatay',
-    image: '/projects/tatay.png',
+    image: '/projects/tatay.webp',
     name: "Tatay's Ihawan",
     industry: 'Restaurant & Food',
     category: 'Grill House Booking',
@@ -350,7 +366,7 @@ export const PROJECTS = [{
   },
 {
     id: 'casa',
-    image: '/projects/casa.png',
+    image: '/projects/casa.webp',
     name: 'Casa Isabella',
     industry: 'Hotel & Hospitality',
     category: 'Heritage Hotel',
@@ -361,7 +377,7 @@ export const PROJECTS = [{
   },
 {
     id: 'palengke',
-    image: '/projects/palengke.png',
+    image: '/projects/palengke.webp',
     name: 'Palengke Go',
     industry: 'E-commerce',
     category: 'Marketplace',
@@ -445,7 +461,7 @@ export const CREW = [
     initials: 'KP',
     avatar: 'teal',
     bio: 'Finds the missions and opens the first conversation.',
-    photo: '/crew/sales-kassandra.jpg',
+    photo: '/crew/sales-kassandra.webp',
     demo: false,
   },
   {
@@ -456,7 +472,7 @@ export const CREW = [
     initials: 'VR',
     avatar: 'sky',
     bio: 'Guides prospects from first call to signed scope.',
-    photo: '/crew/sales-victoria.jpg',
+    photo: '/crew/sales-victoria.webp',
     demo: false,
   },
   {
@@ -467,7 +483,7 @@ export const CREW = [
     initials: 'VC',
     avatar: 'blue',
     bio: 'Builds the pipeline and keeps clients close.',
-    photo: '/crew/sales-vanessa.jpg',
+    photo: '/crew/sales-vanessa.webp',
     demo: false,
   },
   {
@@ -478,7 +494,7 @@ export const CREW = [
     initials: 'GM',
     avatar: 'ember',
     bio: 'Turns inquiries into kickoff calls.',
-    photo: '/crew/sales-geceline.jpg',
+    photo: '/crew/sales-geceline.webp',
     demo: false,
   },
   // Junior Software Engineers
@@ -490,7 +506,7 @@ export const CREW = [
     initials: 'NV',
     avatar: 'ember',
     bio: 'Builds and ships web features end to end.',
-    photo: '/crew/eng-noriel.jpg',
+    photo: '/crew/eng-noriel.webp',
     demo: false,
   },
   {
@@ -501,7 +517,7 @@ export const CREW = [
     initials: 'GA',
     avatar: 'amber',
     bio: 'Crafts clean interfaces and APIs.',
-    photo: '/crew/eng-graciano.jpg',
+    photo: '/crew/eng-graciano.webp',
     demo: false,
   },
   {
@@ -512,7 +528,7 @@ export const CREW = [
     initials: 'JB',
     avatar: 'violet',
     bio: 'Implements features with care for detail.',
-    photo: '/crew/eng-joseph.jpg',
+    photo: '/crew/eng-joseph.webp',
     demo: false,
   },
   {
@@ -523,7 +539,7 @@ export const CREW = [
     initials: 'JC',
     avatar: 'teal',
     bio: 'Turns requirements into working software.',
-    photo: '/crew/eng-johndenver.jpg',
+    photo: '/crew/eng-johndenver.webp',
     demo: false,
   },
   {
@@ -534,7 +550,7 @@ export const CREW = [
     initials: 'RL',
     avatar: 'sky',
     bio: 'Ships reliable, maintainable code.',
-    photo: '/crew/eng-rodel.jpg',
+    photo: '/crew/eng-rodel.webp',
     demo: false,
   },
   {
@@ -545,7 +561,7 @@ export const CREW = [
     initials: 'JT',
     avatar: 'blue',
     bio: 'Builds across the stack, front to back.',
-    photo: '/crew/eng-jexter.jpg',
+    photo: '/crew/eng-jexter.webp',
     demo: false,
   },
   {
@@ -556,7 +572,7 @@ export const CREW = [
     initials: 'CT',
     avatar: 'amber',
     bio: 'Develops features and fixes with precision.',
-    photo: '/crew/eng-christian.jpg',
+    photo: '/crew/eng-christian.webp',
     demo: false,
   },
   {
@@ -567,7 +583,7 @@ export const CREW = [
     initials: 'RE',
     avatar: 'teal',
     bio: 'Implements and ships product improvements.',
-    photo: '/crew/eng-reymart.jpg',
+    photo: '/crew/eng-reymart.webp',
     demo: false,
   },
   {
@@ -578,7 +594,7 @@ export const CREW = [
     initials: 'MG',
     avatar: 'sky',
     bio: 'Builds components and keeps the stack moving.',
-    photo: '/crew/eng-markangelo.jpg',
+    photo: '/crew/eng-markangelo.webp',
     demo: false,
   },
   // Quality Assurance
@@ -590,7 +606,7 @@ export const CREW = [
     initials: 'MM',
     avatar: 'violet',
     bio: 'Breaks the build on purpose so clients never have to.',
-    photo: '/crew/qa-marianne.jpg',
+    photo: '/crew/qa-marianne.webp',
     demo: false,
   },
 ]
@@ -658,10 +674,10 @@ export const PROCESS = [
 
 // ─── /projects — page shell copy (PageHero + closing CTA) ───
 export const PROJECTS_PAGE = {
-  eyebrow: 'Our Work',
-  heading: 'All missions launched',
-  headingAccent: 'launched',
-  lede: "The full fleet — every project we've shipped, from restaurant systems to hotel platforms. Filter by industry to find the work that fits your business.",
+  eyebrow: 'Mission Log',
+  heading: 'Selected works',
+  headingAccent: 'works',
+  lede: "A curated log of the missions we've flown — projects shipped end-to-end by the crew you'll work with. Filter by industry to find the work that fits your business.",
   cta: {
     heading: "Like what you see? Let's launch",
     accent: 'your mission next.',

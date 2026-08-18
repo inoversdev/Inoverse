@@ -49,7 +49,7 @@ function ProjectMarqueeCard({ project, index, onOpen }) {
             src={img}
             alt={p.name}
             loading="lazy"
-            className="h-full w-full object-contain grayscale transition-all duration-700 ease-out group-hover:grayscale-0"
+            className="h-full w-full object-contain grayscale transition-all duration-700 ease-out dark:brightness-0 dark:invert group-hover:grayscale-0 group-hover:invert-0 dark:group-hover:brightness-100"
           />
         </span>
       ) : (
@@ -243,21 +243,21 @@ const marqueeProjects = PROJECTS.filter((p) => p.image)
 
       <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
         <div className="max-w-2xl">
-          <p data-parallax="-0.1" className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-ember-500">Our Work</p>
+          <p data-parallax="-0.1" className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-ember-500">Selected Works</p>
           <SplitHeading
             as="h2"
-            text="Missions launched"
-            accent="launched"
+            text="Selected works"
+            accent="works"
             className="font-display text-[2.75rem] font-semibold leading-[1.02] tracking-[-0.03em] text-star-100 sm:text-6xl"
           />
           <p className="mt-4 max-w-lg text-sm leading-relaxed text-star-400">
-            Every mission is a delivered project — from restaurant systems to hotel platforms.
-            The full fleet, filterable by industry on the projects page.
+            A curated look at delivered projects — from restaurant systems to hotel platforms.
+            Filter by industry to browse the full log.
           </p>
         </div>
         <div className="flex items-center gap-4">
           <span className="rounded-full border border-star-300/25 bg-white px-4 py-1.5 text-xs font-medium text-star-400 shadow-[0_1px_2px_rgba(17,17,17,0.04)] dark:bg-[rgba(26,22,18,0.68)]">
-            {PROJECTS.length} missions
+            {PROJECTS.length} works
           </span>
         </div>
       </div>
@@ -278,7 +278,7 @@ const marqueeProjects = PROJECTS.filter((p) => p.image)
           to="/projects"
           className="group inline-flex items-center gap-2.5 rounded-full border border-ember-500/35 bg-white px-6 py-3 text-sm font-semibold text-ember-600 shadow-[0_1px_2px_rgba(17,17,17,0.04)] transition-all duration-300 hover:border-ember-500 hover:bg-ember-500/[0.06] hover:shadow-[0_10px_30px_-12px_rgba(245,48,3,0.45)] dark:bg-transparent dark:text-ember-300"
         >
-          View all missions
+          View selected works
           <span
             aria-hidden="true"
             className="transition-transform duration-300 ease-out group-hover:translate-x-1 motion-reduce:translate-x-0 motion-reduce:transition-none"

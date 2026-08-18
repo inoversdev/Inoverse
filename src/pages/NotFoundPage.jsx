@@ -26,7 +26,7 @@ export default function NotFoundPage() {
           >→</span>
         </Link>
         <Link to="/projects" className="v2-btn v2-btn-ghost">
-          Browse missions
+          Browse selected works
         </Link>
       </div>
     </section>

@@ -7,6 +7,7 @@ dist/
 # Local debugging / QA artifacts — not part of the product
 .playwright-mcp/
 DEBUG_STATE.md
+.image-backups/
 
 # Client screenshot accidentally left in repo root — do NOT publish
 /scpls-qr-codes-admin.png

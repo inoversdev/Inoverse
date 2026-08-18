@@ -151,18 +151,64 @@ const KINDS = {
       {/* hero copy */}
       <div className="mt-1 space-y-1">
         <MiniLabel className="text-ember-500/80">GROW YOUR BUSINESS</MiniLabel>
-        <Line w="w-4/5" h="h-2.5" tone="bg-star-100/45" className="draw-line" />
-        <Line w="w-3/5" h="h-2.5" tone="bg-star-100/45" className="draw-line" style={{ animationDelay: '0.3s' }} />
-        <Line w="w-2/3" tone="bg-star-100/15" className="draw-line" style={{ animationDelay: '0.6s' }} />
-        <Line w="w-1/2" tone="bg-star-100/15" className="draw-line" style={{ animationDelay: '0.9s' }} />
+        <p className="draw-line font-display text-[13px] font-bold leading-tight text-star-100">
+          Launch a site that
+        </p>
+        <p className="draw-line font-display text-[13px] font-bold leading-tight text-star-100" style={{ animationDelay: '0.3s' }}>
+          actually converts.
+        </p>
+        <p className="draw-line text-[8px] leading-snug text-star-500" style={{ animationDelay: '0.6s' }}>
+          Fast, modern, and built to launch in days — not months.
+        </p>
       </div>
       <div className="flex items-center gap-1.5">
-        <Pill w="w-12" tone="bg-ember-500/80" />
-        <Pill w="w-10" tone="bg-star-100/10" />
+        <span className="flex h-4 items-center rounded-full bg-ember-500/80 px-2 text-[7px] font-bold text-white">
+          Get Started
+        </span>
+        <span className="flex h-4 items-center rounded-full bg-star-100/10 px-2 text-[7px] font-semibold text-star-400">
+          See Work
+        </span>
       </div>
-      {/* hero visual with floating stat card */}
+      {/* hero visual — compact dashboard system, standing in for the
+          product screenshot */}
       <div className="relative min-h-0 flex-1">
-        <Block className="img-shimmer h-full w-full bg-gradient-to-br from-ember-500/25 via-star-100/10 to-transparent" />
+        <div className="flex h-full w-full gap-1 overflow-hidden rounded-md border border-star-300/15 bg-star-100/5 p-1.5">
+          {/* sidebar */}
+          <div className="flex w-6 flex-col items-center gap-1 rounded bg-star-100/8 py-1.5">
+            <span className="h-1.5 w-1.5 rounded-full bg-ember-500/70" />
+            {['D', 'O', 'C'].map((l, i) => (
+              <span key={l} className={`flex h-3 w-3 items-center justify-center rounded ${i === 0 ? 'bg-ember-500/20' : ''}`}>
+                <MiniLabel className={`text-[5px] ${i === 0 ? 'text-ember-500' : 'text-star-500'}`}>{l}</MiniLabel>
+              </span>
+            ))}
+          </div>
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
+            {/* topbar */}
+            <div className="flex items-center justify-between">
+              <MiniLabel className="text-star-300">Overview</MiniLabel>
+              <span className="relative h-2.5 w-2.5 rounded-full bg-star-100/15">
+                <span className="loop-pulse absolute -right-0.5 -top-0.5 h-1 w-1 rounded-full bg-ember-500" />
+              </span>
+            </div>
+            {/* KPI row */}
+            <div className="grid grid-cols-3 gap-1">
+              {[
+                ['Visits', '12.4k', 'bg-ember-500/15'],
+                ['Leads', '842', 'bg-emerald-400/15'],
+                ['Rate', '6.8%', 'bg-sky-400/15'],
+              ].map(([label, v, tone]) => (
+                <div key={label} className={`rounded ${tone} px-1 py-0.5`}>
+                  <MiniSub className="text-star-500">{label}</MiniSub>
+                  <MiniLabel className="text-[8px] text-star-200">{v}</MiniLabel>
+                </div>
+              ))}
+            </div>
+            {/* chart */}
+            <Block className="min-h-0 flex-1">
+              <MiniArea className="p-0.5" />
+            </Block>
+          </div>
+        </div>
         <div className="loop-bob absolute right-1.5 top-1.5 rounded-md bg-white/80 px-1.5 py-1 shadow-sm dark:bg-[rgba(22,18,15,0.50)]">
           <MiniLabel className="text-star-200">+38%</MiniLabel>
           <MiniSub className="text-emerald-500">this week</MiniSub>
@@ -183,7 +229,7 @@ const KINDS = {
       </div>
     </div>
   ),
-  gallery: () => (
+  gallery: (item) => (
     <div className="flex h-full flex-col gap-1.5 p-3">
       <div className="grid flex-1 grid-cols-2 gap-1.5">
         {[
@@ -192,7 +238,10 @@ const KINDS = {
           ['from-star-100/20 to-transparent', '7 likes'],
           ['from-ember-500/20 to-star-100/5', '23 likes'],
         ].map(([g, likes], i) => (
-          <div key={i} className={`photo-cycle relative overflow-hidden rounded-md bg-gradient-to-br ${g}`} style={{ animationDelay: `${i * 1.1}s` }}>
+          <div key={i} className={`photo-cycle relative overflow-hidden rounded-md ${item?.images?.[i] ? '' : `bg-gradient-to-br ${g}`}`} style={{ animationDelay: `${i * 1.1}s` }}>
+            {item?.images?.[i] ? (
+              <img src={item.images[i]} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+            ) : null}
             <span className="loop-pulse absolute right-1 top-1 rounded-full bg-white/70 px-1 py-px text-[6px] font-semibold text-star-800 dark:bg-[rgba(22,18,15,0.50)] dark:text-star-200">
               ♥ {likes}
             </span>
@@ -283,14 +332,17 @@ const KINDS = {
       </div>
     </div>
   ),
-  cards: () => (
+  cards: (item) => (
     <div className="grid h-full grid-cols-2 gap-1.5 p-2.5">
       {[
         ['from-ember-500/25 to-star-100/5', '₱599', '★ 4.9'],
         ['from-star-100/20 to-star-100/5', '₱1,299', '★ 4.7'],
       ].map(([g, price, rating], i) => (
         <div key={i} className="flex flex-col overflow-hidden rounded-md border border-star-300/15 bg-white/40 dark:bg-[rgba(22,18,15,0.50)]">
-          <Block className={`img-shimmer relative min-h-0 flex-1 bg-gradient-to-br ${g}`}>
+          <Block className={`img-shimmer relative min-h-0 flex-1 ${item?.images?.[i] ? '' : `bg-gradient-to-br ${g}`}`}>
+            {item?.images?.[i] ? (
+              <img src={item.images[i]} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+            ) : null}
             <span className="loop-pulse absolute right-1 top-1 rounded-full bg-ember-500/80 px-1 py-px text-[6px] font-bold text-white">
               NEW
             </span>
@@ -322,19 +374,24 @@ const KINDS = {
         </div>
       </div>
       <div className="grid grid-cols-3 gap-2">
-        {['PRODUCT', 'COMPANY', 'SUPPORT'].map((h) => (
+        {[
+          ['PRODUCT', ['Features', 'Pricing', 'Integrations', 'Changelog']],
+          ['COMPANY', ['About', 'Careers', 'Blog', 'Contact']],
+          ['SUPPORT', ['Help center', 'Status', 'Terms', 'Privacy']],
+        ].map(([h, links]) => (
           <div key={h} className="space-y-1">
             <MiniLabel className="text-star-500">{h}</MiniLabel>
-            <Line w="w-4/5" tone="bg-star-100/12" />
-            <Line w="w-3/5" tone="bg-star-100/12" />
-            <Line w="w-2/3" tone="bg-star-100/12" />
-            <Line w="w-1/2" tone="bg-star-100/8" />
+            {links.map((l) => (
+              <MiniSub key={l} className="text-star-400">{l}</MiniSub>
+            ))}
           </div>
         ))}
       </div>
-      <div className="flex items-center gap-1 rounded-full bg-star-100/10 p-1">
-        <Line w="flex-1" h="h-1" tone="bg-star-100/15" />
-        <Pill w="w-8" h="h-2.5" tone="bg-ember-500/70" className="loop-pulse" />
+      <div className="flex items-center gap-1 rounded-full bg-star-100/10 p-1 pl-2">
+        <MiniSub className="flex-1 text-star-500">Get product updates</MiniSub>
+        <span className="loop-pulse flex h-2.5 items-center rounded-full bg-ember-500/70 px-2 text-[6px] font-bold text-white">
+          Subscribe
+        </span>
       </div>
       <div className="flex items-center justify-between border-t border-star-300/10 pt-1.5">
         <MiniSub className="text-star-500">© 2026 Brand. All rights reserved.</MiniSub>
@@ -368,13 +425,13 @@ const KINDS = {
       </div>
       <div className="grid grid-cols-2 gap-1.5">
         {[
-          ['bg-gradient-to-br from-ember-500/25 to-star-100/5', '₱599', '★ 4.9'],
-          ['bg-gradient-to-br from-star-100/20 to-star-100/5', '₱1,299', '★ 4.7'],
-        ].map(([g, price, rating], i) => (
+          ['bg-gradient-to-br from-ember-500/25 to-star-100/5', 'Wireless Earbuds', '₱599', '★ 4.9'],
+          ['bg-gradient-to-br from-star-100/20 to-star-100/5', 'Smart Watch', '₱1,299', '★ 4.7'],
+        ].map(([g, name, price, rating], i) => (
           <div key={i} className="overflow-hidden rounded-md border border-star-300/10 bg-white/40 dark:bg-[rgba(22,18,15,0.50)]">
             <Block className={`img-shimmer min-h-0 flex-1 bg-gradient-to-br ${g}`} />
             <div className="space-y-0.5 p-1">
-              <Line w="w-3/4" h="h-1" tone="bg-star-100/20" />
+              <MiniSub className="text-star-300">{name}</MiniSub>
               <div className="flex items-center justify-between">
                 <MiniLabel className="text-star-300">{price}</MiniLabel>
                 <MiniSub className="text-star-500">{rating}</MiniSub>
@@ -466,7 +523,7 @@ const KINDS = {
       </div>
       <div className="mt-1 flex items-center gap-1.5 rounded-full bg-star-100/10 px-2 py-1">
         <span className="text-[8px] text-star-500">＋</span>
-        <Line w="flex-1" h="h-1" tone="bg-star-100/15" />
+        <MiniSub className="flex-1 text-star-500">Message Inovers Crew…</MiniSub>
         <span className="text-[8px] text-star-500">🎤</span>
         <span className="flex h-4 w-4 items-center justify-center rounded-full bg-ember-500 text-[7px] text-white">➤</span>
       </div>
@@ -529,7 +586,7 @@ const KINDS = {
           ].map(([ini, name, status, st]) => (
             <div key={name} className="flex items-center gap-1">
               <Avatar tone="bg-ember-500/20" size="h-3.5 w-3.5"><MiniLabel className="text-[5px] text-ember-600 dark:text-ember-300">{ini}</MiniLabel></Avatar>
-              <Line w="flex-1" h="h-1" tone="bg-star-100/12" />
+              <MiniSub className="flex-1 truncate text-star-400">{name}</MiniSub>
               <Chip tone={st}>{status}</Chip>
             </div>
           ))}
@@ -571,16 +628,16 @@ const KINDS = {
     <div className="grid h-full grid-cols-3 gap-1.5 p-2">
       {[
         ['TODO', 'bg-star-100/15', '3', [
-          ['w-4/5', 'bg-ember-500/25', 'High'],
-          ['w-3/5', 'bg-star-100/20', 'Low'],
+          ['Payment gateway', 'High'],
+          ['Push notifications', 'Low'],
         ]],
         ['DOING', 'bg-amber-400/50', '2', [
-          ['w-3/4', 'bg-ember-500/30', 'High'],
-          ['w-full', 'bg-star-100/20', 'Med'],
+          ['Checkout flow', 'High'],
+          ['Order tracking', 'Med'],
         ]],
         ['DONE', 'bg-emerald-400/50', '5', [
-          ['w-4/5', 'bg-star-100/20', 'Low'],
-          ['w-1/2', 'bg-star-100/20', 'Low'],
+          ['User onboarding', 'Low'],
+          ['Dark mode', 'Low'],
         ]],
       ].map(([title, headTone, count, cards], col) => (
         <div key={title} className="flex flex-col gap-1.5 rounded-md bg-star-100/5 p-1.5">
@@ -591,18 +648,13 @@ const KINDS = {
             </div>
             <span className="loop-pulse rounded-full bg-star-100/10 px-1 text-[7px] text-star-500">{count}</span>
           </div>
-          {cards.map(([w, tone, prio], i) => (
+          {cards.map(([task, prio], i) => (
             <div key={i} className="kanban-pop space-y-1 rounded-md bg-white/40 p-1 shadow-sm dark:bg-[rgba(22,18,15,0.50)]" style={{ animationDelay: `${col * 1.9 + i * 0.7}s` }}>
-              <div className="flex items-center justify-between">
-                <span className="flex gap-px">
-                  <Dot tone="bg-star-100/25" />
-                  <Dot tone="bg-star-100/25" />
-                  <Dot tone="bg-star-100/25" />
-                </span>
+              <div className="flex items-center justify-between gap-1">
+                <MiniSub className="truncate text-star-300">{task}</MiniSub>
                 <Chip tone={prio === 'High' ? 'bg-ember-500/20 text-ember-600 dark:text-ember-300' : 'bg-star-100/10 text-star-500'}>{prio}</Chip>
               </div>
-              <Line w={w} h="h-1" tone={tone} />
-              <Line w="w-1/2" h="h-1" tone="bg-star-100/10" />
+              <MiniSub className="text-star-500">#{120 + col * 10 + i}</MiniSub>
             </div>
           ))}
           <span className="flex items-center justify-center gap-0.5 rounded-md border border-dashed border-star-300/20 py-0.5 text-[7px] text-star-500">
@@ -795,7 +847,7 @@ const MediaTile = ({ item }) => {
     )
   }
 
-  const content = KINDS[item.kind]?.() ?? (
+  const content = KINDS[item.kind]?.(item) ?? (
     <div className="flex h-full items-center justify-center">
       <div className="h-2 w-2 rounded-full bg-ember-500/25" />
     </div>

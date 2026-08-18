@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useLenis } from 'lenis/react'
-import { BRAND, HERO } from '../lib/content'
+import { HERO } from '../lib/content'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -108,14 +108,6 @@ export default function SpaceHero() {
               aria-hidden="true"
               className="transition-transform duration-300 ease-out group-hover:translate-x-1 motion-reduce:translate-x-0 motion-reduce:transition-none"
             >→</span>
-          </a>
-          <a
-            href={BRAND.calendly}
-            target="_blank"
-            rel="noreferrer"
-            className="v2-btn v2-btn-ghost v2-btn-lg"
-          >
-            {HERO.ctaSecondary}
           </a>
         </div>
         <p className="v2-hero-reveal mt-14 text-xs uppercase tracking-[0.2em] text-star-600">

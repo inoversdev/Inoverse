@@ -218,7 +218,7 @@ export default function ProjectsPage() {
             ))}
           </div>
           <span className="ml-auto inline-flex shrink-0 items-center whitespace-nowrap rounded-full border border-star-300/25 bg-white px-3.5 py-1.5 text-xs font-medium text-star-400 shadow-[0_1px_2px_rgba(17,17,17,0.04)] dark:bg-[rgba(26,22,18,0.68)]">
-            {filtered.length} of {PROJECTS.length} missions
+            {filtered.length} of {PROJECTS.length} works
           </span>
         </div>
 
@@ -242,7 +242,7 @@ export default function ProjectsPage() {
               </div>
             ) : (
               <div key={activeFilter} className="rounded-2xl border border-dashed border-star-300/25 p-10 text-center text-sm text-star-500">
-                No missions in this category yet.
+                No works in this category yet.
               </div>
             )}
           </div>
