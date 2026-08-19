@@ -756,14 +756,13 @@ export function ServiceBookingDemo({ steps }) {
 }
 
 // ─── Mapper — kind by exact project id, steps by project ───
-// Roster synced with content.js (2026-08-17): 7 real projects +
-// 26 concept launches. Every id resolves to a kind; unknown ids fall
+// Roster synced with content.js (2026-08-18): 7 real projects +
+// 6 concept launches. Every id resolves to a kind; unknown ids fall
 // back to the dashboard demo so nothing ever renders blank.
 const STEPS = {
   // Logistics & Delivery
   dory: ['Customer orders', 'Merchant preps', 'Rider picks up', 'Out for delivery', 'Delivered ✓'],
   dorx: ['Shipment booked', 'Picked up', 'In transit', 'Arrived ✓'],
-  sundo: ['Pickup requested', 'Rider assigned', 'En route', 'Delivered ✓'],
   padala: ['Send requested', 'Parcel packed', 'In transit', 'Claimed ✓'],
   // Restaurant & Food
   kanto: ['Order placed', 'Kitchen cooking', 'Out for delivery', 'Delivered ✓'],
@@ -784,7 +783,7 @@ const STEPS = {
 
 const KIND = {
   // delivery
-  dory: 'delivery', dorx: 'delivery', sundo: 'delivery', padala: 'delivery',
+  dory: 'delivery', dorx: 'delivery', padala: 'delivery',
   kanto: 'delivery', silog: 'delivery', tatay: 'delivery',
   // ride hailing
   byahego: 'ride',

@@ -332,17 +332,6 @@ export const PROJECTS = [{
     featured: true,
   },
 {
-    id: 'sundo',
-    image: '/projects/sundo.webp',
-    name: 'Sundo Express',
-    industry: 'Logistics & Delivery',
-    category: 'On-Demand Courier',
-    description: 'On-demand pickup and parcel delivery — book a rider in minutes with live tracking and cash or card payment.',
-    url: null,
-    tags: ['Courier', 'On-Demand', 'Tracking'],
-    featured: true,
-  },
-{
     id: 'padala',
     image: '/projects/padala.webp',
     name: 'Padala PH',
