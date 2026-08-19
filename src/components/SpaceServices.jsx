@@ -280,7 +280,7 @@ const KINDS = {
       <div className="space-y-1">
         <MiniSub className="text-star-500">BUDGET</MiniSub>
         <div className="flex items-center justify-between rounded-md bg-star-100/10 px-1.5 py-1">
-          <MiniSub className="text-star-500">₱599 – Custom</MiniSub>
+          <MiniSub className="text-star-500">₱999 – Custom</MiniSub>
           <span className="text-[7px] text-star-500">▾</span>
         </div>
       </div>

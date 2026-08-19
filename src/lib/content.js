@@ -47,9 +47,9 @@ export const HERO = {
 }
 
 export const STATS = [
-  { value: 50, suffix: '+', label: 'Projects delivered' },
-  { value: 30, suffix: '+', label: 'Happy clients' },
-  { value: 7, suffix: '', label: 'Core products' },
+  { value: 13, suffix: '', label: 'Projects delivered' },
+  { value: 3, suffix: ' months', label: 'Min. system development' },
+  { value: 7, suffix: '', label: 'High-end products' },
   { value: 3, suffix: '-day', label: 'Website turnaround' },
 ]
 
@@ -651,7 +651,7 @@ export const PROCESS = [
     step: '03',
     title: 'Build',
     description:
-      'Rapid, clean development. Websites in 3 days. Complex systems shipped in weeks, not months.',
+      'Rapid, clean development. Websites in 3 days. Complex systems built on a 3-month minimum.',
   },
   {
     step: '04',
@@ -707,7 +707,7 @@ export const FOOTER = {
   copyright: '© 2024 Inovers. All rights reserved.',
 }
 
-// ─── Pricing — two tiers (Mat's call 2026-08-11): ₱599 "as low as"
+// ─── Pricing — two tiers (Mat's call 2026-08-11): ₱999 "as low as"
 // starter + Customize for tailored quotes. Feature lists are EDITABLE
 // placeholders — confirm the exact inclusions with the CTO before
 // launch (don't invent promises the team can't keep).
@@ -721,7 +721,7 @@ export const PRICING = {
       id: 'starter',
       name: 'Starter',
       tagline: 'as low as',
-      price: '599',
+      price: '999',
       currency: '₱',
       cadence: '/mo',
       badge: 'Most popular',
