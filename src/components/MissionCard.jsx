@@ -89,7 +89,11 @@ export default function MissionCard({ project, onOpen }) {
             src={img}
             alt={p.name}
             loading="lazy"
-            className="h-full w-full object-contain grayscale transition-all duration-700 ease-out dark:brightness-0 dark:invert group-hover:grayscale-0 group-hover:invert-0 dark:group-hover:brightness-100"
+            className={`h-full w-full object-contain grayscale transition-all duration-700 ease-out group-hover:grayscale-0 group-hover:invert-0 ${
+              p.noInvert
+                ? ''
+                : 'dark:brightness-0 dark:invert dark:group-hover:brightness-100'
+            }`}
           />
         </span>
       ) : (

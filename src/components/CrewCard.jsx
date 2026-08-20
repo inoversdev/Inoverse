@@ -126,7 +126,7 @@ export default function CrewCard({ member }) {
           aria-hidden="true"
           className="absolute left-1/2 top-0 h-36 w-36 -translate-x-1/2 rounded-full bg-ember-500/10 opacity-0 blur-xl transition-opacity duration-300 group-hover:opacity-100 sm:h-44 sm:w-44"
         />
-        <div className="relative h-36 w-36 overflow-hidden rounded-full ring-[3px] ring-ember-500/40 shadow-md transition-all duration-300 group-hover:ring-ember-500 sm:h-44 sm:w-44">
+        <div className="relative h-36 w-36 overflow-hidden rounded-full border-2 border-white/70 ring-[3px] ring-ember-500/40 shadow-md transition-all duration-300 group-hover:border-white group-hover:ring-ember-500 sm:h-44 sm:w-44">
           <CrewAvatar member={member} size="h-full w-full text-2xl" />
         </div>
       </div>
